@@ -12,6 +12,7 @@ import Avatar from '../assets/avatar.png';
 
 const User = () => {
     const [values, setValues] = useState({
+        role: '',
         name: '',
         email: '',
         password: '',
@@ -38,6 +39,11 @@ const User = () => {
     const navigate = useNavigate();
 
     const handleFileUpload = async (image) => {
+        if (image.size > 2 * 1024 * 1024) {
+            setImageError(true);
+            return;
+        }
+
         const storage = getStorage(app);
         const fileName = new Date().getTime() + image.name;
         const storageRef = ref(storage, fileName);
@@ -72,8 +78,8 @@ const User = () => {
             });
 
             console.log('LOAD USER PROFILE SUCCESS:', response);
-            const { profile, name, email, phone, address } = response.data;
-            setValues({ ...values, profile, name, email, phone, address });
+            const { role, profile, name, email, phone, address } = response.data;
+            setValues({ ...values, role, profile, name, email, phone, address });
         }
 
         catch (err) {
@@ -86,10 +92,12 @@ const User = () => {
             }
         }
     };
-    const { profile, name, email, password, phone, address, buttonText } = values;
+
+    const { role, profile, name, email, password, phone, address, buttonText } = values;
 
     const handleChange = (event) => {
-        setValues({ ...values, [name]: event.target.value });
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
     };
 
     const clickSubmit = async (event) => {
@@ -98,9 +106,6 @@ const User = () => {
 
         if (image) {
             handleFileUpload(image);
-        }
-        else {
-            setImageError(true);
         }
 
         try {
@@ -126,24 +131,29 @@ const User = () => {
     };
 
     const handleDeleteAccount = async () => {
-        try {
-            const response = await axios.delete(
-                `${process.env.REACT_APP_API}/user/delete`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+        const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
 
-            console.log('DELETE USER ACCOUNT SUCCESS:', response);
-            signout(() => {
-                navigate('/signin');
-                // toast.success('Account deleted successfully!');
-            });
-        }
+        if (confirmDelete) {
+            try {
+                const response = await axios.delete(
+                    `${process.env.REACT_APP_API}/user/delete`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
-        catch (err) {
-            console.log('DELETE USER PROFILE FAILED:', err.response.data.error);
-            toast.error(err.response.data.error);
+                console.log('DELETE USER ACCOUNT SUCCESS:', response);
+                toast.success('Account deleted successfully!');
+
+                signout(() => {
+                    navigate('/signin');
+                });
+            }
+
+            catch (err) {
+                console.log('DELETE USER ACCOUNT FAILED:', err.response.data.error);
+                toast.error(err.response.data.error);
+            }
         }
     };
 
@@ -168,10 +178,10 @@ const User = () => {
                         className='h-24 w-24 rounded-full self-center border object-cover cursor-pointer'
                         onClick={() => fileRef.current.click()}
                     />
-                    <p className='text-sm text-center'>
+                    <div className='text-sm text-center'>
                         {imageError ? (
                             <span className='text-red-500'>
-                                Error uploading image! (file size must be less than 2 MB)
+                                Error! File size must be less than 2 MB.
                             </span>
                         )
                             : imagePercent > 0 && imagePercent < 100 ? (
@@ -186,8 +196,26 @@ const User = () => {
                                 )
                                     : null
                         }
-                    </p>
+                    </div>
 
+                    <div className='flex flex-row gap-4'>
+                        <input
+                            type='text'
+                            name='role'
+                            value={role}
+                            placeholder='Role'
+                            className='p-3 shadow rounded'
+                            disabled
+                        />
+                        <input
+                            type='email'
+                            name='email'
+                            value={email}
+                            placeholder='Email'
+                            className='p-3 shadow rounded w-full'
+                            disabled
+                        />
+                    </div>
                     <div className='flex flex-row gap-4'>
                         <input
                             type='text'
@@ -198,13 +226,12 @@ const User = () => {
                             className='p-3 shadow rounded'
                         />
                         <input
-                            type='email'
-                            name='email'
-                            value={email}
-                            placeholder='Email'
+                            type='password'
+                            name='password'
+                            value={password}
+                            placeholder='Password'
                             onChange={handleChange}
                             className='p-3 shadow rounded w-full'
-                            disabled
                         />
                     </div>
                     <div className='flex flex-row gap-4'>
@@ -225,14 +252,6 @@ const User = () => {
                             className='p-3 shadow rounded w-full'
                         />
                     </div>
-                    <input
-                        type='password'
-                        name='password'
-                        value={password}
-                        placeholder='Password'
-                        onChange={handleChange}
-                        className='p-3 shadow rounded'
-                    />
                     <input
                         type='submit'
                         value={buttonText}

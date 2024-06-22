@@ -12,6 +12,7 @@ import Avatar from '../assets/avatar.png';
 
 const Admin = () => {
     const [values, setValues] = useState({
+        role: '',
         name: '',
         email: '',
         password: '',
@@ -22,7 +23,7 @@ const Admin = () => {
     });
 
     const fileRef = useRef(null);
-    const [image, setImage] = useState(undefined);
+    const [image, setImage] = useState(null);
     const [imageError, setImageError] = useState(false);
     const [imagePercent, setImagePercent] = useState(0);
 
@@ -34,27 +35,35 @@ const Admin = () => {
         }
     }, [image]);
 
-    const { profile, name, email, password, phone, address, buttonText } = values;
     const token = getCookie('token');
     const navigate = useNavigate();
 
     const handleFileUpload = async (image) => {
+        if (image.size > 2 * 1024 * 1024) {
+            setImageError(true);
+            return;
+        }
+
         const storage = getStorage(app);
         const fileName = new Date().getTime() + image.name;
         const storageRef = ref(storage, fileName);
         const uploadTask = uploadBytesResumable(storageRef, image);
 
-        uploadTask.on('state_changed', (snapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            setImagePercent(Math.round(progress));
-        },
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setImagePercent(Math.round(progress));
+            },
             (error) => {
+                console.error('Error uploading image:', error);
                 setImageError(true);
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-                    setValues({ ...values, profile: downloadURL })
-                );
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    // console.log('File available at', downloadURL);
+                    setValues({ ...values, profile: downloadURL });
+                    setImagePercent(100);
+                });
             }
         );
     };
@@ -69,8 +78,8 @@ const Admin = () => {
             });
 
             console.log('LOAD ADMIN PROFILE SUCCESS:', response);
-            const { profile, name, email, phone, address } = response.data;
-            setValues({ ...values, profile, name, email, phone, address });
+            const { role, profile, name, email, phone, address } = response.data;
+            setValues({ ...values, role, profile, name, email, phone, address });
         }
 
         catch (err) {
@@ -84,6 +93,8 @@ const Admin = () => {
         }
     };
 
+    const { role, profile, name, email, password, phone, address, buttonText } = values;
+
     const handleChange = (event) => {
         const { name, value } = event.target;
         setValues({ ...values, [name]: value });
@@ -92,6 +103,10 @@ const Admin = () => {
     const clickSubmit = async (event) => {
         event.preventDefault();
         setValues({ ...values, buttonText: 'Updating' });
+
+        if (image) {
+            handleFileUpload(image);
+        }
 
         try {
             const response = await axios.put(
@@ -116,24 +131,29 @@ const Admin = () => {
     };
 
     const handleDeleteAccount = async () => {
-        try {
-            const response = await axios.delete(
-                `${process.env.REACT_APP_API}/admin/delete`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+        const confirmDelete = window.confirm('Are you sure you want to delete your account? This action cannot be undone.');
 
-            console.log('DELETE ADMIN ACCOUNT SUCCESS:', response);
-            signout(() => {
-                navigate('/signin');
-                // toast.success('Account deleted successfully!');
-            });
-        }
+        if (confirmDelete) {
+            try {
+                const response = await axios.delete(
+                    `${process.env.REACT_APP_API}/admin/delete`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
-        catch (err) {
-            console.log('DELETE ADMIN PROFILE FAILED:', err.response.data.error);
-            toast.error(err.response.data.error);
+                console.log('DELETE ADMIN ACCOUNT SUCCESS:', response);
+                toast.success('Account deleted successfully!');
+
+                signout(() => {
+                    navigate('/signin');
+                });
+            }
+
+            catch (err) {
+                console.log('DELETE ADMIN ACCOUNT FAILED:', err.response.data.error);
+                toast.error(err.response.data.error);
+            }
         }
     };
 
@@ -147,8 +167,9 @@ const Admin = () => {
                     <input
                         type='file'
                         ref={fileRef}
-                        hidden accept='image/*'
+                        accept='image/*'
                         onChange={(e) => setImage(e.target.files[0])}
+                        hidden
                     />
                     <img
                         src={profile || values.profile || Avatar}
@@ -157,10 +178,10 @@ const Admin = () => {
                         className='h-24 w-24 rounded-full self-center border object-cover cursor-pointer'
                         onClick={() => fileRef.current.click()}
                     />
-                    <span className='text-sm text-center'>
+                    <div className='text-sm text-center'>
                         {imageError ? (
                             <span className='text-red-500'>
-                                Error uploading image! (file size must be less than 2 MB)
+                                Error! File size must be less than 2 MB.
                             </span>
                         )
                             : imagePercent > 0 && imagePercent < 100 ? (
@@ -175,8 +196,26 @@ const Admin = () => {
                                 )
                                     : null
                         }
-                    </span>
+                    </div>
 
+                    <div className='flex flex-row gap-4'>
+                        <input
+                            type='text'
+                            name='role'
+                            value={role}
+                            placeholder='Role'
+                            className='p-3 shadow rounded'
+                            disabled
+                        />
+                        <input
+                            type='email'
+                            name='email'
+                            value={email}
+                            placeholder='Email'
+                            className='p-3 shadow rounded w-full'
+                            disabled
+                        />
+                    </div>
                     <div className='flex flex-row gap-4'>
                         <input
                             type='text'
@@ -187,10 +226,10 @@ const Admin = () => {
                             className='p-3 shadow rounded'
                         />
                         <input
-                            type='email'
-                            name='email'
-                            value={email}
-                            placeholder='Email'
+                            type='password'
+                            name='password'
+                            value={password}
+                            placeholder='Password'
                             onChange={handleChange}
                             className='p-3 shadow rounded w-full'
                         />
@@ -213,14 +252,6 @@ const Admin = () => {
                             className='p-3 shadow rounded w-full'
                         />
                     </div>
-                    <input
-                        type='password'
-                        name='password'
-                        value={password}
-                        placeholder='Password'
-                        onChange={handleChange}
-                        className='p-3 shadow rounded'
-                    />
                     <input
                         type='submit'
                         value={buttonText}

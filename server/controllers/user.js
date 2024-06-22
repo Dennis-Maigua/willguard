@@ -36,57 +36,65 @@ exports.update = async (req, res) => {
         }
 
         if (profile) {
-            user.profile = profile;
+            user.profile = profile.trim();
         }
 
-        if (!name || name.length < 3) {
-            return res.status(401).json({
+        if (name && name.length >= 3) {
+            user.name = name.trim();
+        }
+        else {
+            return res.status(400).json({
                 error: 'Name must be at least 3 characters long!'
             });
         }
-        else {
-            user.name = name;
-        }
 
+        // for admins only
         if (email) {
-            if (!email || email.length < 6) {
-                return res.status(401).json({
+            if (email.length < 5) {
+                return res.status(400).json({
                     error: 'Enter a valid email address!'
                 });
             }
-            user.email = email;
+            user.email = email.trim();
         }
 
         if (password) {
-            if (!password || password.length < 8) {
-                return res.status(401).json({
+            if (password.length < 8) {
+                return res.status(400).json({
                     error: 'Password must be at least 8 characters long!'
                 });
             }
-            user.password = password;
+            user.password = password.trim();
         }
 
         if (phone) {
             if (phone.length < 10) {
-                return res.status(401).json({
+                return res.status(400).json({
                     error: 'Enter a valid phone number!'
                 });
             }
-            user.phone = phone;
+            else if (phone !== undefined) {
+                user.phone = '';
+            }
+            user.phone = phone.trim();
         }
 
         if (address) {
-            if (!address || address.length < 6) {
-                return res.status(401).json({
-                    error: 'Enter a valid location/address!'
+            if (address.length < 3) {
+                return res.status(400).json({
+                    error: 'Enter a valid address!'
                 });
             }
-            user.address = address;
+            else if (address !== undefined) {
+                user.address = '';
+            }
+            user.address = address.trim();
         }
 
         const updatedUser = await user.save();
         updatedUser.hashed_password = undefined;
         updatedUser.salt = undefined;
+
         // console.log('UPDATE USER SUCCESS:', req.user);
         console.log('UPDATE USER SUCCESS!');
         return res.json(updatedUser);

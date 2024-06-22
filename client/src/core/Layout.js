@@ -15,6 +15,16 @@ const Layout = ({ children }) => {
         return pathname === path ? 'text-red-500' : 'text-white';
     }
 
+    const handleLogout = async () => {
+        const confirmDelete = window.confirm('Are you sure you want to log out?');
+
+        if (confirmDelete) {
+            signout(() => {
+                navigate('/signin');
+            });
+        }
+    };
+
     return (
         <div>
             <nav className='bg-gray-900 text-white'>
@@ -67,13 +77,7 @@ const Layout = ({ children }) => {
                                                 <NavLink to='/lockscreen' className={`hover:text-red-500 ${isActive('/lockscreen')}`}> Lock Screen </NavLink>
                                             </li>
                                             <li>
-                                                <span className='hover:text-red-500 cursor-pointer' onClick={() => {
-                                                    signout(() => {
-                                                        navigate('/');
-                                                    });
-                                                }}>
-                                                    Log Out
-                                                </span>
+                                                <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>
                                             </li>
                                         </ul>
                                     </div>
@@ -102,13 +106,7 @@ const Layout = ({ children }) => {
                                                 <NavLink to='/lockscreen' className={`hover:text-red-500 ${isActive('/lockscreen')}`}> Lock Screen </NavLink>
                                             </li>
                                             <li>
-                                                <span className='hover:text-red-500 cursor-pointer' onClick={() => {
-                                                    signout(() => {
-                                                        navigate('/');
-                                                    });
-                                                }}>
-                                                    Log Out
-                                                </span>
+                                                <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>
                                             </li>
                                         </ul>
                                     </div>

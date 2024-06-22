@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
-import { getCookie } from '../auth/helpers';
+import { getCookie, isAuth } from '../auth/helpers';
 
 const LockScreen = () => {
     const [values, setValues] = useState({
@@ -31,10 +31,10 @@ const LockScreen = () => {
                 }
             });
 
+            // toast.success(response.data.message);
             console.log('SCREEN UNLOCK SUCCESS:', response);
-            // toast.success(response.data.message);    
-            setValues({ ...values, password: '', buttonText: 'Unlocked' });
 
+            setValues({ ...values, password: '', buttonText: 'Unlocked' });
             navigate(-1);
         }
 
@@ -48,6 +48,7 @@ const LockScreen = () => {
     return (
         <div>
             <ToastContainer />
+            {!isAuth() ? <Navigate to='/' /> : null}
             <div className='max-w-lg m-auto px-4 text-center flex flex-col justify-center items-center h-screen gap-4'>
                 <h1 className='text-2xl'>
                     Locked Screen
