@@ -23,7 +23,7 @@ The Automated Wills DApp revolutionizes this process, offering a user-friendly p
 
 ### 1. Clone the Repository
 
-Copy the project to your local machine (Desktop):
+Download the project to your local machine (Desktop):
 
 ```bash
     $ cd Desktop
