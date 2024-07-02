@@ -20,7 +20,7 @@ Download the project to your local machine (Desktop):
 
 ```bash
     $ cd Desktop
-    $ git clone https://github.com/Dennis-Maigua/willguard-web.git
+    $ git clone https://github.com/Dennis-Maigua/willguard.git
 ```
 
 ### 2. Install Packages and Dependencies
@@ -31,11 +31,11 @@ Open two terminals and install all packages and dependencies.
 
 ```bash
     # using npm
-    $ cd Destop/willguard-web/server
+    $ cd Destop/willguard-main/willguard-main/server
     $ npm i
 
     # OR using Yarn
-    $ cd Desktop/willguard-web/server
+    $ cd Desktop/willguard-main/willguard-main/server
     $ yarn add
 ```
 
@@ -43,11 +43,11 @@ Open two terminals and install all packages and dependencies.
 
 ```bash
     # using npm
-    $ cd Destop/willguard-web/client
+    $ cd Destop/willguard-main/willguard-main/client
     $ npm i
 
     # OR using Yarn
-    $ cd Desktop/willguard-web/client
+    $ cd Desktop/willguard-main/willguard-main/client
     $ yarn add
 ```
 
