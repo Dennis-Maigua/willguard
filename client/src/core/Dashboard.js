@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 
-import { isAuth } from '../auth/helpers';
+import { getCookie, isAuth } from '../auth/helpers';
 import Layout from './Layout';
-import { Navigate } from 'react-router-dom';
+import Avatar from '../assets/avatar.png';
 
 const Dashboard = () => {
     const [activeComponent, setActiveComponent] = useState({
@@ -11,16 +13,47 @@ const Dashboard = () => {
         header: 'Dashboard'
     });
 
+    const isActive = (path) => {
+        return path === activeComponent
+            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
+            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
+    };
+
+    const [users, setUsers] = useState([]);
+    const token = getCookie('token');
+
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get(
+                    `${process.env.REACT_APP_API}/dashboard/users`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                console.log('FETCH USERS SUCCESS:', response);
+                setUsers(response.data);
+            }
+
+            catch (err) {
+                console.log('FETCH USERS FAILED:', err.response.data.error);
+            }
+        };
+
+        fetchUsers();
+    }, []);
+
     const renderContent = () => {
         switch (activeComponent.name) {
             case 'Dashboard':
-                return <DashboardContent />;
-            case 'Users':
-                return <UsersContent />;
-            case 'Analytics':
-                return <AnalyticsContent />;
+                return <DashboardContent users={users} />;
             case 'Wills':
                 return <WillsContent />;
+            case 'Users':
+                return <UsersContent users={users} />;
+            case 'Analytics':
+                return <AnalyticsContent />;
             default:
                 return <DashboardContent />;
         }
@@ -31,7 +64,10 @@ const Dashboard = () => {
             <ToastContainer />
             {!isAuth() ? <Navigate to='/' /> : null}
             <div className="flex min-h-screen bg-gray-100">
-                <Sidebar activeComponent={activeComponent.name} setActiveComponent={setActiveComponent} />
+                <Sidebar activeComponent={activeComponent.name}
+                    setActiveComponent={setActiveComponent}
+                    isActive={isActive}
+                />
                 <div className="flex-1 p-6">
                     <Header headerName={activeComponent.header} />
                     <main className="mt-8">
@@ -43,13 +79,7 @@ const Dashboard = () => {
     );
 };
 
-const Sidebar = ({ activeComponent, setActiveComponent }) => {
-    const isActive = (path) => {
-        return path === activeComponent
-            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
-            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
-    };
-
+const Sidebar = ({ isActive, setActiveComponent }) => {
     return (
         <div className="w-64 bg-white shadow-md">
             <div className="p-6">
@@ -82,7 +112,7 @@ const Header = ({ headerName }) => {
     );
 };
 
-const DashboardContent = () => {
+const DashboardContent = ({ users }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-6 bg-white rounded-lg shadow-md">
@@ -90,7 +120,7 @@ const DashboardContent = () => {
                 <p className="text-gray-500"> Total Wills </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                <h3 className="text-lg font-semibold text-gray-700"> {users.length} </h3>
                 <p className="text-gray-500"> Total Users </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
@@ -104,13 +134,13 @@ const DashboardContent = () => {
 const WillsContent = () => {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700">Wills Content</h3>
-            <p className="text-gray-500">Some wills content here.</p>
+            <h3 className="text-lg font-semibold text-gray-700"> Wills Content </h3>
+            <p className="text-gray-500"> Some wills content here. </p>
         </div>
     );
 };
 
-const UsersContent = () => {
+const UsersContent = ({ users }) => {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
             <table className="min-w-full divide-y divide-gray-200 mt-4">
@@ -125,14 +155,21 @@ const UsersContent = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                    </tr>
+                    {users.map((user) => (
+                        <tr key={user._id}>
+                            <td className="px-6 py-4 whitespace-nowrap">{user._id}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <img src={user.profileUrl || Avatar} alt="Profile" className="w-10 h-10 rounded-full" />
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                                <button className="text-indigo-600 hover:text-indigo-900">Edit</button>
+                                <button className="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                            </td>
+                        </tr>
+                    ))}
                 </tbody>
             </table>
         </div>
@@ -142,28 +179,8 @@ const UsersContent = () => {
 const AnalyticsContent = () => {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
-            <table className="min-w-full divide-y divide-gray-200 mt-4">
-                <thead>
-                    <tr>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    <tr>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                        <td className="px-6 py-4 whitespace-nowrap">  </td>
-                    </tr>
-                </tbody>
-            </table>
+            <h3 className="text-lg font-semibold text-gray-700"> Analytics Content </h3>
+            <p className="text-gray-500"> Some analytics content here. </p>
         </div>
     );
 };

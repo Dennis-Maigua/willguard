@@ -162,3 +162,19 @@ exports.lockScreen = async (req, res) => {
         });
     }
 }
+
+exports.dashboard = async (req, res) => {
+    try {
+        const users = await User.find();
+
+        console.log('READ USERS SUCCESS!');
+        return res.json(users);
+    }
+
+    catch (err) {
+        console.log('READ USERS FAILED:', err);
+        return res.status(500).json({
+            message: 'Problem reading users from database!'
+        });
+    }
+};
