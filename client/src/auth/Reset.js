@@ -62,12 +62,12 @@ const Reset = () => {
             <ToastContainer />
             {isAuth() ? <Navigate to='/' /> : null}
             {!reset && (
-                <div className='max-w-lg m-auto text-center flex flex-col gap-4'>
+                <div className='max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10'>
                     <h1 className='text-2xl'>
                         Hello {name}, please enter your new password to continue:
                     </h1>
 
-                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4'>
+                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                         <input
                             type='password'
                             name='newPassword'

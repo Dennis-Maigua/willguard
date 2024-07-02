@@ -17,8 +17,8 @@ const Dashboard = () => {
                 return <DashboardContent />;
             case 'Users':
                 return <UsersContent />;
-            case 'Admins':
-                return <AdminsContent />;
+            case 'Analytics':
+                return <AnalyticsContent />;
             case 'Wills':
                 return <WillsContent />;
             default:
@@ -30,7 +30,7 @@ const Dashboard = () => {
         <Layout>
             <ToastContainer />
             {!isAuth() ? <Navigate to='/' /> : null}
-            <div className="flex h-screen bg-gray-100">
+            <div className="flex min-h-screen bg-gray-100">
                 <Sidebar activeComponent={activeComponent.name} setActiveComponent={setActiveComponent} />
                 <div className="flex-1 p-6">
                     <Header headerName={activeComponent.header} />
@@ -46,8 +46,8 @@ const Dashboard = () => {
 const Sidebar = ({ activeComponent, setActiveComponent }) => {
     const isActive = (path) => {
         return path === activeComponent
-            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-200 cursor-pointer'
-            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-200 cursor-pointer';
+            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
+            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
     };
 
     return (
@@ -55,11 +55,11 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
             <div className="p-6">
                 <h1 className="text-2xl font-bold text-gray-800">Admin</h1>
             </div>
-            <nav className="mt-8 flex flex-col gap-2">
+            <nav className="mt-8 flex flex-col gap-1">
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
                 <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
-                <span onClick={() => setActiveComponent({ name: 'Admins', header: 'Admins' })} className={isActive('Admins')}> Admins </span>
+                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
             </nav>
         </div>
     );
@@ -95,7 +95,7 @@ const DashboardContent = () => {
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                <p className="text-gray-500"> Total Admins </p>
+                <p className="text-gray-500"> Total Analytics </p>
             </div>
         </div>
     );
@@ -139,7 +139,7 @@ const UsersContent = () => {
     );
 };
 
-const AdminsContent = () => {
+const AnalyticsContent = () => {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
             <table className="min-w-full divide-y divide-gray-200 mt-4">

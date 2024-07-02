@@ -73,7 +73,7 @@ const LockScreen = () => {
                 </h1>
                 <span> Please enter your password to return to the website: </span>
 
-                <form onSubmit={handleUnlock} className='w-full p-10 flex flex-col shadow-md rounded gap-4'>
+                <form onSubmit={handleUnlock} className='w-full p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                     <input
                         type='password'
                         name='password'

@@ -54,7 +54,7 @@ const Activate = () => {
             <ToastContainer />
             {isAuth() ? <Navigate to='/' /> : null}
             {!activated && (
-                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4'>
+                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-10'>
                     <h1 className='text-2xl'>
                         Hello {name}, please click the button below to continue:
                     </h1>
@@ -65,7 +65,7 @@ const Activate = () => {
             )}
 
             {activated && (
-                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4'>
+                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-10'>
                     <h1 className='text-2xl'>
                         Activation Success! Please sign in to your new account.
                     </h1>

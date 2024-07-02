@@ -50,10 +50,10 @@ const Forgot = () => {
             <ToastContainer />
             {isAuth() ? <Navigate to='/' /> : null}
             {!requested && (
-                <div className='max-w-lg m-auto text-center flex flex-col gap-4'>
+                <div className='max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10'>
                     <h1 className='text-3xl font-semibold'> Forgot Password </h1>
 
-                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4'>
+                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                         <input
                             type='email'
                             name='email'
