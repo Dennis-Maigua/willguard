@@ -7,6 +7,10 @@ import { getCookie, isAuth } from '../auth/helpers';
 import Layout from './Layout';
 import Avatar from '../assets/avatar.png';
 
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+ChartJS.register(ArcElement, Tooltip, Legend);
+
 const Dashboard = () => {
     const [activeComponent, setActiveComponent] = useState({
         name: 'Dashboard',
@@ -70,7 +74,7 @@ const Dashboard = () => {
                 />
                 <div className="flex-1 p-6">
                     <Header headerName={activeComponent.header} />
-                    <main className="mt-8">
+                    <main className="mt-6">
                         {renderContent()}
                     </main>
                 </div>
@@ -116,16 +120,28 @@ const DashboardContent = ({ users }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 0 </h3>
+                <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                <p className="text-gray-500"> Active Wills </p>
+            </div>
+            <div className="p-6 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                <p className="text-gray-500"> Executed Wills </p>
+            </div>
+            <div className="p-6 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700"> 4 </h3>
                 <p className="text-gray-500"> Total Wills </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold text-gray-700"> {users.length} </h3>
-                <p className="text-gray-500"> Total Users </p>
+                <p className="text-gray-500"> Active Users </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                <p className="text-gray-500"> Total Analytics </p>
+                <p className="text-gray-500"> Deleted Users </p>
+            </div>
+            <div className="p-6 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700"> 3 </h3>
+                <p className="text-gray-500"> Total Users </p>
             </div>
         </div>
     );
@@ -164,9 +180,9 @@ const UsersContent = ({ users }) => {
                             <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <button className="text-indigo-600 hover:text-indigo-900">Edit</button>
-                                <button className="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                            <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                <button className="text-blue-600 hover:text-indigo-900"> Edit </button>
+                                <button className="text-red-600 hover:text-red-900 ml-4"> Delete </button>
                             </td>
                         </tr>
                     ))}
@@ -177,11 +193,59 @@ const UsersContent = ({ users }) => {
 };
 
 const AnalyticsContent = () => {
+    const usersData = {
+        labels: ['Active Users', 'Deleted Users', 'Total Users'],
+        datasets: [
+            {
+                label: '# of Users',
+                data: [2, 1, 3],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)', // Active Users
+                    'rgba(255, 99, 132, 0.2)', // Deleted Users
+                    'rgba(75, 192, 192, 0.2)', // Total Users
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', // Active Users
+                    'rgba(255, 99, 132, 1)', // Deleted Users
+                    'rgba(75, 192, 192, 1)', // Total Users
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const willsData = {
+        labels: ['Active Wills', 'Executed Wills', 'Total Wills'],
+        datasets: [
+            {
+                label: '# of Wills',
+                data: [2, 2, 4],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)', // Active Wills
+                    'rgba(255, 159, 64, 0.2)', // Executed Wills
+                    'rgba(153, 102, 255, 0.2)', // Total Wills
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)', // Active Wills
+                    'rgba(255, 159, 64, 1)', // Executed Wills
+                    'rgba(153, 102, 255, 1)', // Total Wills
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     return (
-        <div className="p-6 bg-white rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700"> Analytics Content </h3>
-            <p className="text-gray-500"> Some analytics content here. </p>
-        </div>
+        <section className="flex flex-row gap-6">
+            <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">User Analytics</h3>
+                <Pie data={usersData} />
+            </div>
+            <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow-md">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4">Wills Analytics</h3>
+                <Pie data={willsData} />
+            </div>
+        </section>
     );
 };
 
