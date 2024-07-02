@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
     const [dropdown, setDropdown] = useState(false);
 
     const isActive = (path) => {
-        return pathname === path ? 'text-red-500' : 'text-white';
+        return pathname === path ? 'text-red-500' : 'text-white hover:text-red-500';
     }
 
     const handleLogout = async () => {
@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
     return (
         <div>
             <nav className='bg-gray-900 text-white'>
-                <div className='max-w-7xl mx-auto p-4 flex items-center justify-between'>
+                <div className='max-w-8xl mx-auto p-4 flex items-center justify-between'>
                     <div>
                         <NavLink to='/' className='flex gap-2'>
                             <img src={Logo} className='h-8' alt='logo' />
@@ -39,16 +39,13 @@ const Layout = ({ children }) => {
                     <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 p-6 left-0 md:w-auto w-full md:flex ${toggled ? 'block top-[60px]' : 'hidden'}`}>
                         <ul className='flex md:flex-row flex-col md:gap-8 gap-5 font-medium'>
                             <li>
-                                <NavLink to='/' className={`hover:text-red-500 ${isActive('/')}`}> Home </NavLink>
+                                <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
                             <li>
-                                <NavLink to='/services' className={`hover:text-red-500 ${isActive('/services')}`}> Services </NavLink>
+                                <NavLink to='/about-us' className={`${isActive('/about-us')}`}> About Us </NavLink>
                             </li>
                             <li>
-                                <NavLink to='/about' className={`hover:text-red-500 ${isActive('/about')}`}> About Us</NavLink>
-                            </li>
-                            <li>
-                                <NavLink to='/contact' className={`hover:text-red-500 ${isActive('/contact')}`}> Contact </NavLink>
+                                <NavLink to='/contact' className={`${isActive('/contact')}`}> Contact </NavLink>
                             </li>
                         </ul>
                     </div>
@@ -68,13 +65,16 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-2 right-12 top-[60px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-0 right-12 top-[60px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/user' className={`hover:text-red-500 ${isActive('/user')}`}> Profile </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/lockscreen' className={`hover:text-red-500 ${isActive('/lockscreen')}`}> Lock Screen </NavLink>
+                                                <NavLink to='/wills' className={`${isActive('/wills')}`}> My Wills </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
                                             </li>
                                             <li>
                                                 <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>
@@ -94,16 +94,16 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-2 right-12 top-[60px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-0 right-12 top-[60px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/admin' className={`hover:text-red-500 ${isActive('/admin')}`}> Profile </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/dashboard' className={`hover:text-red-500 ${isActive('/dashboard')}`}> Dashboard </NavLink>
+                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/lockscreen' className={`hover:text-red-500 ${isActive('/lockscreen')}`}> Lock Screen </NavLink>
+                                                <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
                                             </li>
                                             <li>
                                                 <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>

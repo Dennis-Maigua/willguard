@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { app } from '../firebase';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
@@ -10,7 +10,7 @@ import Layout from './Layout';
 import { getCookie, isAuth, signout, updateUser } from '../auth/helpers';
 import Avatar from '../assets/avatar.png';
 
-const Admin = () => {
+const Profile = () => {
     const [values, setValues] = useState({
         role: '',
         name: '',
@@ -71,19 +71,19 @@ const Admin = () => {
     const loadProfile = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/admin/${isAuth()._id}`, {
+                `${process.env.REACT_APP_API}/profile/${isAuth()._id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
 
-            console.log('LOAD ADMIN PROFILE SUCCESS:', response);
+            console.log('LOAD PROFILE SUCCESS:', response);
             const { role, profile, name, email, phone, address } = response.data;
             setValues({ ...values, role, profile, name, email, phone, address });
         }
 
         catch (err) {
-            console.log('LOAD ADMIN PROFILE FAILED:', err.response.data.error);
+            console.log('LOAD PROFILE FAILED:', err.response.data.error);
 
             if (err.response.status === 401) {
                 signout(() => {
@@ -110,7 +110,7 @@ const Admin = () => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API}/admin/update`, { profile, name, email, password, phone, address }, {
+                `${process.env.REACT_APP_API}/profile/update`, { profile, name, email, password, phone, address }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -136,7 +136,7 @@ const Admin = () => {
         if (confirmDelete) {
             try {
                 const response = await axios.delete(
-                    `${process.env.REACT_APP_API}/admin/delete`, {
+                    `${process.env.REACT_APP_API}/profile/delete`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -160,6 +160,7 @@ const Admin = () => {
     return (
         <Layout>
             <ToastContainer />
+            {!isAuth() ? <Navigate to='/' /> : null}
             <div className='max-w-xl m-auto text-center flex flex-col gap-4'>
                 <h1 className='text-3xl font-semibold'> Profile </h1>
 
@@ -198,24 +199,46 @@ const Admin = () => {
                         }
                     </div>
 
-                    <div className='flex flex-row gap-4'>
-                        <input
-                            type='text'
-                            name='role'
-                            value={role}
-                            placeholder='Role'
-                            className='p-3 shadow rounded'
-                            disabled
-                        />
-                        <input
-                            type='email'
-                            name='email'
-                            value={email}
-                            placeholder='Email'
-                            className='p-3 shadow rounded w-full'
-                            disabled
-                        />
-                    </div>
+                    {isAuth() && isAuth().role === 'subscriber' && (
+                        <div className='flex flex-row gap-4'>
+                            <input
+                                type='text'
+                                name='role'
+                                value={role}
+                                placeholder='Role'
+                                className='p-3 shadow rounded'
+                                disabled
+                            />
+                            <input
+                                type='email'
+                                name='email'
+                                value={email}
+                                placeholder='Email'
+                                className='p-3 shadow rounded w-full'
+                                disabled
+                            />
+                        </div>
+                    )}
+
+                    {isAuth() && isAuth().role === 'admin' && (
+                        <div className='flex flex-row gap-4'>
+                            <input
+                                type='text'
+                                name='role'
+                                value={role}
+                                placeholder='Role'
+                                className='p-3 shadow rounded'
+                            />
+                            <input
+                                type='email'
+                                name='email'
+                                value={email}
+                                placeholder='Email'
+                                className='p-3 shadow rounded w-full'
+                            />
+                        </div>
+                    )}
+
                     <div className='flex flex-row gap-4'>
                         <input
                             type='text'
@@ -234,6 +257,7 @@ const Admin = () => {
                             className='p-3 shadow rounded w-full'
                         />
                     </div>
+
                     <div className='flex flex-row gap-4'>
                         <input
                             type='phone'
@@ -265,4 +289,4 @@ const Admin = () => {
     );
 };
 
-export default Admin;
+export default Profile;

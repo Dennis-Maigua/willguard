@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,6 +13,21 @@ const LockScreen = () => {
     const navigate = useNavigate();
     const token = getCookie('token');
     const { password, buttonText } = values;
+
+    useEffect(() => {
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
+
+    const handleBeforeUnload = (event) => {
+        // Prevent navigation
+        event.preventDefault();
+        event.returnValue = '';
+    };
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -35,6 +50,9 @@ const LockScreen = () => {
             console.log('SCREEN UNLOCK SUCCESS:', response);
 
             setValues({ ...values, password: '', buttonText: 'Unlocked' });
+
+            // Remove the beforeunload event listener since the screen is unlocked
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             navigate(-1);
         }
 

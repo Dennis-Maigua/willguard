@@ -275,29 +275,29 @@ exports.requireSignin = (req, res, next) => {
     });
 };
 
-exports.adminMiddleware = async (req, res, next) => {
-    try {
-        const user = await User.findOne({ _id: req.user._id });
-        if (!user) {
-            return res.status(401).json({
-                error: 'User not found!'
-            });
-        }
+// exports.adminMiddleware = async (req, res, next) => {
+//     try {
+//         const user = await User.findOne({ _id: req.user._id });
+//         if (!user) {
+//             return res.status(401).json({
+//                 error: 'User not found!'
+//             });
+//         }
 
-        if (user.role !== 'admin') {
-            return res.status(401).json({
-                error: 'Access denied.'
-            });
-        }
+//         if (user.role !== 'admin') {
+//             return res.status(401).json({
+//                 error: 'Access denied.'
+//             });
+//         }
 
-        req.profile = user;
-        next();
-    }
+//         req.profile = user;
+//         next();
+//     }
 
-    catch (err) {
-        console.log('ADMIN PROFILE ERROR:', err);
-        return res.status(500).json({
-            error: 'Problem loading admin profile! Please try again.'
-        });
-    }
-};
+//     catch (err) {
+//         console.log('ADMIN PROFILE ERROR:', err);
+//         return res.status(500).json({
+//             error: 'Problem loading admin profile! Please try again.'
+//         });
+//     }
+// };

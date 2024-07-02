@@ -7,7 +7,7 @@ const Wills = () => {
         <Layout>
             <ToastContainer />
             <div className='flex flex-col justify-center items-center h-screen'>
-                <h1 className='text-3xl font-semibold'> My Wills </h1>
+                <h1 className='text-3xl font-semibold'> Wills </h1>
             </div>
         </Layout>
     );
