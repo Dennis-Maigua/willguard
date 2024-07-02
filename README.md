@@ -23,7 +23,7 @@ Download the project to your local machine (Desktop):
     $ git clone https://github.com/Dennis-Maigua/mern-auth-web.git
 ```
 
-### 2. Install Node Packages and Dependencies
+### 2. Install Packages and Dependencies
 
 Open two terminals and install all packages and dependencies.
 
@@ -53,9 +53,9 @@ Open two terminals and install all packages and dependencies.
 
 ### 3. Run the Project
 
-Run both the Backend and the frontend servers.
+Run the following command in both terminals.
 
-- Terminal 1 (Backend/Server):
+- Terminal 1 (Backend):
 
 ```bash
     # using npm
@@ -65,7 +65,7 @@ Run both the Backend and the frontend servers.
     $ yarn start
 ```
 
-- Terminal 2 (Frontend/Client):
+- Terminal 2 (Frontend):
 
 ```bash
     # using npm
