@@ -8,11 +8,11 @@ WillGuard is a decentralized application (DApp) leveraging blockchain technology
 This DApp offers users a reliable and efficient solution for managing their testamentary wishes.
 It also offers a user-friendly platform that ensures the accurate execution of testamentary wishes while maintaining the highest standards of security and privacy.
 
-### Requirements:
+### Environment & Setup (Windows, Mac):
 
 >**Note**: Make sure you have installed the latest version of [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/en/download/package-manager), and [MongoDB](https://www.mongodb.com/try/download/community) before proceeding.
 
-# Environment & Setup (Windows, Mac):
+# Installation:
 
 ### 1. Clone the Repository
 
