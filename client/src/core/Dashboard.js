@@ -7,14 +7,14 @@ import { Navigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const [activeComponent, setActiveComponent] = useState({
-        name: 'Analytics',
-        header: 'Analytics'
+        name: 'Dashboard',
+        header: 'Dashboard'
     });
 
     const renderContent = () => {
         switch (activeComponent.name) {
-            case 'Analytics':
-                return <AnalyticsContent />;
+            case 'Dashboard':
+                return <DashboardContent />;
             case 'Users':
                 return <UsersContent />;
             case 'Admins':
@@ -22,7 +22,7 @@ const Dashboard = () => {
             case 'Wills':
                 return <WillsContent />;
             default:
-                return <AnalyticsContent />;
+                return <DashboardContent />;
         }
     };
 
@@ -56,10 +56,10 @@ const Sidebar = ({ activeComponent, setActiveComponent }) => {
                 <h1 className="text-2xl font-bold text-gray-800">Admin</h1>
             </div>
             <nav className="mt-8 flex flex-col gap-2">
-                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
+                <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
+                <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
                 <span onClick={() => setActiveComponent({ name: 'Admins', header: 'Admins' })} className={isActive('Admins')}> Admins </span>
-                <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
             </nav>
         </div>
     );
@@ -82,7 +82,7 @@ const Header = ({ headerName }) => {
     );
 };
 
-const AnalyticsContent = () => {
+const DashboardContent = () => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-6 bg-white rounded-lg shadow-md">
@@ -97,6 +97,15 @@ const AnalyticsContent = () => {
                 <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
                 <p className="text-gray-500"> Total Admins </p>
             </div>
+        </div>
+    );
+};
+
+const WillsContent = () => {
+    return (
+        <div className="p-6 bg-white rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold text-gray-700">Wills Content</h3>
+            <p className="text-gray-500">Some wills content here.</p>
         </div>
     );
 };
@@ -126,15 +135,6 @@ const UsersContent = () => {
                     </tr>
                 </tbody>
             </table>
-        </div>
-    );
-};
-
-const WillsContent = () => {
-    return (
-        <div className="p-6 bg-white rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700">Wills Content</h3>
-            <p className="text-gray-500">Some wills content here.</p>
         </div>
     );
 };
