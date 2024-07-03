@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Deed {
+contract Will {
   address public lawyer;
   address payable public beneficiary;
   uint public earliest;

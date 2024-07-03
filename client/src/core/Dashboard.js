@@ -150,8 +150,28 @@ const DashboardContent = ({ users }) => {
 const WillsContent = () => {
     return (
         <div className="p-6 bg-white rounded-lg shadow-md">
-            <h3 className="text-lg font-semibold text-gray-700"> Wills Content </h3>
-            <p className="text-gray-500"> Some wills content here. </p>
+            <table className="min-w-full divide-y divide-gray-200">
+                <thead>
+                    <tr>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Block Number </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Txn ID/Hash </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From Address </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To Address </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value Amount </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Gas Fee </th>
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                    <tr>
+                        <td className="px-6 py-4 whitespace-nowrap"> 8 </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 0x2d6930...68899d </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 0x463046...289D1E </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 0x905993...082b78  </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 10.00 ETH </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 28838 </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     );
 };
