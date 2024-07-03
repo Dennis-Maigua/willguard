@@ -7,7 +7,7 @@ const Contact = () => {
         <Layout>
             <ToastContainer />
             <HeroSection />
-            <section className="py-20">
+            <section className="py-14">
                 <div className="container mx-auto px-6">
                     <div className="flex flex-wrap -mx-4">
                         <FormSection />
@@ -21,7 +21,7 @@ const Contact = () => {
 
 const HeroSection = () => {
     return (
-        <section className="bg-gray-600 text-white py-20">
+        <section className="bg-gray-600 text-white py-14">
             <div className="container mx-auto px-6 text-center">
                 <h1 className="text-5xl font-bold mb-2">
                     Contact
@@ -75,7 +75,7 @@ const FormSection = () => {
 
 const InfoSection = () => {
     return (
-        <div className="w-full md:w-1/2 px-10">
+        <div className="w-full md:w-1/2 md:px-20 px-4 md:pt-0 pt-10">
             <h3 className="text-2xl font-bold mb-4">Contact Information</h3>
             <div className="py-6 gap-4 flex flex-col">
                 <p className="text-lg">

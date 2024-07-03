@@ -161,9 +161,15 @@ const Profile = () => {
         <Layout>
             <ToastContainer />
             {!isAuth() ? <Navigate to='/' /> : null}
-            <div className='max-w-xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
-                <h1 className='text-3xl font-semibold'> Profile </h1>
+            <div className="bg-gray-600 text-white py-14">
+                <div className="container mx-auto px-6 text-center">
+                    <h1 className="text-5xl font-bold mb-2">
+                        Sign In
+                    </h1>
+                </div>
+            </div>
 
+            <div className='max-w-xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
                 <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                     <input
                         type='file'

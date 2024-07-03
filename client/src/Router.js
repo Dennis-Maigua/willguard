@@ -14,6 +14,7 @@ import Dashboard from './core/Dashboard';
 import Wills from './components/Wills';
 import About from './components/About';
 import Contact from './components/Contact';
+import CreateWill from './components/CreateWill';
 
 const Router = () => {
     return (
@@ -35,6 +36,7 @@ const Router = () => {
                 <Route path='/lockscreen' element={<LockScreen />} />
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/create-will' element={<CreateWill />} />
             </Routes>
         </BrowserRouter>
     );

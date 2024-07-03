@@ -61,12 +61,16 @@ const Reset = () => {
         <Layout>
             <ToastContainer />
             {isAuth() ? <Navigate to='/' /> : null}
-            {!reset && (
-                <div className='max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10'>
-                    <h1 className='text-2xl'>
-                        Hello {name}, please enter your new password to continue:
+            <div className="bg-gray-600 text-white py-14">
+                <div className="container mx-auto px-6 text-center">
+                    <h1 className="text-5xl font-bold mb-2">
+                        Reset Password
                     </h1>
+                </div>
+            </div>
 
+            {!reset && (
+                <div className='max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-14'>
                     <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                         <input
                             type='password'
@@ -94,7 +98,7 @@ const Reset = () => {
             )}
 
             {reset && (
-                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4'>
+                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-14'>
                     <h1 className='text-2xl'>
                         Reset Success! You can now sign in using your new password.
                     </h1>

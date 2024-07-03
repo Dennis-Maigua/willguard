@@ -48,7 +48,10 @@
     "@babel/plugin-transform-private-property-in-object": "^7.24.6",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
-    "tailwindcss": "^3.4.3"
+    "tailwindcss": "^3.4.3",
+    "web3": "^4.10.0",
+    "webpack": "^5.92.1",
+    "webpack-cli": "^5.1.4"
   },
   "description": "This is the frontend for the project",
   "main": "craco.config.js",

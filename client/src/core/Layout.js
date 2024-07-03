@@ -28,7 +28,7 @@ const Layout = ({ children }) => {
     return (
         <div>
             <nav className='bg-gray-900 text-white'>
-                <div className='max-w-7xl mx-auto p-4 flex items-center justify-between'>
+                <div className='max-w-7xl mx-auto px-4 py-6 flex items-center justify-between'>
                     <div>
                         <NavLink to='/' className='flex gap-2'>
                             <img src={Logo} className='h-8' alt='logo' />
@@ -41,6 +41,11 @@ const Layout = ({ children }) => {
                             <li>
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
+                            {!isAuth() && (
+                                <li>
+                                    <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
+                                </li>
+                            )}
                             <li>
                                 <NavLink to='/about-us' className={`${isActive('/about-us')}`}> About Us </NavLink>
                             </li>
@@ -65,10 +70,10 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[65px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[75px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> My Profile </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/wills' className={`${isActive('/wills')}`}> My Wills </NavLink>
@@ -94,10 +99,10 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[65px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[75px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> My Profile </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
@@ -148,7 +153,7 @@ const Layout = ({ children }) => {
                 {children}
             </div>
 
-            <footer className="bg-gray-900 text-white py-4 bottom-0">
+            <footer className="bg-gray-900 text-white py-6 bottom-0">
                 <div className="container mx-auto px-6 text-center">
                     <p className="text-sm">&copy; 2024 WillGuard. All rights reserved.</p>
                 </div>
