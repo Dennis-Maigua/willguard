@@ -3,39 +3,38 @@ import { ToastContainer } from 'react-toastify';
 import Web3 from 'web3';
 
 import Layout from '../core/Layout';
-import Will from '../contracts/Will.json';
+// import Will from '../contracts/Will.json';
 import { isAuth } from '../auth/helpers';
 import { Navigate } from 'react-router-dom';
 
 const CreateWill = () => {
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
-    const [lawyer, setLawyer] = useState('');
     const [beneficiary, setBeneficiary] = useState('');
     const [amount, setAmount] = useState('');
     const [interval, setInterval] = useState('');
 
-    useEffect(() => {
-        if (window.ethereum) {
-            const web3Instance = new Web3(window.ethereum);
-            setWeb3(web3Instance);
-            window.ethereum.enable().then(accounts => {
-                setAccount(accounts[0]);
-            });
-        } else {
-            alert('Please install MetaMask!');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (window.ethereum) {
+    //         const web3Instance = new Web3(window.ethereum);
+    //         setWeb3(web3Instance);
+    //         window.ethereum.enable().then(accounts => {
+    //             setAccount(accounts[0]);
+    //         });
+    //     } else {
+    //         alert('Please install MetaMask!');
+    //     }
+    // }, []);
 
-    const createWill = async () => {
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = Will.networks[networkId];
-        const willContract = new web3.eth.Contract(Will.abi, deployedNetwork && deployedNetwork.address);
+    // const createWill = async () => {
+    //     const networkId = await web3.eth.net.getId();
+    //     const deployedNetwork = Will.networks[networkId];
+    //     const willContract = new web3.eth.Contract(Will.abi, deployedNetwork && deployedNetwork.address);
 
-        await willContract.methods
-            .setWill(beneficiary, web3.utils.toWei(amount, 'ether'), interval)
-            .send({ from: account, value: web3.utils.toWei(amount, 'ether') });
-    };
+    //     await willContract.methods
+    //         .setWill(beneficiary, web3.utils.toWei(amount, 'ether'), interval)
+    //         .send({ from: account, value: web3.utils.toWei(amount, 'ether') });
+    // };
 
     return (
         <Layout>
@@ -43,14 +42,7 @@ const CreateWill = () => {
             {!isAuth() ? <Navigate to='/signin' /> : null}
             <HeroSection />
             <div className="max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10">
-                <form onSubmit={createWill} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
-                    <input
-                        type="text"
-                        placeholder="Lawyer Address"
-                        value={lawyer}
-                        onChange={(e) => setLawyer(e.target.value)}
-                        className='p-3 shadow rounded'
-                    />
+                <form onSubmit='{createWill}' className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                     <input
                         type="text"
                         placeholder="Beneficiary Address"
@@ -65,13 +57,13 @@ const CreateWill = () => {
                         onChange={(e) => setAmount(e.target.value)}
                         className='p-3 shadow rounded'
                     />
-                    <input
+                    {/* <input
                         type="text"
                         placeholder="Interval (seconds)"
                         value={interval}
                         onChange={(e) => setInterval(e.target.value)}
                         className='p-3 shadow rounded'
-                    />
+                    /> */}
                     <input
                         type='submit'
                         value="Create Will"

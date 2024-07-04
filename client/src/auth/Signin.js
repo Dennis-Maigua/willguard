@@ -36,7 +36,7 @@ const Signin = () => {
             authenticate(response, () => {
                 setValues({ ...values, email: '', password: '', buttonText: 'Submitted' });
                 // toast.success(response.data.message);
-                isAuth() && isAuth().role === 'admin' ? navigate('/dashboard') : navigate('/wills');
+                isAuth() && isAuth().role === 'admin' ? navigate('/dashboard') : navigate('/history');
             });
         }
 

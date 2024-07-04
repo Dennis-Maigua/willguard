@@ -159,6 +159,8 @@ const WillsContent = () => {
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value ETH </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Gas </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Status </th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -169,6 +171,8 @@ const WillsContent = () => {
                         <td className="px-6 py-4 whitespace-nowrap"> 0x469...89D1E </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 0x903...82b78  </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 10.00 ETH </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> 88310 </td>
+                        <td className="px-6 py-4 whitespace-nowrap"> Executed </td>
                     </tr>
                 </tbody>
             </table>
@@ -201,8 +205,8 @@ const UsersContent = ({ users }) => {
                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                             <td className="px-6 py-4 whitespace-nowrap font-medium">
-                                <button className="text-blue-600 hover:text-indigo-900"> Edit </button>
-                                <button className="text-red-600 hover:text-red-900 ml-4"> Delete </button>
+                                <button className="text-indigo-400 hover:text-indigo-700"> Edit </button>
+                                <button className="text-red-500 hover:text-red-700 ml-4"> Delete </button>
                             </td>
                         </tr>
                     ))}

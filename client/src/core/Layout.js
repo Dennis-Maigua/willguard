@@ -36,8 +36,8 @@ const Layout = ({ children }) => {
                         </NavLink>
                     </div>
 
-                    <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 p-6 left-0 md:w-auto w-full md:flex ${toggled ? 'block top-[60px]' : 'hidden'}`}>
-                        <ul className='flex md:flex-row flex-col md:gap-8 gap-5 font-medium'>
+                    <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 p-8 left-0 md:w-auto w-full md:flex ${toggled ? 'block top-20' : 'hidden'}`}>
+                        <ul className='flex md:flex-row flex-col md:gap-8 gap-6 font-medium'>
                             <li>
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
@@ -68,8 +68,8 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 md:top-[75px] top-[90px] p-6'>
-                                        <ul className='flex flex-col gap-5'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-20 p-8'>
+                                        <ul className='flex flex-col gap-6'>
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
@@ -97,16 +97,13 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 md:top-[75px] top-[90px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-20 p-6'>
                                         <ul className='flex flex-col gap-5'>
-                                            <li>
-                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
-                                            </li>
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
+                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>

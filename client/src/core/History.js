@@ -4,7 +4,7 @@ import Web3 from 'web3';
 import { ToastContainer } from 'react-toastify';
 
 import Layout from './Layout';
-import Will from '../blockchain/Will.json';
+// import Will from '../contracts/Will.json';
 import { isAuth } from '../auth/helpers';
 
 const History = () => {
@@ -12,23 +12,23 @@ const History = () => {
     const [account, setAccount] = useState('');
     const [contractAddress, setContractAddress] = useState('');
 
-    useEffect(() => {
-        if (window.ethereum) {
-            const web3Instance = new Web3(window.ethereum);
-            setWeb3(web3Instance);
-            window.ethereum.enable().then(accounts => {
-                setAccount(accounts[0]);
-            });
-        } else {
-            alert('Please install MetaMask!');
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (window.ethereum) {
+    //         const web3Instance = new Web3(window.ethereum);
+    //         setWeb3(web3Instance);
+    //         window.ethereum.enable().then(accounts => {
+    //             setAccount(accounts[0]);
+    //         });
+    //     } else {
+    //         alert('Please install MetaMask!');
+    //     }
+    // }, []);
 
-    const executeWill = async () => {
-        const willContract = new web3.eth.Contract(Will.abi, contractAddress);
+    // const executeWill = async () => {
+    //     const willContract = new web3.eth.Contract(Will.abi, contractAddress);
 
-        await willContract.methods.execute().send({ from: account });
-    };
+    //     await willContract.methods.execute().send({ from: account });
+    // };
 
     return (
         <Layout>
@@ -36,7 +36,7 @@ const History = () => {
             {!isAuth() ? <Navigate to='/signin' /> : null}
             <HeroSection />
             <div className="m-auto text-center flex flex-col gap-4">
-                <form onSubmit={executeWill} className='p-10 flex flex-col md:flex-row shadow-md rounded gap-4 bg-gray-100'>
+                <form onSubmit='{executeWill}' className='p-10 flex flex-col md:flex-row shadow-md rounded gap-4 bg-gray-100'>
                     <input
                         type="text"
                         placeholder="Contract Address"
@@ -69,6 +69,8 @@ const History = () => {
                             <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From </th>
                             <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To </th>
                             <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value ETH </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Gas </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -79,6 +81,11 @@ const History = () => {
                             <td className="px-6 py-4 whitespace-nowrap"> 0x469...89D1E </td>
                             <td className="px-6 py-4 whitespace-nowrap"> 0x903...82b78  </td>
                             <td className="px-6 py-4 whitespace-nowrap"> 10.00 ETH </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 88310 </td>
+                            <td className="px-6 py-4 whitespace-nowrap font-medium">
+                                <button className="text-indigo-400 hover:text-indigo-700"> View </button>
+                                <button className="text-red-500 hover:text-red-700 ml-4"> Send </button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>

@@ -30,16 +30,16 @@ const Router = () => {
                 <Route path='/forgot-password' element={<Forgot />} />
                 <Route path='/reset-password/:token' element={<Reset />} />
                 <Route element={<UserRoute />}>
-                    <Route path='/create-will' element={<CreateWill />} />
+                    <Route path='/history' element={<History />} />
                 </Route>
                 <Route element={<AdminRoute />}>
                     <Route path='/dashboard' element={<Dashboard />} />
                 </Route>
                 <Route path='/profile' element={<Profile />} />
-                <Route path='/history' element={<History />} />
                 <Route path='/lockscreen' element={<LockScreen />} />
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
+                <Route path='/create-will' element={<CreateWill />} />
             </Routes>
         </BrowserRouter>
     );
