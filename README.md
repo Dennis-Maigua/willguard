@@ -8,24 +8,34 @@ WillGuard is a decentralized application (DApp) leveraging blockchain technology
 This DApp offers users a reliable and efficient solution for managing their testamentary wishes.
 It also offers a user-friendly platform that ensures the accurate execution of testamentary wishes while maintaining the highest standards of security and privacy.
 
-### Environment & Setup (Windows, Mac, Linux):
+### Software Requirements:
 
->**Note**: Make sure you have installed the latest version of [Git](https://git-scm.com/downloads), [Node.js](https://nodejs.org/en/download/package-manager), and [MongoDB](https://www.mongodb.com/try/download/community) before proceeding.
+>**Note**: It is necessary to download the following desktop applications for your Windows, Mac, or Linux OS.
 
-# Installation:
+1. [Git](https://git-scm.com/downloads)
 
-### 1. Clone the Repository
+2. [Node.js](https://nodejs.org/en/download/package-manager)
 
-Open a new terminal and clone the project to your local machine `Desktop`:
+3. [MongoDB](https://www.mongodb.com/try/download/community)
+
+4. [Ganache](https://archive.trufflesuite.com/ganache/)
+
+6. [MetaMask](https://MetaMask.io/download/)
+
+# Setup Installation:
+
+### Step 1. Clone the Repository
+
+Open a new terminal and clone the project to your local desktop:
 
 ```bash
     $ cd Desktop
     $ git clone https://github.com/Dennis-Maigua/willguard.git
 ```
 
-### 2. Install Packages and Dependencies
+### Step 2. Install Node Requirements
 
-Open another separate terminal and install all the Node dependencies included in the `package.json` or `requirements.txt` files.
+Open another `separate` terminal and install all the dependencies from the `package.json` files.
 
 - Terminal 1 (Backend):
 
@@ -39,25 +49,47 @@ Open another separate terminal and install all the Node dependencies included in
 ```bash
     $ cd Destop/willguard/client
     $ npm i
+    $ npm i -g truffle
 ```
 
-### 3. Run the Project
+### Step 3. Connect Ganache to MetaMask & your Project
 
-Start the project by running the following command in `both` terminals.
+- Open Ganache in your local desktop and click `New Workspace (Ethereum)`.
 
-- Terminal 1 (Backend):
+- Click `Add Project`, navigate to where the truffle.config.js file is on the project folder and select it, then click `start`.
+
+- Pick any `Address` below the first one, click its `key` on the far right side, and copy its `Private Key`.
+
+- Open MetaMask in your Browser and proceed to `Create a new Wallet`.
+
+- Click `Ethereum Mainnet` >> `+ Add network` >> `Add a network manually`.
+
+- Enter Network name: `Ganache`, New RPC URL: `HTTP://127.0.0.1:7545`, Chain ID: `1337`, Currency symbol: `ETH`.
+
+- Then click `Save` >> `Migrate to Ganache` >> `Account 1` >> `+ Add account or hardware wallet` >> `Import account`.
+
+- Finally, paste in the Private Key that you had copied from Ganache and click `Import`.
+
+### Step 4. Compile & Deploy Smart Contracts
+
+Go back to Terminal 2 above, then compile and deploy the smart contracts in the project:
+
+```bash
+    $ truffle compile
+    $ truffle migrate --network development
+```
+
+### Step 5. Run the Project
+
+Run the following command in `both` terminals, to start the `client` and `server`.
+
+- Terminal 1 & Terminal 2:
 
 ```bash
     $ npm start
 ```
 
-- Terminal 2 (Frontend):
-
-```bash
-    $ npm start
-```
-
-If everything is set up correctly, you should see the web application running in your Browser shortly provided you have set it up correctly.
+>**Note**: If everything is set up correctly, you should see the web application running smoothly in your Web Browser provided you have all the requirements needed.
    
 # Contributing:
 
