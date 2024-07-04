@@ -2,23 +2,51 @@
 pragma solidity ^0.8.0;
 
 contract Will {
-  address public lawyer;
-  address payable public beneficiary;
-  uint public earliest;
+    address owner;
+    uint fortune;
+    bool deceased;
 
-  constructor(
-    address _lawyer, 
-    address payable _beneficiary, 
-    uint fromNow) 
-    payable {
-    lawyer = _lawyer;
-    beneficiary = _beneficiary; 
-    earliest = block.timestamp + fromNow;
-  }
+    constructor() payable {
+        owner = msg.sender; // msg sender represents address being called
+        fortune = msg.value; //msg value tells us how much ether is being sent 
+        deceased = false; 
+    }
 
-  function withdraw() public {
-    require(msg.sender == lawyer, 'lawyer only');
-    require(block.timestamp >= earliest, 'too early');
-    beneficiary.transfer(address(this).balance);
-  }
+    // the only person who can call the contract is the owner
+    modifier onlyOwner {
+        require(msg.sender == owner, 'only owner can execute the will');
+        _;
+    }
+
+    // only allocate funds if friend's gramps is deceased
+    modifier mustBeDeceased {
+        require(deceased == true, 'owner must be deceased to execute payouts');
+        _;
+    }    
+
+    // list of family wallets
+    address payable[] familyWallets;
+
+    // map through inheritance
+    mapping(address => uint) inheritance;
+
+    // set inheritance for each address
+    function setInheritance(address payable wallet, uint amount) public {
+        familyWallets.push(wallet);
+        inheritance[wallet] = amount;
+    }
+
+    // pay each family member based on their wallet address
+    function payout() private mustBeDeceased {
+        for(uint i=0; i<familyWallets.length; i++) {
+            familyWallets[i].transfer(inheritance[familyWallets[i]]);
+            // transferring funds from contract address to reciever address
+        }
+    }
+
+    // oracle switch simulation
+    function hasDeceased() public onlyOwner {
+        deceased = true;
+        payout();
+    }
 }

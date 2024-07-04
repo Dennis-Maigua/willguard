@@ -160,7 +160,7 @@ const Profile = () => {
     return (
         <Layout>
             <ToastContainer />
-            {!isAuth() ? <Navigate to='/' /> : null}
+            {!isAuth() ? <Navigate to='/signin' /> : null}
             <div className="bg-gray-600 text-white py-14">
                 <div className="container mx-auto px-6 text-center">
                     <h1 className="text-5xl font-bold mb-2">

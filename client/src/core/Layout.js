@@ -41,11 +41,9 @@ const Layout = ({ children }) => {
                             <li>
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
-                            {isAuth() && (
-                                <li>
-                                    <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
-                                </li>
-                            )}
+                            <li>
+                                <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
+                            </li>
                             <li>
                                 <NavLink to='/about-us' className={`${isActive('/about-us')}`}> About Us </NavLink>
                             </li>
@@ -70,13 +68,13 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[75px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 md:top-[75px] top-[90px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> My Profile </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/wills' className={`${isActive('/wills')}`}> My Wills </NavLink>
+                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
@@ -99,13 +97,16 @@ const Layout = ({ children }) => {
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-[75px] p-6'>
+                                    <div className='bg-gray-800 absolute md:right-4 right-12 md:top-[75px] top-[90px] p-6'>
                                         <ul className='flex flex-col gap-5'>
                                             <li>
-                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> My Profile </NavLink>
+                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
+                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
+                                            </li>
+                                            <li>
+                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>

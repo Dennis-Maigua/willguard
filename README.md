@@ -16,7 +16,7 @@ It also offers a user-friendly platform that ensures the accurate execution of t
 
 ### 1. Clone the Repository
 
-Download the project to your local machine (Desktop):
+Open a new terminal and clone the project to your local machine `Desktop`:
 
 ```bash
     $ cd Desktop
@@ -25,60 +25,40 @@ Download the project to your local machine (Desktop):
 
 ### 2. Install Packages and Dependencies
 
-Open two terminals and install all packages and dependencies.
+Open another separate terminal and install all the Node dependencies included in the `package.json` or `requirements.txt` files.
 
 - Terminal 1 (Backend):
 
 ```bash
-    # using npm
-    $ cd Destop/willguard-main/willguard-main/server
+    $ cd Destop/willguard/server
     $ npm i
-
-    # OR using Yarn
-    $ cd Desktop/willguard-main/willguard-main/server
-    $ yarn add
 ```
 
 - Terminal 2 (Frontend):
 
 ```bash
-    # using npm
-    $ cd Destop/willguard-main/willguard-main/client
+    $ cd Destop/willguard/client
     $ npm i
-
-    # OR using Yarn
-    $ cd Desktop/willguard-main/willguard-main/client
-    $ yarn add
 ```
 
 ### 3. Run the Project
 
-Run the following command in both terminals.
+Start the project by running the following command in `both` terminals.
 
 - Terminal 1 (Backend):
 
 ```bash
-    # using npm
     $ npm start
-
-    # OR using Yarn
-    $ yarn start
 ```
 
 - Terminal 2 (Frontend):
 
 ```bash
-    # using npm
     $ npm start
-
-    # OR using Yarn
-    $ yarn start
 ```
 
-If everything is set up correctly, you should see your new app running in your Android Emulator or iOS Simulator shortly provided you have set it up correctly.
-
-This is one way to run your app — you can also run it directly from within your Smartphone Device, or Android Studio, and Xcode respectively.
+If everything is set up correctly, you should see the web application running in your Browser shortly provided you have set it up correctly.
    
 # Contributing:
 
-We welcome contributions from developers, technology experts, and blockchain enthusiasts. Feel free to fork the repository, make improvements, and submit pull requests.
+We welcome contributions from developers, IT experts, and technology enthusiasts. Feel free to fork the repository, make improvements, and submit pull requests.

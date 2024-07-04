@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import Web3 from 'web3';
 import { ToastContainer } from 'react-toastify';
 
-import Layout from '../core/Layout';
-import Will from '../contracts/Will.json';
+import Layout from './Layout';
+import Will from '../blockchain/Will.json';
+import { isAuth } from '../auth/helpers';
 
-const Wills = () => {
+const History = () => {
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
     const [contractAddress, setContractAddress] = useState('');
@@ -31,6 +33,7 @@ const Wills = () => {
     return (
         <Layout>
             <ToastContainer />
+            {!isAuth() ? <Navigate to='/signin' /> : null}
             <HeroSection />
             <div className="m-auto text-center flex flex-col gap-4">
                 <form onSubmit={executeWill} className='p-10 flex flex-col md:flex-row shadow-md rounded gap-4 bg-gray-100'>
@@ -61,21 +64,21 @@ const Wills = () => {
                     <thead>
                         <tr>
                             <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Block Number </th>
-                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Txn ID/Hash </th>
-                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From Address </th>
-                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To Address </th>
-                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value Amount </th>
-                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Gas Fee </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Contract Address </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Txn Hash </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To </th>
+                            <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value ETH </th>
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                         <tr>
-                            <td className="px-6 py-4 whitespace-nowrap"> 8 </td>
-                            <td className="px-6 py-4 whitespace-nowrap"> 0x2d6930...68899d </td>
-                            <td className="px-6 py-4 whitespace-nowrap"> 0x463046...289D1E </td>
-                            <td className="px-6 py-4 whitespace-nowrap"> 0x905993...082b78  </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 22 </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 0x325...Ef9Ba </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 0x2d7...6899d </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 0x469...89D1E </td>
+                            <td className="px-6 py-4 whitespace-nowrap"> 0x903...82b78  </td>
                             <td className="px-6 py-4 whitespace-nowrap"> 10.00 ETH </td>
-                            <td className="px-6 py-4 whitespace-nowrap"> 28838 </td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,4 +99,4 @@ const HeroSection = () => {
     );
 };
 
-export default Wills;
+export default History;

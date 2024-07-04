@@ -66,7 +66,7 @@ const LockScreen = () => {
     return (
         <div>
             <ToastContainer />
-            {!isAuth() ? <Navigate to='/' /> : null}
+            {!isAuth() ? <Navigate to='/signin' /> : null}
             <div className='max-w-lg m-auto px-4 text-center flex flex-col justify-center items-center h-screen gap-4'>
                 <h1 className='text-2xl'>
                     Locked Screen

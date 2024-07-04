@@ -26,7 +26,7 @@ const HeroSection = () => {
           Secure, reliable, and easy-to-use platform for your wills and testaments.
         </p>
 
-        <Link to="/create-will" className="py-3 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
+        <Link to="/signin" className="py-3 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
           Get Started
         </Link>
       </div>
