@@ -33,7 +33,7 @@ Open a new terminal, and run the following commands step-by-step:
     $ git clone https://github.com/Dennis-Maigua/willguard.git
 ```
 
-### Step 2. Install Packages and Dependencies
+### Step 2. Install Packages & Dependencies
 
 Open another terminal separately, and install all the requirements for the project.
 
@@ -52,7 +52,7 @@ Open another terminal separately, and install all the requirements for the proje
     $ npm i -g truffle
 ```
 
-### Step 3. Connect Ganache to MetaMask and Project
+### Step 3. Connect Ganache to MetaMask & Project
 
 - Open Ganache in your local desktop, and click `New Workspace (Ethereum)`.
 
@@ -87,7 +87,7 @@ Go back to `Terminal 2` above, and run the commands below:
 
 Run the following command in both terminals, to start the `client` and `server`.
 
-- Terminal 1 and 2:
+- Terminal 1 & 2:
 
 ```bash
     $ npm start
