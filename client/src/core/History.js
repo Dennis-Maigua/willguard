@@ -59,7 +59,7 @@ const History = () => {
             </div>
 
             <div className="px-6 rounded-lg shadow-md mb-4 py-10">
-                <h1 className='font-semibold text-center my-10'> Wills History </h1>
+                <h1 className='font-bold text-xl text-center my-10'> My Wills </h1>
                 <table className="min-w-full divide-y divide-gray-200">
                     <thead>
                         <tr>
@@ -99,7 +99,7 @@ const HeroSection = () => {
         <section className="bg-gray-600 text-white py-14">
             <div className="container mx-auto px-6 text-center">
                 <h1 className="text-5xl font-bold mb-2">
-                    Wills
+                    History
                 </h1>
             </div>
         </section>
