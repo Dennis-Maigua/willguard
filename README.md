@@ -26,16 +26,16 @@ It also offers a user-friendly platform that ensures the accurate execution of t
 
 ### Step 1. Clone the Repository
 
-Open a new terminal and clone the project to your local desktop:
+Open a new terminal, and run the following commands step-by-step:
 
 ```bash
     $ cd Desktop
     $ git clone https://github.com/Dennis-Maigua/willguard.git
 ```
 
-### Step 2. Install Node Requirements
+### Step 2. Install Packages and Dependencies
 
-Open another `separate` terminal and install all the dependencies from the `package.json` files.
+Open another terminal separately, and install all the requirements for the project.
 
 - Terminal 1 (Backend):
 
@@ -54,13 +54,13 @@ Open another `separate` terminal and install all the dependencies from the `pack
 
 ### Step 3. Connect Ganache to MetaMask & your Project
 
-- Open Ganache in your local desktop and click `New Workspace (Ethereum)`.
+- Open Ganache in your local desktop, and click `New Workspace (Ethereum)`.
 
-- Click `Add Project`, navigate to where the truffle.config.js file is on the project folder and select it, then click `start`.
+- Click `Add Project`, navigate to where the `truffle.config.js` file is in the project folder, select it, and click `Start`.
 
-- Pick any `Address` below the first one, click its `key` on the far right side, and copy its `Private Key`.
+- Pick any `Address` below the first one, click on its `key` on the right side, and copy its `Private Key`.
 
-- Open MetaMask in your Browser and proceed to `Create a new Wallet`.
+- Open MetaMask in your Browser, and proceed to `Create a new Wallet`.
 
 - Click `Ethereum Mainnet` >> `+ Add network` >> `Add a network manually`.
 
@@ -68,22 +68,26 @@ Open another `separate` terminal and install all the dependencies from the `pack
 
 - Then click `Save` >> `Migrate to Ganache` >> `Account 1` >> `+ Add account or hardware wallet` >> `Import account`.
 
-- Finally, paste in the Private Key that you had copied from Ganache and click `Import`.
+- Paste in the Private Key that you had copied from Ganache, and finally click `Import`.
+
+>**Note**: Do not close Ganache from this point onwards, otherwise it will reset everything and you will have to repeat this process again manually. However, you can close it when you are done with the project.
 
 ### Step 4. Compile & Deploy Smart Contracts
 
-Go back to Terminal 2 above, then compile and deploy the smart contracts in the project:
+Go back to `Terminal 2` above, and run the commands below:
 
 ```bash
     $ truffle compile
     $ truffle migrate --network development
 ```
 
+>**Note**: Steps 3 and 4 have to be repeated every time you are running the project from a fresh start.
+
 ### Step 5. Run the Project
 
-Run the following command in `both` terminals, to start the `client` and `server`.
+Run the following command in both terminals, to start the `client` and `server`.
 
-- Terminal 1 & Terminal 2:
+- Terminal 1 and 2:
 
 ```bash
     $ npm start
