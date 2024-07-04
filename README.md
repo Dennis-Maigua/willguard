@@ -83,6 +83,8 @@ Go back to `Terminal 2` above, and run the commands below:
 
 >**Note**: Steps 3 and 4 have to be repeated every time you are running the project from a fresh start.
 
+# Usage
+
 ### Step 5. Run the Project
 
 Run the following command in both terminals, to start the `client` and `server`.
