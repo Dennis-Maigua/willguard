@@ -52,7 +52,7 @@ Open another terminal separately, and install all the requirements for the proje
     $ npm i -g truffle
 ```
 
-### Step 3. Connect Ganache to MetaMask & your Project
+### Step 3. Connect Ganache to MetaMask and Project
 
 - Open Ganache in your local desktop, and click `New Workspace (Ethereum)`.
 
