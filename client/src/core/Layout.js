@@ -42,7 +42,7 @@ const Layout = ({ children }) => {
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
                             <li>
-                                <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
+                                <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
                             </li>
                             <li>
                                 <NavLink to='/about-us' className={`${isActive('/about-us')}`}> About Us </NavLink>
@@ -53,10 +53,10 @@ const Layout = ({ children }) => {
                         </ul>
                     </div>
 
-                    <div className='flex gap-4 font-medium'>
+                    <div className='flex gap-4 font-semibold'>
                         {!isAuth() && (
                             <div className='flex gap-4'>
-                                <NavLink to='/signin' className='py-2 px-4 text-sm text-black hover:text-white bg-white hover:bg-red-500 shadow rounded'> Sign In </NavLink>
+                                <NavLink to='/signin' className='py-2 px-5 text-sm text-black hover:text-white bg-white hover:bg-red-500 shadow rounded'> Sign In </NavLink>
                             </div>
                         )}
 
@@ -64,17 +64,17 @@ const Layout = ({ children }) => {
                             <div>
                                 <div className='flex items-center gap-2 cursor-pointer' onMouseEnter={() => { setDropdown(!dropdown) }}>
                                     <img src={isAuth().profile || Avatar} alt='avatar' className='h-8 w-8 rounded-full object-cover border' />
-                                    <span> {isAuth().name} </span>
+                                    <span className=''> {isAuth().name} </span>
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute md:right-4 right-12 top-20 p-8'>
+                                    <div className='bg-gray-800 absolute right-3 top-20 p-8'>
                                         <ul className='flex flex-col gap-6'>
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
+                                                <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>

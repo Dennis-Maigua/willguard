@@ -51,7 +51,6 @@ Open another terminal separately, and install all the requirements for the proje
 ```bash
     $ cd Destop/willguard/client
     $ npm i
-    $ npm i -g truffle
 ```
 
 ### Step 3. Connect Ganache to MetaMask & Project
@@ -81,6 +80,10 @@ Go back to `Terminal 2` above, and run the commands below:
 ```bash
     $ truffle compile
     $ truffle migrate --network development
+
+    # in case of any contracts or migrations file changes
+    $ truffle compile
+    $ truffle migrate --reset
 ```
 
 >**Note**: Steps 3 and 4 have to be repeated every time you are running the project from a fresh start.

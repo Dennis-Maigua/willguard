@@ -17,7 +17,7 @@ import History from './core/History';
 
 import About from './components/About';
 import Contact from './components/Contact';
-import CreateWill from './components/CreateWill';
+import Wills from './components/Wills';
 
 const Router = () => {
     return (
@@ -39,7 +39,7 @@ const Router = () => {
                 <Route path='/lockscreen' element={<LockScreen />} />
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/create-will' element={<CreateWill />} />
+                <Route path='/wills' element={<Wills />} />
             </Routes>
         </BrowserRouter>
     );

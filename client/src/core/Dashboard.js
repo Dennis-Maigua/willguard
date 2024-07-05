@@ -153,25 +153,21 @@ const WillsContent = () => {
             <table className="min-w-full divide-y divide-gray-200">
                 <thead>
                     <tr>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Block Number </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Contract Address </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Txn Hash </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> From </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> To </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Value ETH </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Gas </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Status </th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     <tr>
-                        <td className="px-6 py-4 whitespace-nowrap"> 22 </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 0x325...Ef9Ba </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 0x2d7...6899d </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 0x469...89D1E </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 0x903...82b78  </td>
                         <td className="px-6 py-4 whitespace-nowrap"> 10.00 ETH </td>
-                        <td className="px-6 py-4 whitespace-nowrap"> 88310 </td>
                         <td className="px-6 py-4 whitespace-nowrap"> Executed </td>
                     </tr>
                 </tbody>
