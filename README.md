@@ -57,19 +57,21 @@ Open another terminal separately, and install all the requirements for the proje
 
 - Open Ganache in your local desktop, and click `New Workspace (Ethereum)`.
 
-- Click `Add Project`, navigate to where the `truffle.config.js` file is in the project folder, select it, and click `Start`.
+- Click `Add Project`, select the `truffle.config.js` file from your project folder, then click `Open` >> `Start`.
 
-- Pick any `Address` below the first one, click on its `key` on the right side, and copy its `Private Key`.
+- Choose any `Address` below the first one, click on its `key` and copy the `Private Key`.
 
-- Open MetaMask in your Browser, and proceed to `Create a new Wallet`.
+- Open MetaMask extension in your Browser, click `Import an Existing Account`, and enter the `12-word phrase/mnemonic` displayed on Ganache in the `Accounts` tab.
 
 - Click `Ethereum Mainnet` >> `+ Add network` >> `Add a network manually`.
 
-- Enter Network name: `Ganache`, New RPC URL: `HTTP://127.0.0.1:7545`, Chain ID: `1337`, Currency symbol: `ETH`.
+- Enter Network name: `Ganache`, New RPC URL: `HTTP://127.0.0.1:7545`, Chain ID: `1337`, Currency symbol: `ETH`, then click `Save` >> `Switch to Ganache`. 
 
-- Then click `Save` >> `Migrate to Ganache` >> `Account 1` >> `+ Add account or hardware wallet` >> `Import account`.
+- Install and open MetaMask extension in another Browser, click `Create a New Wallet`, then repeat the above two steps immediately before this one.
 
-- Paste in the Private Key that you had copied from Ganache, and finally click `Import`.
+- Click `Account 1` >> `+ Add account or hardware wallet` >> `Import account`.
+
+- Finally, paste in the Private Key that you had previously copied from Ganache, then click `Import`.
 
 >**Note**: Do not close Ganache from this point onwards, otherwise it will reset everything and you will have to repeat this process again manually. However, you can close it when you are done with the project.
 
@@ -81,18 +83,18 @@ Go back to `Terminal 2` above, and run the commands below:
     $ truffle compile
     $ truffle migrate --network development
 
-    # in case of any contracts or migrations file changes
+    # in case of contracts/migrations file changes. if not, skip this commands
     $ truffle compile
     $ truffle migrate --reset
 ```
 
->**Note**: Steps 3 and 4 have to be repeated every time you are running the project from a fresh start.
+>**Note**: If you close or exit Ganache, repeat the above steps 3 and 4 only before restarting the project.
 
 # Usage
 
 ### Step 5. Run the Project
 
-Run the following command in both terminals, to start the `client` and `server`.
+Start the `client` and `server` in both terminals.
 
 - Terminal 1 & 2:
 

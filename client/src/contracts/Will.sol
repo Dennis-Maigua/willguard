@@ -1,52 +1,62 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Will {
-    address owner;
-    uint fortune;
-    bool deceased;
+contract Wills {
+    address public owner;
+    uint public fortune;
+    bool public deceased;
+
+    event InheritanceSet(address indexed wallet, uint amount);
+    event PayoutExecuted(address indexed wallet, uint amount);
+    event OwnerDeceased();
 
     constructor() payable {
-        owner = msg.sender; // msg sender represents address being called
-        fortune = msg.value; //msg value tells us how much ether is being sent 
-        deceased = false; 
+        owner = msg.sender;
+        fortune = msg.value;
+        deceased = false;
     }
 
-    // the only person who can call the contract is the owner
     modifier onlyOwner {
         require(msg.sender == owner, 'only owner can execute the will');
         _;
     }
 
-    // only allocate funds if friend's gramps is deceased
     modifier mustBeDeceased {
         require(deceased == true, 'owner must be deceased to execute payouts');
         _;
-    }    
-
-    // list of family wallets
-    address payable[] familyWallets;
-
-    // map through inheritance
-    mapping(address => uint) inheritance;
-
-    // set inheritance for each address
-    function setInheritance(address payable wallet, uint amount) public {
-        familyWallets.push(wallet);
-        inheritance[wallet] = amount;
     }
 
-    // pay each family member based on their wallet address
+    address payable[] familyWallets;
+    mapping(address => uint) inheritance;
+
+    function setInheritance(address payable wallet, uint amount) public onlyOwner {
+        // Check if the wallet is already in the familyWallets array
+        bool walletExists = false;
+        for (uint i = 0; i < familyWallets.length; i++) {
+            if (familyWallets[i] == wallet) {
+                walletExists = true;
+                break;
+            }
+        }
+
+        // Add wallet to the familyWallets array if it doesn't already exist
+        if (!walletExists) {
+            familyWallets.push(wallet);
+        }
+        inheritance[wallet] = amount;
+        emit InheritanceSet(wallet, amount);
+    }
+
     function payout() private mustBeDeceased {
-        for(uint i=0; i<familyWallets.length; i++) {
+        for (uint i = 0; i < familyWallets.length; i++) {
             familyWallets[i].transfer(inheritance[familyWallets[i]]);
-            // transferring funds from contract address to reciever address
+            emit PayoutExecuted(familyWallets[i], inheritance[familyWallets[i]]);
         }
     }
 
-    // oracle switch simulation
     function hasDeceased() public onlyOwner {
         deceased = true;
+        emit OwnerDeceased();
         payout();
     }
 }

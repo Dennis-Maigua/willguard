@@ -41,9 +41,11 @@ const Layout = ({ children }) => {
                             <li>
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
                             </li>
-                            <li>
-                                <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
-                            </li>
+                            {isAuth() && (
+                                <li>
+                                    <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
+                                </li>
+                            )}
                             <li>
                                 <NavLink to='/about-us' className={`${isActive('/about-us')}`}> About Us </NavLink>
                             </li>
@@ -74,7 +76,7 @@ const Layout = ({ children }) => {
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
+                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
