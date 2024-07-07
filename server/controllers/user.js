@@ -133,7 +133,7 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
-exports.lockScreen = async (req, res) => {
+exports.lockscreen = async (req, res) => {
     const { password } = req.body;
 
     try {
@@ -163,7 +163,7 @@ exports.lockScreen = async (req, res) => {
     }
 }
 
-exports.dashboard = async (req, res) => {
+exports.fetchUsers = async (req, res) => {
     try {
         const users = await User.find();
 

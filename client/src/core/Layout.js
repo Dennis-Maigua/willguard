@@ -16,13 +16,9 @@ const Layout = ({ children }) => {
     }
 
     const handleLogout = async () => {
-        const confirmDelete = window.confirm('Are you sure you want to log out?');
-
-        if (confirmDelete) {
-            signout(() => {
-                navigate('/signin');
-            });
-        }
+        signout(() => {
+            navigate('/signin');
+        });
     };
 
     return (
@@ -43,7 +39,7 @@ const Layout = ({ children }) => {
                             </li>
                             {isAuth() && (
                                 <li>
-                                    <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
+                                    <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
                                 </li>
                             )}
                             <li>
@@ -58,7 +54,7 @@ const Layout = ({ children }) => {
                     <div className='flex gap-4 font-semibold'>
                         {!isAuth() && (
                             <div className='flex gap-4'>
-                                <NavLink to='/signin' className='py-2 px-5 text-sm text-black hover:text-white bg-white hover:bg-red-500 shadow rounded'> Sign In </NavLink>
+                                <NavLink to='/signin' className='py-2 px-5 text-white bg-red-500 hover:opacity-80 shadow rounded'> Sign In </NavLink>
                             </div>
                         )}
 

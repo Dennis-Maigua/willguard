@@ -11,7 +11,7 @@ import { isAuth } from './helpers';
 const Activate = () => {
     const [values, setValues] = useState({
         name: '',
-        buttonText: 'Activate Account'
+        buttonText: 'Activate Now'
     });
 
     const { token } = useParams();
@@ -44,7 +44,7 @@ const Activate = () => {
 
         catch (err) {
             console.log('ACCOUNT ACTIVATION FAILED:', err.response.data.error);
-            setValues({ ...values, buttonText: 'Activate Account' });
+            setValues({ ...values, buttonText: 'Activate Now' });
             toast.error(err.response.data.error);
         }
     };
@@ -64,7 +64,7 @@ const Activate = () => {
             {!activated && (
                 <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-14'>
                     <h1 className='text-2xl'>
-                        Hello {name}, please click the button below to continue:
+                        Hello {name}, you are one step close to completing the process:
                     </h1>
                     <button className='py-2 px-4 w-auto text-white font-semibold bg-red-500 hover:opacity-90 shadow rounded' onClick={clickSubmit}>
                         {buttonText}
@@ -73,11 +73,10 @@ const Activate = () => {
             )}
 
             {activated && (
-                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-14'>
+                <div className='max-w-lg m-auto flex items-center text-center px-4 py-14'>
                     <h1 className='text-2xl'>
-                        Activation Success! Please sign in to your new account.
+                        Success! You can now sign in to your new account.
                     </h1>
-                    <Link to='/signin' className='py-2 px-4 text-white bg-red-500 hover:opacity-90 shadow rounded'> Sign In </Link>
                 </div>
             )}
         </Layout>

@@ -14,7 +14,7 @@ const Reset = () => {
         token: '',
         newPassword: '',
         confirmPassword: '',
-        buttonText: 'Reset Password'
+        buttonText: 'Reset Now'
     });
 
     const { token } = useParams();
@@ -52,7 +52,7 @@ const Reset = () => {
 
         catch (err) {
             console.log('RESET PASSWORD FAILED:', err.response.data.error);
-            setValues({ ...values, buttonText: 'Reset Password' });
+            setValues({ ...values, buttonText: 'Reset Now' });
             toast.error(err.response.data.error);
         }
     };
@@ -70,7 +70,7 @@ const Reset = () => {
             </div>
 
             {!reset && (
-                <div className='max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-14'>
+                <div className='max-w-lg m-auto text-center px-4 py-14'>
                     <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                         <input
                             type='password'
@@ -98,11 +98,10 @@ const Reset = () => {
             )}
 
             {reset && (
-                <div className='max-w-lg m-auto flex flex-col items-center text-center gap-4 px-4 py-14'>
+                <div className='max-w-lg m-auto flex items-center text-center px-4 py-14'>
                     <h1 className='text-2xl'>
-                        Reset Success! You can now sign in using your new password.
+                        Success! You can now sign in using your new password.
                     </h1>
-                    <Link to='/signin' className='py-2 px-4 text-white bg-red-500 hover:opacity-90 shadow rounded'> Sign In </Link>
                 </div>
             )}
         </Layout>

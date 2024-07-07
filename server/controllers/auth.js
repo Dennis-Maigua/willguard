@@ -275,7 +275,7 @@ exports.requireSignin = (req, res, next) => {
     });
 };
 
-exports.adminMiddleware = async (req, res, next) => {
+exports.adminOnly = async (req, res, next) => {
     try {
         const user = await User.findOne({ _id: req.user._id });
         if (!user) {

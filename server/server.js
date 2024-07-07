@@ -8,6 +8,7 @@ require('dotenv').config();
 const app = express();
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const willRoutes = require('./routes/will');
 
 const port = process.env.PORT || 8000;
 
@@ -26,6 +27,7 @@ if (process.env.NODE_ENV === 'development') {
 
 app.use('/api', authRoutes);
 app.use('/api', userRoutes);
+app.use('/api', willRoutes);
 
 app.listen(port, () => {
     console.log(`API is running on port ${port}`);

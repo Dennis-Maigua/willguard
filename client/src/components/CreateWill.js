@@ -4,13 +4,14 @@ import { toast, ToastContainer } from 'react-toastify';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import Web3 from 'web3';
+import axios from 'axios';
 
 import Layout from '../core/Layout';
-import { isAuth } from '../auth/helpers';
+import { getCookie, isAuth } from '../auth/helpers';
 import Will from '../truffle_abis/Will.json';
 
 const Wills = () => {
-    const [transactions, setTransactions] = useState([]);
+    const [wills, setWills] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
         account: '',
@@ -18,7 +19,7 @@ const Wills = () => {
         contract: null,
         beneficiary: '',
         amount: '',
-        buttonText: 'Create Will'
+        buttonText: 'Create Will',
     });
 
     useEffect(() => {
@@ -33,6 +34,7 @@ const Wills = () => {
         init();
     }, []);
 
+    const token = getCookie('token');
     const { web3, account, balance, contract, beneficiary, amount, buttonText } = values;
 
     const handleChange = (event) => {
@@ -88,17 +90,31 @@ const Wills = () => {
                     .send({ from: account });
 
                 // Extract transaction details
-                const block = receipt.blockNumber;
                 const txnHash = receipt.transactionHash;
                 const contractAddress = receipt.to;
                 const from = receipt.from;
                 const to = beneficiary;
                 const value = amount;
-                const gas = receipt.gasUsed;
+                const status = 'Pending';
+                const payout = 'Payout';
 
-                toast.success('Will created successfully!');
-                setTransactions([...transactions, { block, txnHash, contractAddress, from, to, value, gas }]);
+                setWills([...wills, { txnHash, contractAddress, from, to, value, status, payout }]);
                 setValues({ ...values, beneficiary: '', amount: '', contract: newContractInstance, buttonText: 'Created' });
+
+                await axios.post(
+                    `${process.env.REACT_APP_API}/will/create`, { txnHash, contractAddress, from, to, value, status }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                    .then((response) => {
+                        console.log('WILL SAVED SUCCESS:', response);
+                        toast.success('Will created successfully!');
+                    })
+                    .catch((err) => {
+                        console.log('WILL RECORD FAILED:', err.response.data.error);
+                        setValues({ ...values, buttonText: 'Create Will' });
+                    });
             }
 
             catch (err) {
@@ -120,9 +136,9 @@ const Wills = () => {
         if (contract && account) {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
+                toast.success('Owner declared deceased and Payout executed Successfully!');
 
-                toast.success('Owner declared deceased. Payout executed!');
-                // Optionally, update the transaction list or perform other actions here
+                // setWills([...wills, { status: 'Paid', payout: 'View' }]);
             }
 
             catch (err) {
@@ -143,7 +159,7 @@ const Wills = () => {
 
             <section className="bg-gray-600 text-white py-14">
                 <div className="container mx-auto px-6 text-center">
-                    <h1 className="text-5xl font-bold mb-2"> Wills </h1>
+                    <h1 className="text-5xl font-bold mb-2"> Create a Will </h1>
                 </div>
             </section>
 
@@ -153,7 +169,7 @@ const Wills = () => {
                         <span className='text-red-600 font-semibold'> Account: </span>
                         {!account ? (
                             <button onClick={loadWeb3}
-                                className='py-2 px-4 font-semibold bg-white-700 hover:opacity-80 border shadow rounded-md cursor-pointer'
+                                className='py-2 px-4 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
                             >
                                 Connect to MetaMask
                             </button>
@@ -205,12 +221,13 @@ const Wills = () => {
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value (ETH) </th>
+                                <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
-                            {transactions.length > 0 ? (
-                                transactions.map((txn, index) => (
+                            {wills.length > 0 ? (
+                                wills.map((txn, index) => (
                                     <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
@@ -253,17 +270,18 @@ const Wills = () => {
                                             </div>
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>{txn.value}</td>
+                                        <td className='px-6 py-4 whitespace-nowrap'>{txn.status}</td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout}>
-                                                Payout
+                                                {txn.payout}
                                             </button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td className='px-6 py-4 whitespace-nowrap' colSpan='8'>
-                                        <div className='text-center text-gray-500'>No transactions found</div>
+                                    <td className='px-6 py-4 whitespace-nowrap' colSpan='7'>
+                                        <div className='text-center text-gray-500'>No wills found</div>
                                     </td>
                                 </tr>
                             )}
