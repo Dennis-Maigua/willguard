@@ -26,19 +26,6 @@ const History = () => {
                 </div>
             </section>
 
-            <section className='mx-auto px-4 py-8 flex flex-col gap-8 bg-gray-100 shadow rounded'>
-                <div className='px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
-                    <div className='flex md:flex-row flex-col gap-2'>
-                        <span className='text-red-600 font-semibold'> Account: </span>
-                        <span> {account} </span>
-                    </div>
-                    <div className='flex md:flex-row flex-col gap-2'>
-                        <span className='text-red-600 font-semibold'> Balance: </span>
-                        <span> {balance} ETH </span>
-                    </div>
-                </div>
-            </section>
-
             <section className='max-w-7xl mx-auto px-4 py-14'>
                 <div className='shadow rounded'>
                     <table className='min-w-full divide-y divide-gray-200'>

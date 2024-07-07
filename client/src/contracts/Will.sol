@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract Wills {
+contract Will {
     address public owner;
     uint public fortune;
     bool public deceased;
