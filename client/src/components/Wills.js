@@ -33,7 +33,7 @@ const Wills = () => {
         init();
     }, []);
 
-    const { web3, account, balance, contract, beneficiary, amount, deceased, buttonText } = values;
+    const { web3, account, balance, contract, beneficiary, amount, buttonText } = values;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -91,7 +91,6 @@ const Wills = () => {
                 const block = receipt.blockNumber;
                 const txnHash = receipt.transactionHash;
                 const contractAddress = receipt.to;
-                // const contractAddress = newContractInstance.options.address;
                 const from = receipt.from;
                 const to = beneficiary;
                 const value = amount;
@@ -123,13 +122,12 @@ const Wills = () => {
                 await contract.methods.hasDeceased().send({ from: account });
 
                 toast.success('Owner declared deceased. Payout executed!');
-                setValues({ ...values, deceased: true });
                 // Optionally, update the transaction list or perform other actions here
             }
 
             catch (err) {
                 toast.error('Failed to execute payout! Please try again.');
-                console.error("Error executing payout: ", err);
+                console.error('Error executing payout:', err);
             }
         }
     };
@@ -202,13 +200,11 @@ const Wills = () => {
                     <table className='min-w-full divide-y divide-gray-200'>
                         <thead>
                             <tr>
-                                <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Block Number </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Contract Address </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Txn Hash </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value (ETH) </th>
-                                <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Gas </th>
                                 <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
                             </tr>
                         </thead>
@@ -216,7 +212,6 @@ const Wills = () => {
                             {transactions.length > 0 ? (
                                 transactions.map((txn, index) => (
                                     <tr key={index}>
-                                        <td className='px-6 py-4 whitespace-nowrap'> {txn.block} </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(txn.contractAddress)}</span>
@@ -258,9 +253,8 @@ const Wills = () => {
                                             </div>
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>{txn.value}</td>
-                                        <td className='px-6 py-4 whitespace-nowrap'>{txn.gas}</td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
-                                            <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout} disabled={deceased}>
+                                            <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout}>
                                                 Payout
                                             </button>
                                         </td>
