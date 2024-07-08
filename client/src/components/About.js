@@ -60,7 +60,7 @@ const TeamSection = () => {
             <h3 className="text-2xl font-bold mb-10">Meet the Team</h3>
             <div className="flex flex-wrap mx-4">
                 <div className="w-full md:w-1/3 px-4 mb-8">
-                    <div className="bg-gray-100 rounded-lg shadow-lg p-6">
+                    <div className="bg-gray-100 rounded-lg shadow p-6">
                         <img
                             className="w-20 h-20 rounded-full mx-auto mb-4"
                             src={Avatar}
@@ -71,7 +71,7 @@ const TeamSection = () => {
                     </div>
                 </div>
                 <div className="w-full md:w-1/3 px-4 mb-8">
-                    <div className="bg-gray-100 rounded-lg shadow-lg p-6">
+                    <div className="bg-gray-100 rounded-lg shadow p-6">
                         <img
                             className="w-20 h-20 rounded-full mx-auto mb-4"
                             src={Avatar}
@@ -82,7 +82,7 @@ const TeamSection = () => {
                     </div>
                 </div>
                 <div className="w-full md:w-1/3 px-4">
-                    <div className="bg-gray-100 rounded-lg shadow-lg p-6">
+                    <div className="bg-gray-100 rounded-lg shadow p-6">
                         <img
                             className="w-20 h-20 rounded-full mx-auto mb-4"
                             src={Avatar}

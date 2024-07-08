@@ -60,7 +60,7 @@ const CreateWill = () => {
 
             catch (err) {
                 console.error('WEB3 LOADING FAILED:', err);
-                toast.error('Failed to load Web3 accounts!');
+                // toast.error('Failed to load Web3 accounts!');
             }
         }
     };
@@ -105,11 +105,12 @@ const CreateWill = () => {
                 localStorage.setItem('will', JSON.stringify(storeWills));
 
                 await axios.post(
-                    `${process.env.REACT_APP_API}/will/create`, newWill, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+                    `${process.env.REACT_APP_API}/will/create`, newWill,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                     .then((response) => {
                         console.log('SAVE WILL SUCCESS:', response);
                         toast.success('Will created successfully!');
@@ -144,17 +145,19 @@ const CreateWill = () => {
 
                 // Update wills state
                 const updatedWills = [...wills];
+                const id = updatedWills[index].txnHash;
                 updatedWills[index].status = 'Complete';
                 setWills(updatedWills);
 
                 localStorage.setItem('will', JSON.stringify(updatedWills));
 
                 await axios.put(
-                    `${process.env.REACT_APP_API}/will/update`, { status: 'Complete', index }, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                })
+                    `${process.env.REACT_APP_API}/will/update`, { txnHash: id, status: 'Complete' },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    })
                     .then((response) => {
                         console.log('EXECUTE PAYOUT SUCCESS:', response);
                         toast.success('Payout executed Successfully!');
@@ -197,7 +200,14 @@ const CreateWill = () => {
                                 Connect to MetaMask
                             </button>
                         ) : (
-                            <span> {account} </span>
+                            <div>
+                                <span> {shortenAddress(account)}</span>
+                                <CopyToClipboard text={account}>
+                                    <button className='ml-2'>
+                                        <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                    </button>
+                                </CopyToClipboard>
+                            </div>
                         )}
                     </div>
 
@@ -209,7 +219,7 @@ const CreateWill = () => {
             </section>
 
             <section className="max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10">
-                <form onSubmit={handleCreateWill} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
+                <form onSubmit={handleCreateWill} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
                     <input
                         type="text"
                         name="beneficiary"

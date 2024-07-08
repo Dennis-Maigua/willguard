@@ -45,8 +45,8 @@ const Dashboard = () => {
                 return <WillsContent list={wills} />;
             case 'Users':
                 return <UsersContent list={users} />;
-            case 'Analytics':
-                return <AnalyticsContent />;
+            // case 'Analytics':
+            //     return <AnalyticsContent />;
             default:
                 return <DashboardContent />;
         }
@@ -110,7 +110,7 @@ const Dashboard = () => {
 
 const Sidebar = ({ isActive, setActiveComponent }) => {
     return (
-        <div className="w-64 bg-white shadow-md">
+        <div className="w-64 bg-white shadow">
             <div className="p-6">
                 <h1 className="text-2xl font-bold text-gray-800">Admin</h1>
             </div>
@@ -142,32 +142,87 @@ const Header = ({ headerName }) => {
 };
 
 const DashboardContent = ({ totalWills, activeUsers }) => {
+    const usersData = {
+        labels: ['Active Users', 'Deleted Users', 'Total Users'],
+        datasets: [
+            {
+                label: '# of Users',
+                data: [2, 1, 3],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)', // Active Users
+                    'rgba(255, 99, 132, 0.2)', // Deleted Users
+                    'rgba(75, 192, 192, 0.2)', // Total Users
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', // Active Users
+                    'rgba(255, 99, 132, 1)', // Deleted Users
+                    'rgba(75, 192, 192, 1)', // Total Users
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const willsData = {
+        labels: ['Pending Wills', 'Completed Wills', 'Total Wills'],
+        datasets: [
+            {
+                label: '# of Wills',
+                data: [2, 2, 4],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)', // Active Wills
+                    'rgba(255, 159, 64, 0.2)', // Executed Wills
+                    'rgba(153, 102, 255, 0.2)', // Total Wills
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)', // Active Wills
+                    'rgba(255, 159, 64, 1)', // Executed Wills
+                    'rgba(153, 102, 255, 1)', // Total Wills
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
-                <p className="text-gray-500"> Pending Wills </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                <p className="text-gray-500"> Completed Wills </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
-                <p className="text-gray-500"> Total Wills </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> {activeUsers.length} </h3>
-                <p className="text-gray-500"> Active Users </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                <p className="text-gray-500"> Deleted Users </p>
-            </div>
-            <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 3 </h3>
-                <p className="text-gray-500"> Total Users </p>
-            </div>
+        <div className='flex flex-col gap-8'>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                    <p className="text-gray-500"> Pending Wills </p>
+                </div>
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
+                    <p className="text-gray-500"> Completed Wills </p>
+                </div>
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
+                    <p className="text-gray-500"> Total Wills </p>
+                </div>
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> {activeUsers.length} </h3>
+                    <p className="text-gray-500"> Active Users </p>
+                </div>
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
+                    <p className="text-gray-500"> Deleted Users </p>
+                </div>
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700"> 3 </h3>
+                    <p className="text-gray-500"> Total Users </p>
+                </div>
+            </section>
+
+            <section className="flex flex-row gap-6">
+                <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">User Analytics</h3>
+                    <Pie data={usersData} />
+                </div>
+                <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Wills Analytics</h3>
+                    <Pie data={willsData} />
+                </div>
+            </section>
         </div>
     );
 };
@@ -251,7 +306,7 @@ const UsersContent = ({ list }) => {
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow-md">
+        <div className="p-6 bg-white rounded-lg shadow">
             <table className="min-w-full divide-y divide-gray-200 mt-4">
                 <thead>
                     <tr>
@@ -294,61 +349,10 @@ const UsersContent = ({ list }) => {
     );
 };
 
-const AnalyticsContent = () => {
-    const usersData = {
-        labels: ['Active Users', 'Deleted Users', 'Total Users'],
-        datasets: [
-            {
-                label: '# of Users',
-                data: [2, 1, 3],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)', // Active Users
-                    'rgba(255, 99, 132, 0.2)', // Deleted Users
-                    'rgba(75, 192, 192, 0.2)', // Total Users
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)', // Active Users
-                    'rgba(255, 99, 132, 1)', // Deleted Users
-                    'rgba(75, 192, 192, 1)', // Total Users
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
+// const AnalyticsContent = () => {
 
-    const willsData = {
-        labels: ['Active Wills', 'Executed Wills', 'Total Wills'],
-        datasets: [
-            {
-                label: '# of Wills',
-                data: [2, 2, 4],
-                backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)', // Active Wills
-                    'rgba(255, 159, 64, 0.2)', // Executed Wills
-                    'rgba(153, 102, 255, 0.2)', // Total Wills
-                ],
-                borderColor: [
-                    'rgba(75, 192, 192, 1)', // Active Wills
-                    'rgba(255, 159, 64, 1)', // Executed Wills
-                    'rgba(153, 102, 255, 1)', // Total Wills
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    return (
-        <section className="flex flex-row gap-6">
-            <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">User Analytics</h3>
-                <Pie data={usersData} />
-            </div>
-            <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4">Wills Analytics</h3>
-                <Pie data={willsData} />
-            </div>
-        </section>
-    );
-};
+//     return (
+//     );
+// };
 
 export default Dashboard;

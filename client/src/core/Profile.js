@@ -168,7 +168,7 @@ const Profile = () => {
             </div>
 
             <div className='max-w-xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
-                <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
+                <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
                     <input
                         type='file'
                         ref={fileRef}

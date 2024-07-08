@@ -35,7 +35,7 @@ const FormSection = () => {
     return (
         <div className="w-full md:w-1/2 px-4 mb-8 md:mb-0">
             <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
-            <form className="bg-gray-100 rounded-lg shadow-lg p-10">
+            <form className="bg-gray-100 rounded-lg shadow p-10">
                 <div className="mb-4">
                     <input
                         className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"

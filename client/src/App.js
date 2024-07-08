@@ -48,19 +48,19 @@ const HowItWorksSection = () => {
         <h2 className="text-3xl font-bold mb-10">How It Works</h2>
         <div className="flex flex-wrap -mx-4">
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-10">
+            <div className="bg-white rounded-lg shadow p-10">
               <h3 className="text-xl font-bold mb-4">Step 1: Sign Up</h3>
               <p>Register on our platform to get started. It is quick and easy!</p>
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-10">
+            <div className="bg-white rounded-lg shadow p-10">
               <h3 className="text-xl font-bold mb-4">Step 2: Create Will</h3>
               <p>Follow our simple step-by-step process to create your will.</p>
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-white rounded-lg shadow-lg p-10">
+            <div className="bg-white rounded-lg shadow p-10">
               <h3 className="text-xl font-bold mb-4">Step 3: Execute Will</h3>
               <p>Easily send payouts to your beneficiaries anytime, anywhere.</p>
             </div>
@@ -78,7 +78,7 @@ const TestimonialsSection = () => {
         <h2 className="text-3xl font-bold mb-10">Testimonials</h2>
         <div className="flex flex-wrap -mx-4">
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow-lg p-10">
+            <div className="bg-gray-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "This platform made it so easy to create my will. I feel at ease knowing my family is taken care of."
               </p>
@@ -86,7 +86,7 @@ const TestimonialsSection = () => {
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow-lg p-10">
+            <div className="bg-gray-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "The process was straightforward, and I was able to update my will effortlessly. Highly recommend!"
               </p>
@@ -94,7 +94,7 @@ const TestimonialsSection = () => {
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow-lg p-10">
+            <div className="bg-gray-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "The security and ease of use are top-notch. I trust this platform with my important documents."
               </p>

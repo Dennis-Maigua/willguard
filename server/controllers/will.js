@@ -3,14 +3,7 @@ const Will = require('../models/will');
 exports.create = async (req, res) => {
     const { txnHash, contractAddress, from, to, value, status } = req.body;
 
-    const newWill = new Will({
-        txnHash,
-        contractAddress,
-        from,
-        to,
-        value,
-        status
-    });
+    const newWill = new Will({ txnHash, contractAddress, from, to, value, status });
 
     try {
         const savedWill = await newWill.save();
@@ -42,10 +35,10 @@ exports.fetchWills = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const { status } = req.body;
+    const { txnHash, status } = req.body;
 
     try {
-        const will = await Will.findById(req.will._id);
+        const will = await Will.findOne({ txnHash });
         if (!will) {
             return res.status(401).json({
                 error: 'Will not found!'
@@ -55,7 +48,7 @@ exports.update = async (req, res) => {
         will.status = status.trim();
         const updatedWill = await will.save();
 
-        console.log('UPDATE WILL SUCCESS:', req.will);
+        console.log('UPDATE WILL SUCCESS:', updatedWill);
         return res.json(updatedWill);
     }
 
