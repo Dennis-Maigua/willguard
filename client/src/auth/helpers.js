@@ -28,6 +28,18 @@ export const setLocalStorage = (key, value) => {
     }
 };
 
+export const updateLocalStorage = (response, next) => {
+    console.log('UPDATE LOCALSTORAGE:', response);
+
+    if (typeof window !== 'undefined') {
+        let auth = JSON.parse(localStorage.getItem('user'));
+        auth = response.data;
+        localStorage.setItem('user', JSON.stringify(auth));
+    }
+
+    next();
+};
+
 export const removeLocalStorage = (key) => {
     if (window !== 'undefined') {
         localStorage.removeItem(key);
@@ -56,18 +68,6 @@ export const isAuth = () => {
             }
         }
     }
-};
-
-export const updateUser = (response, next) => {
-    console.log('UPDATE USER IN LOCALSTORAGE:', response);
-
-    if (typeof window !== 'undefined') {
-        let auth = JSON.parse(localStorage.getItem('user'));
-        auth = response.data;
-        localStorage.setItem('user', JSON.stringify(auth));
-    }
-
-    next();
 };
 
 export const signout = (next) => {

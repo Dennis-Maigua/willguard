@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import Layout from './Layout';
-import { getCookie, isAuth, signout, updateUser } from '../auth/helpers';
+import { getCookie, isAuth, signout, updateLocalStorage } from '../auth/helpers';
 import Avatar from '../assets/avatar.png';
 
 const Profile = () => {
@@ -37,6 +37,7 @@ const Profile = () => {
 
     const token = getCookie('token');
     const navigate = useNavigate();
+    const { role, profile, name, email, password, phone, address, buttonText } = values;
 
     const handleFileUpload = async (image) => {
         if (image.size > 2 * 1024 * 1024) {
@@ -93,14 +94,12 @@ const Profile = () => {
         }
     };
 
-    const { role, profile, name, email, password, phone, address, buttonText } = values;
-
     const handleChange = (event) => {
         const { name, value } = event.target;
         setValues({ ...values, [name]: value });
     };
 
-    const clickSubmit = async (event) => {
+    const clickUpdate = async (event) => {
         event.preventDefault();
         setValues({ ...values, buttonText: 'Updating' });
 
@@ -117,7 +116,7 @@ const Profile = () => {
             });
 
             console.log('UPDATE ADMIN PROFILE SUCCESS:', response);
-            updateUser(response, () => {
+            updateLocalStorage(response, () => {
                 setValues({ ...values, buttonText: 'Updated' });
                 toast.success('Profile updated successfully!');
             });
@@ -126,7 +125,6 @@ const Profile = () => {
         catch (err) {
             console.log('UPDATE ADMIN PROFILE FAILED:', err.response.data.error);
             setValues({ ...values, buttonText: 'Update' });
-            toast.error(err.response.data.error);
         }
     };
 
@@ -170,7 +168,7 @@ const Profile = () => {
             </div>
 
             <div className='max-w-xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
-                <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
+                <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow-md rounded gap-4 bg-gray-100'>
                     <input
                         type='file'
                         ref={fileRef}

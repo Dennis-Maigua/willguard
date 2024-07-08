@@ -1,7 +1,7 @@
 const Will = require('../models/will');
 
 exports.create = async (req, res) => {
-    const { txnHash, contractAddress, from, to, value, status, payout } = req.body;
+    const { txnHash, contractAddress, from, to, value, status } = req.body;
 
     const newWill = new Will({
         txnHash,
@@ -14,32 +14,69 @@ exports.create = async (req, res) => {
 
     try {
         const savedWill = await newWill.save();
-        res.status(201).json(savedWill);
+        return res.json(savedWill);
     }
 
     catch (error) {
-        res.status(400).json({ message: error.message });
+        console.log('CREATE WILL FAILED:', err);
+        res.status(400).json({
+            error: 'Failed to create will! Please try again.'
+        });
     }
 };
 
 exports.read = async (req, res) => {
+    const { from } = req.params;
+
     try {
-        const will = await Will.findById(req.user._id);
-        if (!will) {
+        const wills = await Will.find({ from });
+
+        if (!wills) {
             return res.status(401).json({
-                error: 'Will not found!'
+                error: 'Wills not found!'
             });
         }
 
-        // console.log('LOAD USER WILL SUCCESS:', req.user);
-        console.log('LOAD USER WILL SUCCESS!');
-        return res.json(will);
+        // console.log('LOAD WILL SUCCESS:', req.user);
+        console.log('LOAD WILL SUCCESS!');
+        return res.json(wills);
     }
 
     catch (err) {
-        console.log('READ WILL FAILED:', err);
+        console.log('LOAD WILL FAILED:', err);
         return res.status(500).json({
-            error: 'Problem reading will from database!'
+            error: 'Failed to read wills from database!'
+        });
+    }
+};
+
+exports.update = async (req, res) => {
+    const { from } = req.params;
+    const { status } = req.body;
+
+    try {
+        const will = await Will.find({ from });
+        if (!will) {
+            return res.status(401).json({
+                error: 'User not found!'
+            });
+        }
+
+        if (status) {
+            will.status = status.trim();
+        }
+
+        const updatedWill = await will.save();
+
+        // console.log('UPDATE WILL SUCCESS:', req.user);
+        console.log('UPDATE WILL SUCCESS!');
+        return res.json(updatedWill);
+    }
+
+    catch (err) {
+        console.log('UPDATE WILL FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to update will! Please try again.'
         });
     }
 };
@@ -55,7 +92,7 @@ exports.fetchWills = async (req, res) => {
     catch (err) {
         console.log('READ WILL FAILED:', err);
         return res.status(500).json({
-            message: 'Problem reading will from database!'
+            message: 'Failed to fetch will from database!'
         });
     }
 };

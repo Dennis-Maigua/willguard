@@ -10,7 +10,7 @@ import Layout from '../core/Layout';
 import { getCookie, isAuth } from '../auth/helpers';
 import Will from '../truffle_abis/Will.json';
 
-const Wills = () => {
+const CreateWill = () => {
     const [wills, setWills] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
@@ -20,6 +20,7 @@ const Wills = () => {
         beneficiary: '',
         amount: '',
         buttonText: 'Create Will',
+        status: 'Pending'
     });
 
     useEffect(() => {
@@ -35,7 +36,7 @@ const Wills = () => {
     }, []);
 
     const token = getCookie('token');
-    const { web3, account, balance, contract, beneficiary, amount, buttonText } = values;
+    const { web3, account, balance, contract, beneficiary, amount, buttonText, status } = values;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -59,8 +60,8 @@ const Wills = () => {
             }
 
             catch (err) {
+                console.error('WEB3 LOADING FAILED:', err);
                 toast.error('Failed to load Web3 accounts!');
-                console.error('Error loading Web3:', err);
             }
         }
     };
@@ -95,10 +96,8 @@ const Wills = () => {
                 const from = receipt.from;
                 const to = beneficiary;
                 const value = amount;
-                const status = 'Pending';
-                const payout = 'Payout';
 
-                setWills([...wills, { txnHash, contractAddress, from, to, value, status, payout }]);
+                setWills([...wills, { txnHash, contractAddress, from, to, value, status }]);
                 setValues({ ...values, beneficiary: '', amount: '', contract: newContractInstance, buttonText: 'Created' });
 
                 await axios.post(
@@ -108,18 +107,18 @@ const Wills = () => {
                     }
                 })
                     .then((response) => {
-                        console.log('WILL SAVED SUCCESS:', response);
+                        console.log('SAVE WILL SUCCESS:', response);
                         toast.success('Will created successfully!');
                     })
                     .catch((err) => {
-                        console.log('WILL RECORD FAILED:', err.response.data.error);
+                        console.log('SAVE WILL FAILED:', err.response.data.error);
                         setValues({ ...values, buttonText: 'Create Will' });
                     });
             }
 
             catch (err) {
+                console.error('CREATE WILL FAILED:', err);
                 toast.error('Failed to create will! Please try again.');
-                console.error('Error creating will:', err);
                 setValues({ ...values, buttonText: 'Create Will' });
             }
         }
@@ -136,14 +135,14 @@ const Wills = () => {
         if (contract && account) {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
-                toast.success('Owner declared deceased and Payout executed Successfully!');
-
-                // setWills([...wills, { status: 'Paid', payout: 'View' }]);
+                setValues({ ...values, status: 'Complete' });
+                toast.success('Payout executed Successfully!');
             }
 
             catch (err) {
+                console.error('EXECUTE PAYOUT FAILED:', err.response.data.error);
                 toast.error('Failed to execute payout! Please try again.');
-                console.error('Error executing payout:', err);
+                setValues({ ...values, status: 'Pending' });
             }
         }
     };
@@ -227,12 +226,12 @@ const Wills = () => {
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
                             {wills.length > 0 ? (
-                                wills.map((txn, index) => (
+                                wills.map((will, index) => (
                                     <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
-                                                <span>{shortenAddress(txn.contractAddress)}</span>
-                                                <CopyToClipboard text={txn.contractAddress}>
+                                                <span>{shortenAddress(will.contractAddress)}</span>
+                                                <CopyToClipboard text={will.contractAddress}>
                                                     <button className='ml-2'>
                                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                                     </button>
@@ -241,8 +240,8 @@ const Wills = () => {
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
-                                                <span>{shortenAddress(txn.txnHash)}</span>
-                                                <CopyToClipboard text={txn.txnHash}>
+                                                <span>{shortenAddress(will.txnHash)}</span>
+                                                <CopyToClipboard text={will.txnHash}>
                                                     <button className='ml-2'>
                                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                                     </button>
@@ -251,8 +250,8 @@ const Wills = () => {
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
-                                                <span>{shortenAddress(txn.from)}</span>
-                                                <CopyToClipboard text={txn.from}>
+                                                <span>{shortenAddress(will.from)}</span>
+                                                <CopyToClipboard text={will.from}>
                                                     <button className='ml-2'>
                                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                                     </button>
@@ -261,21 +260,30 @@ const Wills = () => {
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
-                                                <span>{shortenAddress(txn.to)}</span>
-                                                <CopyToClipboard text={txn.to}>
+                                                <span>{shortenAddress(will.to)}</span>
+                                                <CopyToClipboard text={will.to}>
                                                     <button className='ml-2'>
                                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                                     </button>
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
-                                        <td className='px-6 py-4 whitespace-nowrap'>{txn.value}</td>
-                                        <td className='px-6 py-4 whitespace-nowrap'>{txn.status}</td>
-                                        <td className='px-6 py-4 whitespace-nowrap'>
-                                            <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout}>
-                                                {txn.payout}
-                                            </button>
-                                        </td>
+                                        <td className='px-6 py-4 whitespace-nowrap'>{will.value}</td>
+                                        <td className='px-6 py-4 whitespace-nowrap'>{status}</td>
+
+                                        {status === 'Pending' ? (
+                                            <td className='px-6 py-4 whitespace-nowrap'>
+                                                <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout}>
+                                                    Payout
+                                                </button>
+                                            </td>
+                                        ) : (
+                                            <td className='px-6 py-4 whitespace-nowrap'>
+                                                <button disabled className='text-gray-400 font-medium'>
+                                                    Paid
+                                                </button>
+                                            </td>
+                                        )}
                                     </tr>
                                 ))
                             ) : (
@@ -293,4 +301,4 @@ const Wills = () => {
     );
 };
 
-export default Wills;
+export default CreateWill;

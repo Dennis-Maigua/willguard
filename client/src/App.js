@@ -2,6 +2,7 @@ import React from 'react';
 import Layout from './core/Layout';
 import { ToastContainer } from 'react-toastify';
 import { Link } from 'react-router-dom';
+import { isAuth } from './auth/helpers';
 
 const App = () => {
   return (
@@ -26,9 +27,15 @@ const HeroSection = () => {
           Secure, reliable, and easy-to-use platform for your wills and testaments.
         </p>
 
-        <Link to="/signup" className="py-3 px-4 font-semibold text-black bg-white hover:text-red-500 shadow rounded">
-          Get Started
-        </Link>
+        {!isAuth() ? (
+          <Link to="/signup" className="py-3 px-4 font-semibold text-black bg-white hover:text-red-500 shadow rounded">
+            Get Started
+          </Link>
+        ) : (
+          <Link to="/create-will" className="py-3 px-4 font-semibold text-black bg-white hover:text-red-500 shadow rounded">
+            Get Started
+          </Link>
+        )}
       </div>
     </section>
   );

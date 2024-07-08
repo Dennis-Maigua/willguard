@@ -19,7 +19,7 @@ exports.read = async (req, res) => {
     catch (err) {
         console.log('READ PROFILE FAILED:', err);
         return res.status(500).json({
-            error: 'Problem reading profile from database!'
+            error: 'Failed to read profile from database!'
         });
     }
 };
@@ -103,7 +103,7 @@ exports.update = async (req, res) => {
     catch (err) {
         console.log('UPDATE USER FAILED:', err);
         return res.status(500).json({
-            error: 'Update failed! Please try again.'
+            error: 'Failed to update user! Please try again.'
         });
     }
 };
@@ -158,7 +158,7 @@ exports.lockscreen = async (req, res) => {
     catch (err) {
         console.log('UNLOCK USER ERROR:', err);
         return res.status(500).json({
-            error: 'Problem with unlocking! Please try again.'
+            error: 'Failed to unlock screen! Please try again.'
         });
     }
 }
@@ -174,7 +174,7 @@ exports.fetchUsers = async (req, res) => {
     catch (err) {
         console.log('READ USERS FAILED:', err);
         return res.status(500).json({
-            message: 'Problem reading users from database!'
+            message: 'Failed to fetch users from database!'
         });
     }
 };
