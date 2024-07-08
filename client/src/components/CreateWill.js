@@ -19,8 +19,7 @@ const CreateWill = () => {
         contract: null,
         beneficiary: '',
         amount: '',
-        buttonText: 'Create Will',
-        status: 'Pending'
+        buttonText: 'Create Will'
     });
 
     useEffect(() => {
@@ -36,7 +35,7 @@ const CreateWill = () => {
     }, []);
 
     const token = getCookie('token');
-    const { web3, account, balance, contract, beneficiary, amount, buttonText, status } = values;
+    const { web3, contract, account, balance, beneficiary, amount, buttonText } = values;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -97,11 +96,16 @@ const CreateWill = () => {
                 const to = beneficiary;
                 const value = amount;
 
-                setWills([...wills, { txnHash, contractAddress, from, to, value, status }]);
-                setValues({ ...values, beneficiary: '', amount: '', contract: newContractInstance, buttonText: 'Created' });
+                const newWill = { txnHash, contractAddress, from, to, value, status: 'Pending' };
+                // Update state
+                const storeWills = [...wills, newWill];
+                setWills(storeWills);
+
+                // Store in localStorage
+                localStorage.setItem('will', JSON.stringify(storeWills));
 
                 await axios.post(
-                    `${process.env.REACT_APP_API}/will/create`, { txnHash, contractAddress, from, to, value, status }, {
+                    `${process.env.REACT_APP_API}/will/create`, newWill, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -109,6 +113,7 @@ const CreateWill = () => {
                     .then((response) => {
                         console.log('SAVE WILL SUCCESS:', response);
                         toast.success('Will created successfully!');
+                        setValues({ ...values, contract: newContractInstance, beneficiary: '', amount: '', buttonText: 'Created' });
                     })
                     .catch((err) => {
                         console.log('SAVE WILL FAILED:', err.response.data.error);
@@ -124,7 +129,7 @@ const CreateWill = () => {
         }
     };
 
-    const handlePayout = async (event) => {
+    const handlePayout = async (event, index) => {
         event.preventDefault();
 
         if (!contract) {
@@ -135,14 +140,33 @@ const CreateWill = () => {
         if (contract && account) {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
-                setValues({ ...values, status: 'Complete' });
                 toast.success('Payout executed Successfully!');
+
+                // Update wills state
+                const updatedWills = [...wills];
+                updatedWills[index].status = 'Complete';
+                setWills(updatedWills);
+
+                localStorage.setItem('will', JSON.stringify(updatedWills));
+
+                await axios.put(
+                    `${process.env.REACT_APP_API}/will/update`, { status: 'Complete', index }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                    .then((response) => {
+                        console.log('EXECUTE PAYOUT SUCCESS:', response);
+                        toast.success('Payout executed Successfully!');
+                    })
+                    .catch((err) => {
+                        console.log('EXECUTE PAYOUT FAILED:', err.response.data.error);
+                    });
             }
 
             catch (err) {
                 console.error('EXECUTE PAYOUT FAILED:', err.response.data.error);
                 toast.error('Failed to execute payout! Please try again.');
-                setValues({ ...values, status: 'Pending' });
             }
         }
     };
@@ -269,11 +293,11 @@ const CreateWill = () => {
                                             </div>
                                         </td>
                                         <td className='px-6 py-4 whitespace-nowrap'>{will.value}</td>
-                                        <td className='px-6 py-4 whitespace-nowrap'>{status}</td>
+                                        <td className='px-6 py-4 whitespace-nowrap'>{will.status}</td>
 
-                                        {status === 'Pending' ? (
+                                        {will.status === 'Pending' ? (
                                             <td className='px-6 py-4 whitespace-nowrap'>
-                                                <button className='text-red-500 hover:opacity-80 font-medium' onClick={handlePayout}>
+                                                <button className='text-red-500 hover:opacity-80 font-medium' onClick={(event) => handlePayout(event, index)}>
                                                     Payout
                                                 </button>
                                             </td>

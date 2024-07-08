@@ -35,11 +35,11 @@ const Router = () => {
                 <Route element={<AdminRoute />}>
                     <Route path='/dashboard' element={<Dashboard />} />
                 </Route>
-                <Route path='/history' element={<History />} />
                 <Route path='/lockscreen' element={<LockScreen />} />
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
                 <Route path='/create-will' element={<CreateWill />} />
+                <Route path='/history' element={<History />} />
             </Routes>
         </BrowserRouter>
     );

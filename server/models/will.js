@@ -7,7 +7,10 @@ const willSchema = new mongoose.Schema(
         from: String,
         to: String,
         value: String,
-        status: String,
+        status: {
+            type: String,
+            default: 'Pending'
+        }
     },
     { timestamps: true }
 );

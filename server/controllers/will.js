@@ -41,27 +41,53 @@ exports.fetchWills = async (req, res) => {
     }
 };
 
-exports.read = async (req, res) => {
-    const { from } = req.params;
+exports.update = async (req, res) => {
+    const { status } = req.body;
 
     try {
-        const wills = await Will.find({ from });
-
-        if (!wills) {
+        const will = await Will.findById(req.will._id);
+        if (!will) {
             return res.status(401).json({
-                error: 'Wills not found!'
+                error: 'Will not found!'
             });
         }
 
-        // console.log('LOAD WILL SUCCESS:', req.user);
-        console.log('LOAD WILL SUCCESS!');
-        return res.json(wills);
+        will.status = status.trim();
+        const updatedWill = await will.save();
+
+        console.log('UPDATE WILL SUCCESS:', req.will);
+        return res.json(updatedWill);
     }
 
     catch (err) {
-        console.log('LOAD WILL FAILED:', err);
+        console.log('UPDATE WILL FAILED:', err);
         return res.status(500).json({
-            error: 'Failed to read wills from database!'
+            error: 'Failed to update will! Please try again.'
         });
     }
 };
+
+// exports.read = async (req, res) => {
+//     try {
+//         satisfies
+//         const wills = await Will.findById(req.will._id);
+//         // const wills = await Will.find({ from });
+
+//         if (!wills) {
+//             return res.status(401).json({
+//                 error: 'Wills not found!'
+//             });
+//         }
+
+//         // console.log('LOAD WILL SUCCESS:', req.user);
+//         console.log('LOAD WILL SUCCESS!');
+//         return res.json(wills);
+//     }
+
+//     catch (err) {
+//         console.log('LOAD WILL FAILED:', err);
+//         return res.status(500).json({
+//             error: 'Failed to read wills from database!'
+//         });
+//     }
+// };

@@ -145,12 +145,12 @@ const DashboardContent = ({ totalWills, activeUsers }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="p-6 bg-white rounded-lg shadow-md">
-                <h3 className="text-lg font-semibold text-gray-700"> 0 </h3>
-                <p className="text-gray-500"> Active Wills </p>
+                <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                <p className="text-gray-500"> Pending Wills </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                <p className="text-gray-500"> Executed Wills </p>
+                <p className="text-gray-500"> Completed Wills </p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow-md">
                 <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>

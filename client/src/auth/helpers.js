@@ -75,5 +75,6 @@ export const signout = (next) => {
 
     removeCookie('token');
     removeLocalStorage('user');
+    removeLocalStorage('will');
     next();
 };
