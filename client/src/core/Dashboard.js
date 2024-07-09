@@ -158,7 +158,7 @@ const Dashboard = () => {
             case 'Wills':
                 return <WillsContent list={wills} />;
             case 'Users':
-                return <UsersContent list={users} />;
+                return <UsersContent list={users} token={token} />;
             default:
                 return <DashboardContent />;
         }
@@ -394,46 +394,154 @@ const WillsContent = ({ list }) => {
     );
 };
 
-const UsersContent = ({ list }) => {
+const UsersContent = ({ list, token }) => {
+    const [editUser, setEditUser] = useState(null);
+    const [role, setRole] = useState('');
+    const [profile, setProfile] = useState('');
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [address, setAddress] = useState('');
+
+    const handleEditClick = (user) => {
+        setRole(user.role);
+        setProfile(user.profile);
+        setEditUser(user);
+        setName(user.name);
+        setEmail(user.email);
+        setPhone(user.phone);
+        setAddress(user.address);
+    };
+
+    const handleUpdateUser = async () => {
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_API}/admin/update`,
+                { userId: editUser._id, role, profile, name, email, phone, address },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('User updated:', response.data);
+            // Update the user list with the new data (optional)
+            setEditUser(null);
+        }
+
+        catch (error) {
+            console.error('Error updating user:', error);
+        }
+    };
+
+    const handleDeleteUser = async (userId) => {
+        try {
+            const response = await axios.delete(
+                `${process.env.REACT_APP_API}/admin/delete`,
+                { data: { userId } },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+            console.log('User deleted:', response.data);
+            // Update the user list by removing the deleted user (optional)
+        }
+
+        catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    };
+
     const shortenId = (address) => {
         return `${address.slice(0, 5)}...${address.slice(-5)}`;
     };
 
     return (
         <div className="p-6 bg-white rounded-lg shadow">
+            {editUser && (
+                <div className="mb-4">
+                    <h3>Edit User</h3>
+                    <form onSubmit={handleUpdateUser}>
+                        <label>
+                            Role:
+                            <input
+                                type="text"
+                                value={role}
+                                onChange={(e) => setRole(e.target.value)}
+                                required
+                            />
+                        </label>
+                        <label>
+                            Profile URL:
+                            <input
+                                type="text"
+                                value={profile}
+                                onChange={(e) => setProfile(e.target.value)}
+                            />
+                        </label>
+                        <label>
+                            Name:
+                            <input
+                                type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
+                                required
+                            />
+                        </label>
+                        <label>
+                            Email:
+                            <input
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </label>
+                        <label>
+                            Phone:
+                            <input
+                                type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                required
+                            />
+                        </label>
+                        <label>
+                            Address:
+                            <input
+                                type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
+                            />
+                        </label>
+                        <button type="submit"> Update User </button>
+                        <button type="button" onClick={() => setEditUser(null)}> Cancel </button>
+                    </form>
+                </div>
+            )}
             <table className="min-w-full divide-y divide-gray-200 mt-4">
                 <thead>
                     <tr>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> ID </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Role </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Profile </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Name </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Email </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Phone </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Address </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {list.map((user) => (
                         <tr key={user._id}>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className='flex items-center'>
-                                    <span>{shortenId(user._id)}</span>
-                                    <CopyToClipboard text={user._id}>
-                                        <button className='ml-2'>
-                                            <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                        </button>
-                                    </CopyToClipboard>
-                                </div>
-                            </td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                                <img src={user.profileUrl || Avatar} alt="Profile" className="w-10 h-10 rounded-full" />
+                                <div className='flex items-center'>
+                                    <img src={user.profile || Avatar} alt="Profile" className="w-10 h-10 rounded-full" />
+                                </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.phone}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.address}</td>
                             <td className="px-6 py-4 whitespace-nowrap font-medium">
-                                <button className="text-indigo-400 hover:text-indigo-700"> Edit </button>
-                                <button className="text-red-500 hover:text-red-700 ml-4"> Delete </button>
+                                <button className="text-blue-400 hover:text-blue-700" onClick={() => handleEditClick(user)}> Edit </button>
+                                <button className="text-red-500 hover:text-red-700 ml-4" onClick={() => handleDeleteUser(user._id)}> Delete </button>
                             </td>
                         </tr>
                     ))}

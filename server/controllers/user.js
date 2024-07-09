@@ -4,7 +4,7 @@ exports.read = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(404).json({
+            return res.status(401).json({
                 error: 'User not found!'
             });
         }
@@ -30,7 +30,7 @@ exports.update = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(404).json({
+            return res.status(401).json({
                 error: 'User not found!'
             });
         }
@@ -38,20 +38,18 @@ exports.update = async (req, res) => {
         if (role) {
             if (role !== 'subscriber' || role !== 'admin') {
                 return res.status(401).json({
-                    error: 'Enter a valid user role!'
+                    error: 'Invalid user role!'
                 });
             }
-            else {
-                user.role = role.trim() || user.role;
-            }
+            user.role = role.trim();
         }
 
         if (profile) {
-            user.profile = profile.trim() || user.profile;
+            user.profile = profile.trim();
         }
 
         if (name && name.length >= 3) {
-            user.name = name.trim() || user.name;
+            user.name = name.trim();
         }
         else {
             return res.status(400).json({
@@ -60,46 +58,46 @@ exports.update = async (req, res) => {
         }
 
         // for admins only
-        if (email && email.length >= 5) {
-            user.email = email.trim() || user.email;
-        }
-        else {
-            return res.status(400).json({
-                error: 'Enter a valid email address!'
-            });
-        }
-
-        if (password && password.length >= 8) {
-            user.password = password.trim() || user.password;
-        }
-        else {
-            return res.status(400).json({
-                error: 'Password must be at least 8 characters long!'
-            });
+        if (email) {
+            if (email.length < 5) {
+                return res.status(400).json({
+                    error: 'Enter a valid email address!'
+                });
+            }
+            user.email = email.trim();
         }
 
-        if (phone && phone.length >= 10) {
-            user.phone = phone.trim() || user.phone;
-        }
-        else if (phone !== undefined) {
-            user.phone = '';
-        }
-        else {
-            return res.status(400).json({
-                error: 'Enter a valid phone number!'
-            });
+        if (password) {
+            if (password.length < 8) {
+                return res.status(400).json({
+                    error: 'Password must be at least 8 characters long!'
+                });
+            }
+            user.password = password.trim();
         }
 
-        if (address && address.length >= 3) {
-            user.address = address.trim() || user.address;
+        if (phone) {
+            if (phone.length < 10) {
+                return res.status(400).json({
+                    error: 'Enter a valid phone number!'
+                });
+            }
+            else if (phone !== undefined) {
+                user.phone = '';
+            }
+            user.phone = phone.trim();
         }
-        else if (address !== undefined) {
-            user.address = '';
-        }
-        else {
-            return res.status(400).json({
-                error: 'Enter a valid address!'
-            });
+
+        if (address) {
+            if (address.length < 3) {
+                return res.status(400).json({
+                    error: 'Enter a valid address!'
+                });
+            }
+            else if (address !== undefined) {
+                user.address = '';
+            }
+            user.address = address.trim();
         }
 
         const updatedUser = await user.save();
