@@ -4,7 +4,7 @@ exports.read = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
@@ -25,22 +25,33 @@ exports.read = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
-    const { profile, name, email, password, phone, address } = req.body;
+    const { role, profile, name, email, password, phone, address } = req.body;
 
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
 
+        if (role) {
+            if (role !== 'subscriber' || role !== 'admin') {
+                return res.status(401).json({
+                    error: 'Enter a valid user role!'
+                });
+            }
+            else {
+                user.role = role.trim() || user.role;
+            }
+        }
+
         if (profile) {
-            user.profile = profile.trim();
+            user.profile = profile.trim() || user.profile;
         }
 
         if (name && name.length >= 3) {
-            user.name = name.trim();
+            user.name = name.trim() || user.name;
         }
         else {
             return res.status(400).json({
@@ -49,46 +60,46 @@ exports.update = async (req, res) => {
         }
 
         // for admins only
-        if (email) {
-            if (email.length < 5) {
-                return res.status(400).json({
-                    error: 'Enter a valid email address!'
-                });
-            }
-            user.email = email.trim();
+        if (email && email.length >= 5) {
+            user.email = email.trim() || user.email;
+        }
+        else {
+            return res.status(400).json({
+                error: 'Enter a valid email address!'
+            });
         }
 
-        if (password) {
-            if (password.length < 8) {
-                return res.status(400).json({
-                    error: 'Password must be at least 8 characters long!'
-                });
-            }
-            user.password = password.trim();
+        if (password && password.length >= 8) {
+            user.password = password.trim() || user.password;
+        }
+        else {
+            return res.status(400).json({
+                error: 'Password must be at least 8 characters long!'
+            });
         }
 
-        if (phone) {
-            if (phone.length < 10) {
-                return res.status(400).json({
-                    error: 'Enter a valid phone number!'
-                });
-            }
-            else if (phone !== undefined) {
-                user.phone = '';
-            }
-            user.phone = phone.trim();
+        if (phone && phone.length >= 10) {
+            user.phone = phone.trim() || user.phone;
+        }
+        else if (phone !== undefined) {
+            user.phone = '';
+        }
+        else {
+            return res.status(400).json({
+                error: 'Enter a valid phone number!'
+            });
         }
 
-        if (address) {
-            if (address.length < 3) {
-                return res.status(400).json({
-                    error: 'Enter a valid address!'
-                });
-            }
-            else if (address !== undefined) {
-                user.address = '';
-            }
-            user.address = address.trim();
+        if (address && address.length >= 3) {
+            user.address = address.trim() || user.address;
+        }
+        else if (address !== undefined) {
+            user.address = '';
+        }
+        else {
+            return res.status(400).json({
+                error: 'Enter a valid address!'
+            });
         }
 
         const updatedUser = await user.save();
@@ -110,19 +121,18 @@ exports.update = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findByIdAndDelete(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
 
-        const deletedUser = await User.findByIdAndDelete(req.user._id);
-        deletedUser.hashed_password = undefined;
-        deletedUser.salt = undefined;
+        user.hashed_password = undefined;
+        user.salt = undefined;
 
         console.log('DELETE USER SUCCESS:', req.user)
-        return res.json(deletedUser);
+        return res.json(user);
     }
 
     catch (err) {
@@ -139,7 +149,7 @@ exports.lockscreen = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }

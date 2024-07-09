@@ -104,7 +104,7 @@ exports.signin = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
@@ -144,7 +144,7 @@ exports.forgotPassword = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
@@ -282,7 +282,7 @@ exports.adminOnly = async (req, res, next) => {
     try {
         const user = await User.findOne({ _id: req.user._id });
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }

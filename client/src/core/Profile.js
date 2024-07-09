@@ -72,7 +72,7 @@ const Profile = () => {
     const loadProfile = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/profile/${isAuth()._id}`, {
+                `${process.env.REACT_APP_API}/user/${isAuth()._id}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -109,7 +109,7 @@ const Profile = () => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API}/profile/update`, { profile, name, email, password, phone, address }, {
+                `${process.env.REACT_APP_API}/user/update`, { profile, name, email, password, phone, address }, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -134,7 +134,7 @@ const Profile = () => {
         if (confirmDelete) {
             try {
                 const response = await axios.delete(
-                    `${process.env.REACT_APP_API}/profile/delete`, {
+                    `${process.env.REACT_APP_API}/user/delete`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }

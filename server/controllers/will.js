@@ -24,7 +24,7 @@ exports.update = async (req, res) => {
     try {
         const will = await Will.findOne({ txnHash });
         if (!will) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'Will not found!'
             });
         }
