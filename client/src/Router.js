@@ -7,11 +7,10 @@ import Signin from './auth/Signin';
 import Activate from './auth/Activate';
 import Forgot from './auth/Forgot';
 import Reset from './auth/Reset';
-import UserRoute from './auth/UserRoute';
-import AdminRoute from './auth/AdminRoute';
+import UserRoute from './utils/UserRoute';
+import AdminRoute from './utils/AdminRoute';
 
 import Profile from './core/Profile';
-import LockScreen from './core/Lockscreen';
 import Dashboard from './core/Dashboard';
 import History from './core/History';
 
@@ -35,7 +34,6 @@ const Router = () => {
                 <Route element={<AdminRoute />}>
                     <Route path='/dashboard' element={<Dashboard />} />
                 </Route>
-                <Route path='/lockscreen' element={<LockScreen />} />
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
                 <Route path='/create-will' element={<CreateWill />} />

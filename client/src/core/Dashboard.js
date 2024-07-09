@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 
-import { getCookie, isAuth } from '../auth/helpers';
+import { getCookie, isAuth } from '../utils/helpers';
 import Layout from './Layout';
 import Avatar from '../assets/avatar.png';
 
@@ -48,11 +48,7 @@ const Dashboard = () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API}/wills/fetch`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('FETCH WILLS SUCCESS:', response);
@@ -68,11 +64,7 @@ const Dashboard = () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API}/wills/count`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('COUNT WILLS SUCCESS:', response);
@@ -87,11 +79,7 @@ const Dashboard = () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API}/wills/trends`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('WILL TRENDS SUCCESS:', response);
@@ -106,11 +94,7 @@ const Dashboard = () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API}/users/fetch`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('FETCH USERS SUCCESS:', response);
@@ -126,11 +110,7 @@ const Dashboard = () => {
         try {
             const response = await axios.get(
                 `${process.env.REACT_APP_API}/users/active`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('ACTIVE USERS SUCCESS:', response);
@@ -153,12 +133,15 @@ const Dashboard = () => {
         switch (activeComponent.name) {
             case 'Dashboard':
                 return <DashboardContent totalWills={wills} pendingWills={willCounts.pending}
-                    completeWills={willCounts.complete} totalUsers={users} activeUsers={userCounts.active}
-                    willTrends={willTrends} inactiveUsers={users.length - userCounts.active} />;
+                    completeWills={willCounts.complete} activeUsers={userCounts.active}
+                    inactiveUsers={users.length - userCounts.active} totalUsers={users} />;
             case 'Wills':
                 return <WillsContent list={wills} />;
             case 'Users':
                 return <UsersContent list={users} token={token} />;
+            case 'Analytics':
+                return <AnalyticsContent pendingWills={willCounts.pending} completeWills={willCounts.complete}
+                    activeUsers={userCounts.active} inactiveUsers={users.length - userCounts.active} willTrends={willTrends} />;
             default:
                 return <DashboardContent />;
         }
@@ -194,6 +177,7 @@ const Sidebar = ({ isActive, setActiveComponent }) => {
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
                 <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
+                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
             </nav>
         </div>
     );
@@ -216,108 +200,39 @@ const Header = ({ headerName }) => {
     );
 };
 
-const DashboardContent = ({ pendingWills, completeWills, totalWills, willTrends, totalUsers, activeUsers, inactiveUsers }) => {
-    const willsData = {
-        labels: ['Pending', 'Complete'],
-        datasets: [
-            {
-                label: 'Count',
-                data: [pendingWills, completeWills],
-                backgroundColor: [
-                    'rgba(255, 159, 64, 0.2)', // Pending Wills
-                    'rgba(153, 102, 255, 0.2)', // Complete Wills
-                ],
-                borderColor: [
-                    'rgba(255, 159, 64, 1)', // Pending Wills
-                    'rgba(153, 102, 255, 1)', // Complete Wills
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const usersData = {
-        labels: ['Active', 'Inactive'],
-        datasets: [
-            {
-                label: 'Count',
-                data: [activeUsers, inactiveUsers],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)', // Active Users
-                    'rgba(255, 99, 132, 0.2)', // Inactive Users
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)', // Active Users
-                    'rgba(255, 99, 132, 1)', // Inactive Users
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
+const DashboardContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers }) => {
     return (
-        <div className='flex flex-col gap-8'>
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {pendingWills} </h3>
-                    <p className="text-gray-500"> Pending Wills </p>
-                </div>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {pendingWills} </h3>
+                <p className="text-gray-500"> Pending Wills </p>
+            </div>
 
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {completeWills} </h3>
-                    <p className="text-gray-500"> Complete Wills </p>
-                </div>
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {completeWills} </h3>
+                <p className="text-gray-500"> Complete Wills </p>
+            </div>
 
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
-                    <p className="text-gray-500"> Total Wills </p>
-                </div>
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
+                <p className="text-gray-500"> Total Wills </p>
+            </div>
 
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {activeUsers} </h3>
-                    <p className="text-gray-500"> Active Users </p>
-                </div>
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {activeUsers} </h3>
+                <p className="text-gray-500"> Active Users </p>
+            </div>
 
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {inactiveUsers} </h3>
-                    <p className="text-gray-500"> Inactive Users </p>
-                </div>
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {inactiveUsers} </h3>
+                <p className="text-gray-500"> Inactive Users </p>
+            </div>
 
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {totalUsers.length} </h3>
-                    <p className="text-gray-500"> Total Users </p>
-                </div>
-            </section>
-
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Wills </h3>
-                    <Pie data={willsData} />
-                </div>
-
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Users </h3>
-                    <Pie data={usersData} />
-                </div>
-
-                <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Wills Trends </h3>
-                    <Line
-                        data={{
-                            labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
-                            datasets: [
-                                {
-                                    label: 'Wills Created',
-                                    data: willTrends.map(trend => trend.count),
-                                    borderColor: 'rgba(75,192,192,1)',
-                                    fill: false,
-                                }
-                            ]
-                        }}
-                    />
-                </div>
-            </section>
-        </div>
+            <div className="py-10 bg-white rounded-lg shadow text-center">
+                <h3 className="text-lg font-semibold text-gray-700"> {totalUsers.length} </h3>
+                <p className="text-gray-500"> Total Users </p>
+            </div>
+        </section>
     );
 };
 
@@ -548,6 +463,77 @@ const UsersContent = ({ list, token }) => {
                 </tbody>
             </table>
         </div>
+    );
+};
+
+const AnalyticsContent = ({ pendingWills, completeWills, willTrends, activeUsers, inactiveUsers }) => {
+    const willsData = {
+        labels: ['Pending', 'Complete'],
+        datasets: [
+            {
+                label: 'Count',
+                data: [pendingWills, completeWills],
+                backgroundColor: [
+                    'rgba(255, 159, 64, 0.2)', // Pending Wills
+                    'rgba(153, 102, 255, 0.2)', // Complete Wills
+                ],
+                borderColor: [
+                    'rgba(255, 159, 64, 1)', // Pending Wills
+                    'rgba(153, 102, 255, 1)', // Complete Wills
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const usersData = {
+        labels: ['Active', 'Inactive'],
+        datasets: [
+            {
+                label: 'Count',
+                data: [activeUsers, inactiveUsers],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)', // Active Users
+                    'rgba(255, 99, 132, 0.2)', // Inactive Users
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', // Active Users
+                    'rgba(255, 99, 132, 1)', // Inactive Users
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    return (
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="p-6 bg-white rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Wills </h3>
+                <Pie data={willsData} />
+            </div>
+
+            <div className="p-6 bg-white rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Users </h3>
+                <Pie data={usersData} />
+            </div>
+
+            <div className="p-6 bg-white rounded-lg shadow">
+                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Wills Trends </h3>
+                <Bar //or Line
+                    data={{
+                        labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                        datasets: [
+                            {
+                                label: 'Wills Created',
+                                data: willTrends.map(trend => trend.count),
+                                borderColor: 'rgba(75,192,192,1)',
+                                fill: false,
+                            }
+                        ]
+                    }}
+                />
+            </div>
+        </section>
     );
 };
 

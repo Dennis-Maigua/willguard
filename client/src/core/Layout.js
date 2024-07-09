@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
-import { isAuth, signout } from '../auth/helpers';
+import { isAuth, signout } from '../utils/helpers';
 import Logo from '../assets/logo.png';
 import Avatar from '../assets/avatar.png';
 
@@ -75,9 +75,6 @@ const Layout = ({ children }) => {
                                                 <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
                                             </li>
                                             <li>
-                                                <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
-                                            </li>
-                                            <li>
                                                 <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>
                                             </li>
                                         </ul>
@@ -98,16 +95,13 @@ const Layout = ({ children }) => {
                                     <div className='bg-gray-800 absolute right-0 top-20 px-10 py-6'>
                                         <ul className='flex flex-col gap-6'>
                                             <li>
+                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
+                                            </li>
+                                            <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to='/lockscreen' className={`${isActive('/lockscreen')}`}> Lock Screen </NavLink>
                                             </li>
                                             <li>
                                                 <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>

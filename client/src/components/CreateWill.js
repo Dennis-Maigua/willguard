@@ -7,7 +7,7 @@ import Web3 from 'web3';
 import axios from 'axios';
 
 import Layout from '../core/Layout';
-import { getCookie, isAuth } from '../auth/helpers';
+import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
 const CreateWill = () => {
@@ -106,11 +106,8 @@ const CreateWill = () => {
 
                 await axios.post(
                     `${process.env.REACT_APP_API}/will/create`, newWill,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    })
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
                     .then((response) => {
                         console.log('SAVE WILL SUCCESS:', response);
                         toast.success('Will created successfully!');
@@ -152,11 +149,8 @@ const CreateWill = () => {
 
                 await axios.put(
                     `${process.env.REACT_APP_API}/will/update`, { txnHash: id, status: 'Complete' },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    })
+                    { headers: { Authorization: `Bearer ${token}` } }
+                )
                     .then((response) => {
                         console.log('EXECUTE PAYOUT SUCCESS:', response);
                         toast.success('Payout executed Successfully!');

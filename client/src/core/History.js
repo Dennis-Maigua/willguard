@@ -5,7 +5,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
 
 import Layout from '../core/Layout';
-import { isAuth } from '../auth/helpers';
+import { isAuth } from '../utils/helpers';
 
 const History = () => {
     const [wills, setWills] = useState([]);

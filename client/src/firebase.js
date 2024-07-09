@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import Layout from '../core/Layout';
-import { isAuth } from './helpers';
+import { isAuth } from '../utils/helpers';
 
 const Activate = () => {
     const [values, setValues] = useState({

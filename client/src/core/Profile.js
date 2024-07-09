@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import Layout from './Layout';
-import { getCookie, isAuth, signout, updateLocalStorage } from '../auth/helpers';
+import { getCookie, isAuth, signout, updateLocalStorage } from '../utils/helpers';
 import Avatar from '../assets/avatar.png';
 
 const Profile = () => {
@@ -72,11 +72,9 @@ const Profile = () => {
     const loadProfile = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/user/${isAuth()._id}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+                `${process.env.REACT_APP_API}/user/${isAuth()._id}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
             console.log('LOAD PROFILE SUCCESS:', response);
             const { role, profile, name, email, phone, address } = response.data;
@@ -109,11 +107,10 @@ const Profile = () => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API}/user/update`, { role, profile, name, email, password, phone, address }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+                `${process.env.REACT_APP_API}/user/update`,
+                { role, profile, name, email, password, phone, address },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
 
             console.log('UPDATE ADMIN PROFILE SUCCESS:', response);
             updateLocalStorage(response, () => {
@@ -134,11 +131,9 @@ const Profile = () => {
         if (confirmDelete) {
             try {
                 const response = await axios.delete(
-                    `${process.env.REACT_APP_API}/user/delete`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
+                    `${process.env.REACT_APP_API}/user/delete`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
 
                 console.log('DELETE ADMIN ACCOUNT SUCCESS:', response);
                 toast.success('Account deleted successfully!');
@@ -287,7 +282,7 @@ const Profile = () => {
                     />
                 </form>
 
-                <span onClick={handleDeleteAccount} className='font-medium text-gray-500 hover:text-red-500 cursor-pointer'> Delete Account </span>
+                <span onClick={handleDeleteAccount} className='font-medium text-red-500 hover:opacity-80 cursor-pointer'> Delete Account </span>
             </div>
         </Layout>
     );

@@ -141,36 +141,6 @@ exports.deleteUser = async (req, res) => {
     }
 }
 
-exports.lockscreen = async (req, res) => {
-    const { password } = req.body;
-
-    try {
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).json({
-                error: 'User not found!'
-            });
-        }
-
-        if (!user.authenticate(password)) {
-            return res.status(401).json({
-                error: 'Incorrect password! Please try again.'
-            });
-        }
-
-        return res.json({
-            message: `Screen unlocked successfully!`
-        });
-    }
-
-    catch (err) {
-        console.log('UNLOCK USER ERROR:', err);
-        return res.status(500).json({
-            error: 'Failed to unlock screen! Please try again.'
-        });
-    }
-}
-
 exports.fetchUsers = async (req, res) => {
     try {
         const users = await User.find();
