@@ -13,23 +13,7 @@ exports.create = async (req, res) => {
     catch (error) {
         console.log('CREATE WILL FAILED:', err);
         res.status(400).json({
-            error: 'Failed to create will! Please try again.'
-        });
-    }
-};
-
-exports.fetchWills = async (req, res) => {
-    try {
-        const wills = await Will.find();
-
-        console.log('READ WILL SUCCESS!');
-        return res.json(wills);
-    }
-
-    catch (err) {
-        console.log('READ WILL FAILED:', err);
-        return res.status(500).json({
-            message: 'Failed to fetch will from database!'
+            error: 'Failed to create will!'
         });
     }
 };
@@ -55,32 +39,65 @@ exports.update = async (req, res) => {
     catch (err) {
         console.log('UPDATE WILL FAILED:', err);
         return res.status(500).json({
-            error: 'Failed to update will! Please try again.'
+            error: 'Failed to update will!'
         });
     }
 };
 
-// exports.read = async (req, res) => {
-//     try {
-//         satisfies
-//         const wills = await Will.findById(req.will._id);
-//         // const wills = await Will.find({ from });
+exports.fetchWills = async (req, res) => {
+    try {
+        const wills = await Will.find();
 
-//         if (!wills) {
-//             return res.status(401).json({
-//                 error: 'Wills not found!'
-//             });
-//         }
+        console.log('READ WILL SUCCESS!');
+        return res.json(wills);
+    }
 
-//         // console.log('LOAD WILL SUCCESS:', req.user);
-//         console.log('LOAD WILL SUCCESS!');
-//         return res.json(wills);
-//     }
+    catch (err) {
+        console.log('READ WILL FAILED:', err);
+        return res.status(500).json({
+            message: 'Failed to fetch will from database!'
+        });
+    }
+};
 
-//     catch (err) {
-//         console.log('LOAD WILL FAILED:', err);
-//         return res.status(500).json({
-//             error: 'Failed to read wills from database!'
-//         });
-//     }
-// };
+exports.countByStatus = async (req, res) => {
+    try {
+        const pending = await Will.countDocuments({ status: 'Pending' });
+        const complete = await Will.countDocuments({ status: 'Complete' });
+
+        return res.json({
+            pending,
+            complete
+        });
+    }
+    catch (err) {
+        console.log('COUNTING WILLS FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to count will!'
+        });
+    }
+}
+
+exports.willsTrends = async (req, res) => {
+    try {
+        const trends = await Will.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                        day: { $dayOfMonth: "$createdAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ]);
+        return res.json(trends);
+    }
+
+    catch (err) {
+        console.log('WILL CREATION TRENDS FAILED:', err);
+        return res.status(500).json({ error: 'Failed to fetch will creation trends!' });
+    }
+};

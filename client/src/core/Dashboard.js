@@ -9,57 +9,51 @@ import Avatar from '../assets/avatar.png';
 
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
-import { Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-ChartJS.register(ArcElement, Tooltip, Legend);
+import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
 
 const Dashboard = () => {
+    const [wills, setWills] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [willTrends, setWillTrends] = useState([]);
+
+    const [willCounts, setWillCounts] = useState({
+        pending: 0,
+        complete: 0
+    });
+    const [userCounts, setUserCounts] = useState({
+        active: 0,
+        inactive: 0
+    });
     const [activeComponent, setActiveComponent] = useState({
         name: 'Dashboard',
         header: 'Dashboard'
     });
 
-    const isActive = (path) => {
-        return path === activeComponent
-            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
-            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
-    };
-
-    const [users, setUsers] = useState([]);
-    const [wills, setWills] = useState([]);
-    const token = getCookie('token');
-
     useEffect(() => {
         const init = async () => {
-            await fetchUsers();
             await fetchWills();
+            await countWills();
+            await fetchTrends();
+            await fetchUsers();
+            await countActive();
         };
         init();
     }, []);
 
-    const renderContent = () => {
-        switch (activeComponent.name) {
-            case 'Dashboard':
-                return <DashboardContent activeUsers={users} totalWills={wills} />;
-            case 'Wills':
-                return <WillsContent list={wills} />;
-            case 'Users':
-                return <UsersContent list={users} />;
-            // case 'Analytics':
-            //     return <AnalyticsContent />;
-            default:
-                return <DashboardContent />;
-        }
-    };
+    const token = getCookie('token');
 
     const fetchWills = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/fetch`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+                `${process.env.REACT_APP_API}/wills/fetch`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             console.log('FETCH WILLS SUCCESS:', response);
             setWills(response.data);
@@ -70,14 +64,54 @@ const Dashboard = () => {
         }
     };
 
+    const countWills = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/count`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log('COUNT WILLS SUCCESS:', response);
+            setWillCounts(response.data);
+        }
+        catch (err) {
+            console.log('COUNT WILLS FAILED:', err.response.data.error);
+        }
+    }
+
+    const fetchTrends = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/trends`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log('WILL TRENDS SUCCESS:', response);
+            setWillTrends(response.data);
+        }
+        catch (err) {
+            console.log('WILL TRENDS FAILED:', err.response.data.error);
+        }
+    }
+
     const fetchUsers = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/users/fetch`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
+                `${process.env.REACT_APP_API}/users/fetch`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            });
+            );
 
             console.log('FETCH USERS SUCCESS:', response);
             setUsers(response.data);
@@ -85,6 +119,48 @@ const Dashboard = () => {
 
         catch (err) {
             console.log('FETCH USERS FAILED:', err.response.data.error);
+        }
+    };
+
+    const countActive = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/users/active`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            console.log('ACTIVE USERS SUCCESS:', response);
+            setUserCounts(response.data);
+        }
+
+        catch (err) {
+            console.log('ACTIVE USERS FAILED:', err.response.data.error);
+        }
+
+    }
+
+    const isActive = (path) => {
+        return path === activeComponent
+            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
+            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
+    };
+
+    const renderContent = () => {
+        switch (activeComponent.name) {
+            case 'Dashboard':
+                return <DashboardContent totalWills={wills} pendingWills={willCounts.pending}
+                    completeWills={willCounts.complete} totalUsers={users} activeUsers={userCounts.active}
+                    willTrends={willTrends} inactiveUsers={users.length - userCounts.active} />;
+            case 'Wills':
+                return <WillsContent list={wills} />;
+            case 'Users':
+                return <UsersContent list={users} />;
+            default:
+                return <DashboardContent />;
         }
     };
 
@@ -118,7 +194,6 @@ const Sidebar = ({ isActive, setActiveComponent }) => {
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
                 <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
-                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
             </nav>
         </div>
     );
@@ -141,43 +216,39 @@ const Header = ({ headerName }) => {
     );
 };
 
-const DashboardContent = ({ totalWills, activeUsers }) => {
-    const usersData = {
-        labels: ['Active Users', 'Deleted Users', 'Total Users'],
+const DashboardContent = ({ pendingWills, completeWills, totalWills, willTrends, totalUsers, activeUsers, inactiveUsers }) => {
+    const willsData = {
+        labels: ['Pending', 'Complete'],
         datasets: [
             {
-                label: '# of Users',
-                data: [2, 1, 3],
+                label: 'Count',
+                data: [pendingWills, completeWills],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)', // Active Users
-                    'rgba(255, 99, 132, 0.2)', // Deleted Users
-                    'rgba(75, 192, 192, 0.2)', // Total Users
+                    'rgba(255, 159, 64, 0.2)', // Pending Wills
+                    'rgba(153, 102, 255, 0.2)', // Complete Wills
                 ],
                 borderColor: [
-                    'rgba(54, 162, 235, 1)', // Active Users
-                    'rgba(255, 99, 132, 1)', // Deleted Users
-                    'rgba(75, 192, 192, 1)', // Total Users
+                    'rgba(255, 159, 64, 1)', // Pending Wills
+                    'rgba(153, 102, 255, 1)', // Complete Wills
                 ],
                 borderWidth: 1,
             },
         ],
     };
 
-    const willsData = {
-        labels: ['Pending Wills', 'Completed Wills', 'Total Wills'],
+    const usersData = {
+        labels: ['Active', 'Inactive'],
         datasets: [
             {
-                label: '# of Wills',
-                data: [2, 2, 4],
+                label: 'Count',
+                data: [activeUsers, inactiveUsers],
                 backgroundColor: [
-                    'rgba(75, 192, 192, 0.2)', // Active Wills
-                    'rgba(255, 159, 64, 0.2)', // Executed Wills
-                    'rgba(153, 102, 255, 0.2)', // Total Wills
+                    'rgba(54, 162, 235, 0.2)', // Active Users
+                    'rgba(255, 99, 132, 0.2)', // Inactive Users
                 ],
                 borderColor: [
-                    'rgba(75, 192, 192, 1)', // Active Wills
-                    'rgba(255, 159, 64, 1)', // Executed Wills
-                    'rgba(153, 102, 255, 1)', // Total Wills
+                    'rgba(54, 162, 235, 1)', // Active Users
+                    'rgba(255, 99, 132, 1)', // Inactive Users
                 ],
                 borderWidth: 1,
             },
@@ -188,39 +259,62 @@ const DashboardContent = ({ totalWills, activeUsers }) => {
         <div className='flex flex-col gap-8'>
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> 2 </h3>
+                    <h3 className="text-lg font-semibold text-gray-700"> {pendingWills} </h3>
                     <p className="text-gray-500"> Pending Wills </p>
                 </div>
+
                 <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                    <p className="text-gray-500"> Completed Wills </p>
+                    <h3 className="text-lg font-semibold text-gray-700"> {completeWills} </h3>
+                    <p className="text-gray-500"> Complete Wills </p>
                 </div>
+
                 <div className="p-6 bg-white rounded-lg shadow">
                     <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
                     <p className="text-gray-500"> Total Wills </p>
                 </div>
+
                 <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> {activeUsers.length} </h3>
+                    <h3 className="text-lg font-semibold text-gray-700"> {activeUsers} </h3>
                     <p className="text-gray-500"> Active Users </p>
                 </div>
+
                 <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> 1 </h3>
-                    <p className="text-gray-500"> Deleted Users </p>
+                    <h3 className="text-lg font-semibold text-gray-700"> {inactiveUsers} </h3>
+                    <p className="text-gray-500"> Inactive Users </p>
                 </div>
+
                 <div className="p-6 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700"> 3 </h3>
+                    <h3 className="text-lg font-semibold text-gray-700"> {totalUsers.length} </h3>
                     <p className="text-gray-500"> Total Users </p>
                 </div>
             </section>
 
-            <section className="flex flex-row gap-6">
-                <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4">User Analytics</h3>
+            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Wills </h3>
+                    <Pie data={willsData} />
+                </div>
+
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Users </h3>
                     <Pie data={usersData} />
                 </div>
-                <div className="w-full md:w-1/2 p-10 bg-white rounded-lg shadow">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-4">Wills Analytics</h3>
-                    <Pie data={willsData} />
+
+                <div className="p-6 bg-white rounded-lg shadow">
+                    <h3 className="text-lg font-semibold text-gray-700 mb-4"> Wills Trends </h3>
+                    <Line
+                        data={{
+                            labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            datasets: [
+                                {
+                                    label: 'Wills Created',
+                                    data: willTrends.map(trend => trend.count),
+                                    borderColor: 'rgba(75,192,192,1)',
+                                    fill: false,
+                                }
+                            ]
+                        }}
+                    />
                 </div>
             </section>
         </div>
@@ -311,10 +405,10 @@ const UsersContent = ({ list }) => {
                 <thead>
                     <tr>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> ID </th>
+                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Role </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Profile </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Name </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Email </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Role </th>
                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
                     </tr>
                 </thead>
@@ -331,12 +425,12 @@ const UsersContent = ({ list }) => {
                                     </CopyToClipboard>
                                 </div>
                             </td>
+                            <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                             <td className="px-6 py-4 whitespace-nowrap">
                                 <img src={user.profileUrl || Avatar} alt="Profile" className="w-10 h-10 rounded-full" />
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
                             <td className="px-6 py-4 whitespace-nowrap font-medium">
                                 <button className="text-indigo-400 hover:text-indigo-700"> Edit </button>
                                 <button className="text-red-500 hover:text-red-700 ml-4"> Delete </button>
@@ -348,11 +442,5 @@ const UsersContent = ({ list }) => {
         </div>
     );
 };
-
-// const AnalyticsContent = () => {
-
-//     return (
-//     );
-// };
 
 export default Dashboard;

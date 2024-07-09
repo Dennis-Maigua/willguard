@@ -115,6 +115,9 @@ exports.signin = async (req, res) => {
             });
         }
 
+        user.lastLogin = Date.now();
+        await user.save();
+
         const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
         user.hashed_password = undefined;

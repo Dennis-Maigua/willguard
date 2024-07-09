@@ -178,3 +178,20 @@ exports.fetchUsers = async (req, res) => {
         });
     }
 };
+
+exports.countActive = async (req, res) => {
+    try {
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+        const activeUsers = await User.countDocuments({ lastLogin: { $gte: thirtyDaysAgo } });
+        return res.json({
+            active: activeUsers
+        });
+    }
+
+    catch (err) {
+        console.log('COUNT ACTIVE USERS FAILED:', err);
+        return res.status(500).json({ error: 'Failed to count active users!' });
+    }
+};

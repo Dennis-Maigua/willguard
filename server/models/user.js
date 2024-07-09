@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
+    role: {
+        type: String,
+        default: 'subscriber'
+    },
     name: {
         type: String,
         trim: true,
@@ -19,16 +23,18 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    salt: String,
-    role: {
-        type: String,
-        default: 'subscriber'
+    lastLogin: {
+        type: Date,
+        default: Date.now
     },
+    salt: String,
     resetPasswordLink: String,
     profile: String,
     phone: Number,
     address: String
-}, { timestamps: true });
+}, {
+    timestamps: true
+});
 
 userSchema
     .virtual('password')
