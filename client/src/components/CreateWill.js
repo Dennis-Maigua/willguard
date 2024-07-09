@@ -141,7 +141,6 @@ const CreateWill = () => {
         if (contract && account) {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
-                toast.success('Payout executed Successfully!');
 
                 // Update wills state
                 const updatedWills = [...wills];
@@ -308,13 +307,13 @@ const CreateWill = () => {
                                         {will.status === 'Pending' ? (
                                             <td className='px-6 py-4 whitespace-nowrap'>
                                                 <button className='text-red-500 hover:opacity-80 font-medium' onClick={(event) => handlePayout(event, index)}>
-                                                    Payout
+                                                    Send
                                                 </button>
                                             </td>
                                         ) : (
                                             <td className='px-6 py-4 whitespace-nowrap'>
                                                 <button disabled className='text-gray-400 font-medium'>
-                                                    Paid
+                                                    Sent
                                                 </button>
                                             </td>
                                         )}
