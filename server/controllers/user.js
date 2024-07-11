@@ -1,102 +1,66 @@
 const User = require('../models/user');
 
-exports.read = async (req, res) => {
+exports.loadProfile = async (req, res) => {
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
 
         user.hashed_password = undefined;
         user.salt = undefined;
-        // console.log('LOAD USER PROFILE SUCCESS:', req.user);
-        console.log('LOAD USER PROFILE SUCCESS!');
+
+        console.log('LOAD PROFILE SUCCESS:', req.user);
         return res.json(user);
     }
 
     catch (err) {
-        console.log('READ PROFILE FAILED:', err);
+        console.log('LOAD PROFILE FAILED:', err);
         return res.status(500).json({
             error: 'Failed to read profile from database!'
         });
     }
 };
 
-exports.update = async (req, res) => {
-    const { role, profile, name, email, password, phone, address } = req.body;
+exports.updateProfile = async (req, res) => {
+    const { role, profileUrl, name, email, password, phone, address } = req.body;
 
     try {
         const user = await User.findById(req.user._id);
         if (!user) {
-            return res.status(401).json({
+            return res.status(404).json({
                 error: 'User not found!'
             });
         }
 
         if (role) {
-            if (role !== 'subscriber' || role !== 'admin') {
-                return res.status(401).json({
-                    error: 'Invalid user role!'
-                });
-            }
             user.role = role.trim();
         }
 
-        if (profile) {
-            user.profile = profile.trim();
+        if (profileUrl) {
+            user.profileUrl = profileUrl.trim();
         }
 
-        if (name && name.length >= 3) {
+        if (name) {
             user.name = name.trim();
-        }
-        else {
-            return res.status(400).json({
-                error: 'Name must be at least 3 characters long!'
-            });
         }
 
         // for admins only
         if (email) {
-            if (email.length < 5) {
-                return res.status(400).json({
-                    error: 'Enter a valid email address!'
-                });
-            }
             user.email = email.trim();
         }
 
-        if (password) {
-            if (password.length < 8) {
-                return res.status(400).json({
-                    error: 'Password must be at least 8 characters long!'
-                });
-            }
+        if (password !== undefined) {
             user.password = password.trim();
         }
 
-        if (phone) {
-            if (phone.length < 10) {
-                return res.status(400).json({
-                    error: 'Enter a valid phone number!'
-                });
-            }
-            else if (phone !== undefined) {
-                user.phone = '';
-            }
+        if (phone !== undefined) {
             user.phone = phone.trim();
         }
 
-        if (address) {
-            if (address.length < 3) {
-                return res.status(400).json({
-                    error: 'Enter a valid address!'
-                });
-            }
-            else if (address !== undefined) {
-                user.address = '';
-            }
+        if (address !== undefined) {
             user.address = address.trim();
         }
 
@@ -104,20 +68,23 @@ exports.update = async (req, res) => {
         updatedUser.hashed_password = undefined;
         updatedUser.salt = undefined;
 
-        // console.log('UPDATE USER SUCCESS:', req.user);
-        console.log('UPDATE USER SUCCESS!');
-        return res.json(updatedUser);
+        console.log('UPDATE PROFILE SUCCESS:', req.user);
+        return res.json({
+            success: true,
+            message: `User profile updated successfully!`,
+            updatedUser
+        });
     }
 
     catch (err) {
-        console.log('UPDATE USER FAILED:', err);
+        console.log('UPDATE PROFILE FAILED:', err);
         return res.status(500).json({
-            error: 'Failed to update user! Please try again.'
+            error: 'Failed to update profile! Please try again.'
         });
     }
 };
 
-exports.deleteUser = async (req, res) => {
+exports.deleteAccount = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.user._id);
         if (!user) {
@@ -129,14 +96,18 @@ exports.deleteUser = async (req, res) => {
         user.hashed_password = undefined;
         user.salt = undefined;
 
-        console.log('DELETE USER SUCCESS:', req.user)
-        return res.json(user);
+        console.log('DELETE ACCOUNT SUCCESS:', req.user)
+        return res.json({
+            success: true,
+            message: `Account deleted successfully!`,
+            user
+        });
     }
 
     catch (err) {
-        console.log('DELETE USER FAILED:', err);
+        console.log('DELETE ACCOUNT FAILED:', err);
         return res.status(500).json({
-            error: 'Failed to delete user! Please try again.'
+            error: 'Failed to delete account! Please try again.'
         });
     }
 }
@@ -145,19 +116,19 @@ exports.fetchUsers = async (req, res) => {
     try {
         const users = await User.find();
 
-        console.log('READ USERS SUCCESS!');
+        console.log('FETCH USERS SUCCESS!');
         return res.json(users);
     }
 
     catch (err) {
-        console.log('READ USERS FAILED:', err);
+        console.log('FETCH USERS FAILED:', err);
         return res.status(500).json({
             message: 'Failed to fetch users from database!'
         });
     }
 };
 
-exports.countActive = async (req, res) => {
+exports.activeUsers = async (req, res) => {
     try {
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -173,3 +144,31 @@ exports.countActive = async (req, res) => {
         return res.status(500).json({ error: 'Failed to count active users!' });
     }
 };
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndDelete(req.body._id);
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found!'
+            });
+        }
+
+        user.hashed_password = undefined;
+        user.salt = undefined;
+
+        console.log('DELETE USER SUCCESS:', req.user)
+        return res.json({
+            success: true,
+            message: `User deleted successfully!`,
+            user
+        });
+    }
+
+    catch (err) {
+        console.log('DELETE USER FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to delete user! Please try again.'
+        });
+    }
+}

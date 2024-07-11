@@ -43,7 +43,7 @@ const Activate = () => {
         }
 
         catch (err) {
-            console.log('ACCOUNT ACTIVATION FAILED:', err.response.data.error);
+            console.log('ACCOUNT ACTIVATION FAILED:', err);
             setValues({ ...values, buttonText: 'Activate Now' });
             toast.error(err.response.data.error);
         }

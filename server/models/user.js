@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
     },
     salt: String,
     resetPasswordLink: String,
-    profile: String,
+    profileUrl: String,
     phone: Number,
     address: String
 }, {

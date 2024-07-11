@@ -40,7 +40,7 @@ const Signup = () => {
         }
 
         catch (err) {
-            console.log('USER SIGNUP FAILED:', err.response.data.error);
+            console.log('USER SIGNUP FAILED:', err);
             setValues({ ...values, buttonText: 'Submit' });
             toast.error(err.response.data.error);
         }

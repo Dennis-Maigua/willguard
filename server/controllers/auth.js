@@ -29,9 +29,10 @@ exports.signup = async (req, res) => {
             console.log('EMAIL SENT SUCCESS');
             res.json({
                 success: true,
-                message: `An activation link has been sent to your email!`
+                message: `Activation link sent to your email!`
             });
         }
+
         catch (err) {
             console.log('EMAIL NOT SENT:', err);
             return res.status(500).json({
@@ -164,7 +165,7 @@ exports.forgotPassword = async (req, res) => {
                 console.log(`EMAIL SENT SUCCESS`);
                 res.json({
                     success: true,
-                    message: 'A reset link has been sent to your email!'
+                    message: 'Reset link sent to your email!'
                 });
             })
             .catch((err) => {

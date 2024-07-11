@@ -30,7 +30,7 @@ const Forgot = () => {
                 `${process.env.REACT_APP_API}/forgot-password`, { email }
             );
 
-            console.log('FORGOT PASSWORD SUCCESS:', response);
+            console.log('SEND RESET LINK SUCCESS:', response);
 
             setValues({ ...values, email: '', buttonText: 'Requested' });
             toast.success(response.data.message);
@@ -39,7 +39,7 @@ const Forgot = () => {
         }
 
         catch (err) {
-            console.log('FORGOT PASSWORD FAILED:', err.response.data.error);
+            console.log('SEND RESET LINK FAILED:', err);
             setValues({ ...values, buttonText: 'Request Reset Link' });
             toast.error(err.response.data.error);
         }

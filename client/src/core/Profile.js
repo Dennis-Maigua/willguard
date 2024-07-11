@@ -16,7 +16,7 @@ const Profile = () => {
         name: '',
         email: '',
         password: '',
-        profile: '',
+        profileUrl: '',
         phone: '',
         address: '',
         buttonText: 'Update'
@@ -37,7 +37,7 @@ const Profile = () => {
 
     const token = getCookie('token');
     const navigate = useNavigate();
-    const { role, profile, name, email, password, phone, address, buttonText } = values;
+    const { role, profileUrl, name, email, password, phone, address, buttonText } = values;
 
     const handleFileUpload = async (image) => {
         if (image.size > 2 * 1024 * 1024) {
@@ -62,7 +62,7 @@ const Profile = () => {
             () => {
                 getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
                     // console.log('File available at', downloadURL);
-                    setValues({ ...values, profile: downloadURL });
+                    setValues({ ...values, profileUrl: downloadURL });
                     setImagePercent(100);
                 });
             }
@@ -77,12 +77,12 @@ const Profile = () => {
             );
 
             console.log('LOAD PROFILE SUCCESS:', response);
-            const { role, profile, name, email, phone, address } = response.data;
-            setValues({ ...values, role, profile, name, email, phone, address });
+            const { role, profileUrl, name, email, phone, address } = response.data;
+            setValues({ ...values, role, profileUrl, name, email, phone, address });
         }
 
         catch (err) {
-            console.log('LOAD PROFILE FAILED:', err.response.data.error);
+            console.log('LOAD PROFILE FAILED:', err);
 
             if (err.response.status === 401) {
                 signout(() => {
@@ -102,26 +102,27 @@ const Profile = () => {
         setValues({ ...values, buttonText: 'Updating' });
 
         if (image) {
-            handleFileUpload(image);
+            await handleFileUpload(image);
         }
 
         try {
             const response = await axios.put(
                 `${process.env.REACT_APP_API}/user/update`,
-                { role, profile, name, email, password, phone, address },
+                { role, profileUrl, name, email, password, phone, address },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            console.log('UPDATE ADMIN PROFILE SUCCESS:', response);
+            console.log('UPDATE PROFILE SUCCESS:', response);
             updateLocalStorage(response, () => {
                 setValues({ ...values, buttonText: 'Updated' });
-                toast.success('Profile updated successfully!');
+                toast.success(response.data.message);
             });
         }
 
         catch (err) {
-            console.log('UPDATE ADMIN PROFILE FAILED:', err.response.data.error);
+            console.log('UPDATE PROFILE FAILED:', err);
             setValues({ ...values, buttonText: 'Update' });
+            toast.error(err.response.data.error);
         }
     };
 
@@ -135,8 +136,8 @@ const Profile = () => {
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
 
-                console.log('DELETE ADMIN ACCOUNT SUCCESS:', response);
-                toast.success('Account deleted successfully!');
+                console.log('DELETE ACCOUNT SUCCESS:', response);
+                toast.success(response.data.message);
 
                 signout(() => {
                     navigate('/signin');
@@ -144,7 +145,7 @@ const Profile = () => {
             }
 
             catch (err) {
-                console.log('DELETE ADMIN ACCOUNT FAILED:', err.response.data.error);
+                console.log('DELETE ACCOUNT FAILED:', err);
                 toast.error(err.response.data.error);
             }
         }
@@ -154,15 +155,13 @@ const Profile = () => {
         <Layout>
             <ToastContainer />
             {!isAuth() ? <Navigate to='/signin' /> : null}
-            <div className="bg-gray-600 text-white py-14">
-                <div className="container mx-auto px-6 text-center">
-                    <h1 className="text-5xl font-bold mb-2">
-                        Profile
-                    </h1>
+            <div className='bg-gray-600 text-white py-14'>
+                <div className='container mx-auto px-6 text-center'>
+                    <h1 className='text-5xl font-bold mb-2'> Profile </h1>
                 </div>
             </div>
 
-            <div className='max-w-xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
+            <div className='max-w-2xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
                 <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
                     <input
                         type='file'
@@ -172,9 +171,9 @@ const Profile = () => {
                         hidden
                     />
                     <img
-                        src={profile || values.profile || Avatar}
+                        src={profileUrl || values.profileUrl || Avatar}
                         alt='avatar'
-                        name='profile'
+                        name='profileUrl'
                         className='h-24 w-24 rounded-full self-center border object-cover cursor-pointer'
                         onClick={() => fileRef.current.click()}
                     />
@@ -198,47 +197,28 @@ const Profile = () => {
                         }
                     </div>
 
-                    {isAuth() && isAuth().role === 'subscriber' && (
-                        <div className='flex flex-row gap-4'>
-                            <input
-                                type='text'
-                                name='role'
-                                value={role}
-                                placeholder='Role'
-                                className='p-3 shadow rounded'
-                                disabled
-                            />
-                            <input
-                                type='email'
-                                name='email'
-                                value={email}
-                                placeholder='Email'
-                                className='p-3 shadow rounded w-full'
-                                disabled
-                            />
-                        </div>
-                    )}
+                    <div className='grid grid-cols-2 gap-4'>
+                        <input
+                            type='text'
+                            name='role'
+                            value={role}
+                            placeholder='Role'
+                            onChange={handleChange}
+                            className='p-3 shadow rounded'
+                            disabled={isAuth().role === 'subscriber'}
+                        />
+                        <input
+                            type='email'
+                            name='email'
+                            value={email}
+                            placeholder='Email'
+                            onChange={handleChange}
+                            className='p-3 shadow rounded'
+                            disabled={isAuth().role === 'subscriber'}
+                        />
+                    </div>
 
-                    {isAuth() && isAuth().role === 'admin' && (
-                        <div className='flex flex-row gap-4'>
-                            <input
-                                type='text'
-                                name='role'
-                                value={role}
-                                placeholder='Role'
-                                className='p-3 shadow rounded'
-                            />
-                            <input
-                                type='email'
-                                name='email'
-                                value={email}
-                                placeholder='Email'
-                                className='p-3 shadow rounded w-full'
-                            />
-                        </div>
-                    )}
-
-                    <div className='flex flex-row gap-4'>
+                    <div className='grid grid-cols-2 gap-4'>
                         <input
                             type='text'
                             name='name'
@@ -253,11 +233,11 @@ const Profile = () => {
                             value={password}
                             placeholder='Password'
                             onChange={handleChange}
-                            className='p-3 shadow rounded w-full'
+                            className='p-3 shadow rounded'
                         />
                     </div>
 
-                    <div className='flex flex-row gap-4'>
+                    <div className='grid grid-cols-2 gap-4'>
                         <input
                             type='phone'
                             name='phone'
@@ -272,7 +252,7 @@ const Profile = () => {
                             value={address}
                             placeholder='Address'
                             onChange={handleChange}
-                            className='p-3 shadow rounded w-full'
+                            className='p-3 shadow rounded'
                         />
                     </div>
                     <input

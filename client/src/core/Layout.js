@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
     const [dropdown, setDropdown] = useState(false);
 
     const isActive = (path) => {
-        return pathname === path ? 'text-red-500' : 'text-white hover:text-red-500';
+        return path === pathname ? 'text-red-500' : 'text-white hover:text-red-500';
     }
 
     const handleLogout = async () => {
@@ -32,7 +32,8 @@ const Layout = ({ children }) => {
                         </NavLink>
                     </div>
 
-                    <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 py-6 text-center left-0 md:w-auto w-full md:flex ${toggled ? 'block top-20' : 'hidden'}`}>
+                    <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 py-6 text-center left-0 
+                        md:w-auto w-full md:flex ${toggled ? 'block top-20' : 'hidden'}`}>
                         <ul className='flex md:flex-row flex-col md:gap-8 gap-6 font-medium'>
                             <li>
                                 <NavLink to='/' className={`${isActive('/')}`}> Home </NavLink>
@@ -60,14 +61,14 @@ const Layout = ({ children }) => {
 
                         {isAuth() && isAuth().role === 'subscriber' && (
                             <div>
-                                <div className='flex items-center gap-2 cursor-pointer' onMouseEnter={() => { setDropdown(!dropdown) }}>
+                                <div className='flex items-center gap-2 cursor-pointer' onClick={() => { setDropdown(!dropdown) }}>
                                     <img src={isAuth().profile || Avatar} alt='avatar' className='h-8 w-8 rounded-full object-cover border' />
                                     <span className=''> {isAuth().name} </span>
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute right-0 top-20 px-10 py-6'>
-                                        <ul className='flex flex-col gap-6'>
+                                    <div className='bg-gray-800 absolute right-0 top-20 w-40 round shadow'>
+                                        <ul className='flex flex-col gap-6 p-6'>
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>
@@ -86,16 +87,16 @@ const Layout = ({ children }) => {
 
                         {isAuth() && isAuth().role === 'admin' && (
                             <div>
-                                <div className='flex items-center gap-2 cursor-pointer' onMouseEnter={() => { setDropdown(!dropdown) }}>
+                                <div className='flex items-center gap-2 cursor-pointer' onClick={() => { setDropdown(!dropdown) }}>
                                     <img src={isAuth().profile || Avatar} alt='avatar' className='h-8 w-8 rounded-full object-cover border' />
                                     <span> {isAuth().name} </span>
                                 </div>
 
                                 {dropdown ? (
-                                    <div className='bg-gray-800 absolute right-0 top-20 px-10 py-6'>
-                                        <ul className='flex flex-col gap-6'>
+                                    <div className='bg-gray-800 absolute right-2 top-20 w-40 round shadow'>
+                                        <ul className='flex flex-col gap-6 p-6'>
                                             <li>
-                                                <NavLink to='/dashboard' className={`${isActive('/dashboard')}`}> Dashboard </NavLink>
+                                                <NavLink to='/admin/dashboard' className={`${isActive('/admin/dashboard')}`}> Dashboard </NavLink>
                                             </li>
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
@@ -113,29 +114,13 @@ const Layout = ({ children }) => {
                             </div>
                         )}
 
-                        <button
-                            type='button'
-                            className='md:hidden px-2 rounded-lg'
-                            onClick={() => { setToggled(!toggled) }}
-                        >
+                        <button type='button' className='md:hidden px-2 rounded-lg' onClick={() => { setToggled(!toggled) }}>
                             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 {!toggled ? (
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M4 6h16M4 12h16m-7 6h7"
-                                    />
-                                )
-                                    : (
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    )
-                                }
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                                ) : (
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                )}
                             </svg>
                         </button>
                     </div>

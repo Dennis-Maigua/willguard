@@ -3,18 +3,32 @@ const { check } = require('express-validator');
 exports.signupValidator = [
     check('name')
         .isLength({ min: 3 })
-        .withMessage('Name must be at least 3 characters long!'),
+        .withMessage('Name must be at least 3 characters long!')
+        .matches(/^[A-Za-z\s]+$/)
+        .withMessage('Name can only contain alphabetic characters and spaces!'),
     check('email')
         .isEmail()
+        .withMessage('A valid email is required!')
+        .normalizeEmail()
         .withMessage('A valid email is required!'),
     check('password')
         .isLength({ min: 8 })
         .withMessage('Password must be at least 8 characters long!')
+        .matches(/[a-z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[A-Z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[0-9]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
 ];
 
 exports.signinValidator = [
     check('email')
         .isEmail()
+        .withMessage('A valid email is required!')
+        .normalizeEmail()
         .withMessage('A valid email is required!'),
     check('password')
         .isLength({ min: 8 })
@@ -25,10 +39,56 @@ exports.forgotValidator = [
     check('email')
         .isEmail()
         .withMessage('A valid email is required!')
+        .normalizeEmail()
+        .withMessage('A valid email is required!')
 ];
 
 exports.resetValidator = [
-    check('newPassword')
+    check('password')
         .isLength({ min: 8 })
         .withMessage('Password must be at least 8 characters long!')
+        .matches(/[a-z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[A-Z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[0-9]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+];
+
+exports.updateValidator = [
+    check('role')
+        .isIn(['subscriber', 'admin'])
+        .withMessage('Role must be either subscriber or admin!'),
+    check('name')
+        .isLength({ min: 3 })
+        .withMessage('Name must be at least 3 characters long!')
+        .matches(/^[A-Za-z\s]+$/)
+        .withMessage('Name can only contain alphabetic characters and spaces!'),
+    check('email')
+        .isEmail()
+        .withMessage('A valid email is required!')
+        .normalizeEmail()
+        .withMessage('A valid email is required!'),
+    check('password')
+        .optional({ checkFalsy: true }) // This will skip validation if the password field is an empty string
+        .isLength({ min: 8 })
+        .withMessage('Password must be at least 8 characters long!')
+        .matches(/[a-z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[A-Z]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[0-9]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/)
+        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!'),
+    check('phone')
+        .optional()
+        .isMobilePhone()
+        .withMessage('Enter a valid mobile phone number!'),
+    check('address')
+        .optional()
+        .isLength({ min: 3 })
+        .withMessage('Address must be at least 3 characters long!')
 ];

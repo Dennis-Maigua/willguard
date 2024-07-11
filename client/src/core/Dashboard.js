@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 
 import { getCookie, isAuth } from '../utils/helpers';
 import Layout from './Layout';
@@ -22,7 +22,7 @@ const Dashboard = () => {
         pending: 0,
         complete: 0
     });
-    const [userCounts, setUserCounts] = useState({
+    const [activeCounts, setActiveCounts] = useState({
         active: 0,
         inactive: 0
     });
@@ -56,7 +56,7 @@ const Dashboard = () => {
         }
 
         catch (err) {
-            console.log('FETCH WILLS FAILED:', err.response.data.error);
+            console.log('FETCH WILLS FAILED:', err);
         }
     };
 
@@ -71,7 +71,7 @@ const Dashboard = () => {
             setWillCounts(response.data);
         }
         catch (err) {
-            console.log('COUNT WILLS FAILED:', err.response.data.error);
+            console.log('COUNT WILLS FAILED:', err);
         }
     }
 
@@ -86,7 +86,7 @@ const Dashboard = () => {
             setWillTrends(response.data);
         }
         catch (err) {
-            console.log('WILL TRENDS FAILED:', err.response.data.error);
+            console.log('WILL TRENDS FAILED:', err);
         }
     }
 
@@ -102,7 +102,7 @@ const Dashboard = () => {
         }
 
         catch (err) {
-            console.log('FETCH USERS FAILED:', err.response.data.error);
+            console.log('FETCH USERS FAILED:', err);
         }
     };
 
@@ -114,34 +114,38 @@ const Dashboard = () => {
             );
 
             console.log('ACTIVE USERS SUCCESS:', response);
-            setUserCounts(response.data);
+            setActiveCounts(response.data);
         }
 
         catch (err) {
-            console.log('ACTIVE USERS FAILED:', err.response.data.error);
+            console.log('ACTIVE USERS FAILED:', err);
         }
 
     }
 
     const isActive = (path) => {
         return path === activeComponent
-            ? 'p-4 text-sm font-semibold text-red-500 bg-gray-100 cursor-pointer'
-            : 'p-4 text-sm font-semibold hover:text-red-500 hover:bg-gray-100 cursor-pointer';
+            ? 'w-full text-sm font-semibold py-5 text-red-500 cursor-pointer'
+            : 'w-full text-sm font-semibold py-5 hover:text-red-500 cursor-pointer';
+    };
+
+    const shortenContent = (content) => {
+        return `${content.slice(0, 5)}...${content.slice(-5)}`;
     };
 
     const renderContent = () => {
         switch (activeComponent.name) {
             case 'Dashboard':
                 return <DashboardContent totalWills={wills} pendingWills={willCounts.pending}
-                    completeWills={willCounts.complete} activeUsers={userCounts.active}
-                    inactiveUsers={users.length - userCounts.active} totalUsers={users} />;
+                    completeWills={willCounts.complete} activeUsers={activeCounts.active}
+                    inactiveUsers={users.length - activeCounts.active} totalUsers={users} />;
             case 'Wills':
                 return <WillsContent list={wills} />;
             case 'Users':
-                return <UsersContent list={users} token={token} />;
+                return <UsersContent list={users} token={token} shorten={shortenContent} />;
             case 'Analytics':
                 return <AnalyticsContent pendingWills={willCounts.pending} completeWills={willCounts.complete}
-                    activeUsers={userCounts.active} inactiveUsers={users.length - userCounts.active} willTrends={willTrends} />;
+                    activeUsers={activeCounts.active} inactiveUsers={users.length - activeCounts.active} willTrends={willTrends} />;
             default:
                 return <DashboardContent />;
         }
@@ -151,14 +155,17 @@ const Dashboard = () => {
         <Layout>
             <ToastContainer />
             {!isAuth() ? <Navigate to='/signin' /> : null}
-            <div className="flex min-h-screen bg-gray-100">
+            <div className='flex min-h-screen bg-gray-100'>
                 <Sidebar activeComponent={activeComponent.name}
                     setActiveComponent={setActiveComponent}
                     isActive={isActive}
                 />
-                <div className="flex-1 p-6">
-                    <Header headerName={activeComponent.header} />
-                    <main className="mt-6">
+                <div className='flex-1 p-5'>
+                    <Header headerName={activeComponent.header}
+                        activeComponent={activeComponent.name}
+                        setActiveComponent={setActiveComponent}
+                        isActive={isActive} />
+                    <main className='mt-6'>
                         {renderContent()}
                     </main>
                 </div>
@@ -169,81 +176,101 @@ const Dashboard = () => {
 
 const Sidebar = ({ isActive, setActiveComponent }) => {
     return (
-        <div className="w-64 bg-white shadow">
-            <div className="p-6">
-                <h1 className="text-2xl font-bold text-gray-800">Admin</h1>
-            </div>
-            <nav className="mt-8 flex flex-col gap-1">
+        <section className='md:block static hidden w-60 bg-white shadow p-10'>
+            <h1 className='text-2xl font-bold text-gray-800'> Admin </h1>
+            <nav className='flex flex-col mt-10'>
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
                 <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
                 <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
             </nav>
-        </div>
+        </section>
     );
 };
 
-const Header = ({ headerName }) => {
+const Header = ({ headerName, isActive, setActiveComponent }) => {
+    const [dropdown, setDropdown] = useState(false);
+
     return (
-        <header className="flex justify-between items-center py-4 px-6 bg-white border-b-4 border-red-500">
+        <header className='flex justify-between items-center py-4 px-6 bg-white border-b-4 border-red-500'>
             <div>
-                <h2 className="text-2xl font-semibold text-gray-800">{headerName}</h2>
+                <h2 className='text-2xl font-semibold text-gray-800'>{headerName}</h2>
             </div>
             <div>
-                <button className="text-gray-600 focus:outline-none">
-                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                <button className='md:hidden text-gray-600 focus:outline-none' onClick={() => { setDropdown(!dropdown) }}>
+                    <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
+                        {!dropdown ? (
+                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4 6h16M4 12h16m-7 6h7' />
+                        ) : (
+                            <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
+                        )}
                     </svg>
                 </button>
             </div>
+
+            {dropdown ? (
+                <div className='md:hidden static absolute bg-gray-100 right-6 top-40 w-40 round shadow'>
+                    <ul className='flex flex-col gap-6 p-6'>
+                        <li>
+                            <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
+                        </li>
+                        <li>
+                            <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
+                        </li>
+                        <li>
+                            <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
+                        </li>
+                        <li>
+                            <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
+                        </li>
+                    </ul>
+                </div>
+            )
+                : null}
         </header>
     );
 };
 
 const DashboardContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers }) => {
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {pendingWills} </h3>
-                <p className="text-gray-500"> Pending Wills </p>
+        <section className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {pendingWills} </h3>
+                <p className='text-gray-500'> Pending Wills </p>
             </div>
 
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {completeWills} </h3>
-                <p className="text-gray-500"> Complete Wills </p>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {completeWills} </h3>
+                <p className='text-gray-500'> Complete Wills </p>
             </div>
 
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {totalWills.length} </h3>
-                <p className="text-gray-500"> Total Wills </p>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {totalWills.length} </h3>
+                <p className='text-gray-500'> Total Wills </p>
             </div>
 
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {activeUsers} </h3>
-                <p className="text-gray-500"> Active Users </p>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {activeUsers} </h3>
+                <p className='text-gray-500'> Active Users </p>
             </div>
 
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {inactiveUsers} </h3>
-                <p className="text-gray-500"> Inactive Users </p>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {inactiveUsers} </h3>
+                <p className='text-gray-500'> Inactive Users </p>
             </div>
 
-            <div className="py-10 bg-white rounded-lg shadow text-center">
-                <h3 className="text-lg font-semibold text-gray-700"> {totalUsers.length} </h3>
-                <p className="text-gray-500"> Total Users </p>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {totalUsers.length} </h3>
+                <p className='text-gray-500'> Total Users </p>
             </div>
         </section>
     );
 };
 
-const WillsContent = ({ list }) => {
-    const shortenAddress = (address) => {
-        return `${address.slice(0, 5)}...${address.slice(-5)}`;
-    };
-
+const WillsContent = ({ list, shorten }) => {
     return (
-        <section className='mx-auto'>
-            <div className='shadow rounded overflow-x-auto'>
+        <section className='max-w-md md:max-w-lg lg:max-w-full mx-auto bg-white rounded-lg shadow'>
+            <div className='overflow-x-auto'>
                 <table className='min-w-full divide-y divide-gray-200'>
                     <thead>
                         <tr>
@@ -255,12 +282,12 @@ const WillsContent = ({ list }) => {
                             <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
                         </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className='bg-white divide-y divide-gray-200'>
                         {list.map((will) => (
                             <tr key={will._id}>
-                                <td className="px-6 py-4 whitespace-nowrap">
+                                <td className='px-6 py-4 whitespace-nowrap'>
                                     <div className='flex items-center'>
-                                        <span>{shortenAddress(will.txnHash)}</span>
+                                        <span>{shorten(will.txnHash)}</span>
                                         <CopyToClipboard text={will.txnHash}>
                                             <button className='ml-2'>
                                                 <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
@@ -268,9 +295,10 @@ const WillsContent = ({ list }) => {
                                         </CopyToClipboard>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+
+                                <td className='px-6 py-4 whitespace-nowrap'>
                                     <div className='flex items-center'>
-                                        <span>{shortenAddress(will.contractAddress)}</span>
+                                        <span>{shorten(will.contractAddress)}</span>
                                         <CopyToClipboard text={will.contractAddress}>
                                             <button className='ml-2'>
                                                 <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
@@ -278,9 +306,10 @@ const WillsContent = ({ list }) => {
                                         </CopyToClipboard>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+
+                                <td className='px-6 py-4 whitespace-nowrap'>
                                     <div className='flex items-center'>
-                                        <span>{shortenAddress(will.from)}</span>
+                                        <span>{shorten(will.from)}</span>
                                         <CopyToClipboard text={will.from}>
                                             <button className='ml-2'>
                                                 <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
@@ -288,9 +317,10 @@ const WillsContent = ({ list }) => {
                                         </CopyToClipboard>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">
+
+                                <td className='px-6 py-4 whitespace-nowrap'>
                                     <div className='flex items-center'>
-                                        <span>{shortenAddress(will.to)}</span>
+                                        <span>{shorten(will.to)}</span>
                                         <CopyToClipboard text={will.to}>
                                             <button className='ml-2'>
                                                 <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
@@ -298,8 +328,9 @@ const WillsContent = ({ list }) => {
                                         </CopyToClipboard>
                                     </div>
                                 </td>
-                                <td className="px-6 py-4 whitespace-nowrap">{will.value}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{will.status}</td>
+
+                                <td className='px-6 py-4 whitespace-nowrap'>{will.value}</td>
+                                <td className='px-6 py-4 whitespace-nowrap'>{will.status}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -311,158 +342,196 @@ const WillsContent = ({ list }) => {
 
 const UsersContent = ({ list, token }) => {
     const [editUser, setEditUser] = useState(null);
-    const [role, setRole] = useState('');
-    const [profile, setProfile] = useState('');
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
+    const [values, setValues] = useState({
+        role: '',
+        profileUrl: '',
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        buttonText: 'Update'
+    });
 
-    const handleEditClick = (user) => {
-        setRole(user.role);
-        setProfile(user.profile);
-        setEditUser(user);
-        setName(user.name);
-        setEmail(user.email);
-        setPhone(user.phone);
-        setAddress(user.address);
+    const { role, profileUrl, name, email, phone, address, buttonText } = values;
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
     };
 
-    const handleUpdateUser = async () => {
+    const clickEditUser = (user) => {
+        setEditUser(user);
+        setValues({
+            ...values,
+            role: user.role,
+            profileUrl: user.profileUrl,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+            address: user.address
+        })
+    };
+
+    const handleUpdateUser = async (event) => {
+        event.preventDefault();
+
         try {
             const response = await axios.put(
                 `${process.env.REACT_APP_API}/admin/update`,
-                { userId: editUser._id, role, profile, name, email, phone, address },
+                { userId: editUser._id, role, profileUrl, name, email, phone, address },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            console.log('User updated:', response.data);
+            console.log('USER UPDATE SUCCESS:', response.data);
+            toast.success(response.data.message);
             // Update the user list with the new data (optional)
             setEditUser(null);
         }
 
-        catch (error) {
-            console.error('Error updating user:', error);
+        catch (err) {
+            console.error('Error updating user:', err);
+            toast.error(err.response.data.error);
         }
     };
 
     const handleDeleteUser = async (userId) => {
-        try {
-            const response = await axios.delete(
-                `${process.env.REACT_APP_API}/admin/delete`,
-                { data: { userId } },
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-            console.log('User deleted:', response.data);
-            // Update the user list by removing the deleted user (optional)
-        }
+        const confirmDelete = window.confirm('Are you sure you want to delete this user? This action cannot be undone.');
 
-        catch (error) {
-            console.error('Error deleting user:', error);
-        }
-    };
+        if (confirmDelete) {
+            try {
+                const response = await axios.delete(
+                    `${process.env.REACT_APP_API}/admin/delete`,
+                    { headers: { Authorization: `Bearer ${token}` } },
+                    { data: { userId } }
+                );
 
-    const shortenId = (address) => {
-        return `${address.slice(0, 5)}...${address.slice(-5)}`;
+                console.log('DELETE USER SUCCESS:', response);
+                toast.success(response.data.message);
+                // Update the user list by removing the deleted user (optional)
+            }
+
+            catch (err) {
+                console.error('DELETE ACCOUNT FAILED:', err);
+                toast.error(err.response.data.error);
+            }
+        }
     };
 
     return (
-        <div className="p-6 bg-white rounded-lg shadow">
+        <section className='max-w-md md:max-w-lg lg:max-w-full mx-auto bg-white rounded-lg shadow'>
+            <div className='overflow-x-auto'>
+                <table className='min-w-full divide-y divide-gray-200'>
+                    <thead>
+                        <tr>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Role </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Profile </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Phone </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Address </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
+                        </tr>
+                    </thead>
+                    <tbody className='bg-white divide-y divide-gray-200'>
+                        {list.map((user) => (
+                            <tr key={user._id}>
+                                <td className='px-6 py-4 whitespace-nowrap'>{user.role}</td>
+                                <td className='px-6 py-4 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <img src={user.profileUrl || Avatar} alt='Profile' className='w-10 h-10 rounded-full' />
+                                    </div>
+                                </td>
+                                <td className='px-6 py-4 whitespace-nowrap'>{user.name}</td>
+                                <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
+                                <td className='px-6 py-4 whitespace-nowrap'>{user.phone}</td>
+                                <td className='px-6 py-4 whitespace-nowrap'>{user.address}</td>
+                                <td className='px-6 py-4 whitespace-nowrap font-medium'>
+                                    <button className='text-blue-400 hover:text-blue-700' onClick={() => clickEditUser(user)}> Edit </button>
+                                    <button className='text-red-500 hover:text-red-700 ml-4' onClick={() => handleDeleteUser(user._id)}> Delete </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
             {editUser && (
-                <div className="mb-4">
-                    <h3>Edit User</h3>
-                    <form onSubmit={handleUpdateUser}>
-                        <label>
-                            Role:
+                <div className='fixed inset-0 flex items-center justify-center z-50 p-4'>
+                    <div className='fixed inset-0 bg-black opacity-50'></div>
+                    <div className='bg-white rounded-lg shadow-lg p-10 z-10 max-w-2xl w-full'>
+                        <h1 className='text-center text-3xl font-semibold mb-10'> Edit User </h1>
+
+                        <form onSubmit={handleUpdateUser} className='flex flex-col gap-4'>
+                            <div className='grid grid-cols-2 gap-4'>
+                                <input
+                                    type='text'
+                                    name='role'
+                                    value={role}
+                                    placeholder='Role'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                                <input
+                                    type='text'
+                                    name='profileUrl'
+                                    value={profileUrl}
+                                    placeholder='Profile URL'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                            </div>
+
+                            <div className='grid grid-cols-2 gap-4'>
+                                <input
+                                    type='text'
+                                    name='name'
+                                    value={name}
+                                    placeholder='Name'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                                <input
+                                    type='text'
+                                    name='email'
+                                    value={email}
+                                    placeholder='Email'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                            </div>
+
+                            <div className='grid grid-cols-2 gap-4'>
+                                <input
+                                    type='text'
+                                    name='phone'
+                                    value={phone}
+                                    placeholder='Phone'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                                <input
+                                    type='text'
+                                    name='address'
+                                    value={address}
+                                    placeholder='Address'
+                                    onChange={handleChange}
+                                    className='p-3 shadow rounded'
+                                />
+                            </div>
+
                             <input
-                                type="text"
-                                value={role}
-                                onChange={(e) => setRole(e.target.value)}
-                                required
+                                type='submit'
+                                value={buttonText}
+                                className='py-3 text-white font-semibold bg-red-500 hover:opacity-90 shadow rounded cursor-pointer'
                             />
-                        </label>
-                        <label>
-                            Profile URL:
-                            <input
-                                type="text"
-                                value={profile}
-                                onChange={(e) => setProfile(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            Name:
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Email:
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Phone:
-                            <input
-                                type="text"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
-                                required
-                            />
-                        </label>
-                        <label>
-                            Address:
-                            <input
-                                type="text"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            />
-                        </label>
-                        <button type="submit"> Update User </button>
-                        <button type="button" onClick={() => setEditUser(null)}> Cancel </button>
-                    </form>
+
+                            <button type='button' onClick={() => setEditUser(null)}
+                                className='font-semibold hover:text-red-500'> Cancel </button>
+                        </form>
+                    </div>
                 </div>
             )}
-            <table className="min-w-full divide-y divide-gray-200 mt-4">
-                <thead>
-                    <tr>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Role </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Profile </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Name </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Email </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Phone </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Address </th>
-                        <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Actions </th>
-                    </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                    {list.map((user) => (
-                        <tr key={user._id}>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.role}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                                <div className='flex items-center'>
-                                    <img src={user.profile || Avatar} alt="Profile" className="w-10 h-10 rounded-full" />
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.phone}</td>
-                            <td className="px-6 py-4 whitespace-nowrap">{user.address}</td>
-                            <td className="px-6 py-4 whitespace-nowrap font-medium">
-                                <button className="text-blue-400 hover:text-blue-700" onClick={() => handleEditClick(user)}> Edit </button>
-                                <button className="text-red-500 hover:text-red-700 ml-4" onClick={() => handleDeleteUser(user._id)}> Delete </button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+        </section>
     );
 };
 
@@ -506,32 +575,34 @@ const AnalyticsContent = ({ pendingWills, completeWills, willTrends, activeUsers
     };
 
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <div className="p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Wills </h3>
-                <Pie data={willsData} />
-            </div>
+        <section className='flex flex-col gap-8'>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 gap-6'>
+                <div className='p-6 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills </h3>
+                    <Pie data={willsData} />
+                </div>
 
-            <div className="p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Number of Users </h3>
-                <Pie data={usersData} />
-            </div>
+                <div className='p-6 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Users </h3>
+                    <Pie data={usersData} />
+                </div>
 
-            <div className="p-6 bg-white rounded-lg shadow">
-                <h3 className="text-lg font-semibold text-gray-700 mb-4"> Wills Trends </h3>
-                <Bar //or Line
-                    data={{
-                        labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
-                        datasets: [
-                            {
-                                label: 'Wills Created',
-                                data: willTrends.map(trend => trend.count),
-                                borderColor: 'rgba(75,192,192,1)',
-                                fill: false,
-                            }
-                        ]
-                    }}
-                />
+                <div className='p-6 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills Trends </h3>
+                    <Line //or Bar
+                        data={{
+                            labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            datasets: [
+                                {
+                                    label: 'Wills Created',
+                                    data: willTrends.map(trend => trend.count),
+                                    borderColor: 'rgba(75,192,192,1)',
+                                    fill: false,
+                                }
+                            ]
+                        }}
+                    />
+                </div>
             </div>
         </section>
     );

@@ -52,7 +52,7 @@ const Reset = () => {
         }
 
         catch (err) {
-            console.log('RESET PASSWORD FAILED:', err.response.data.error);
+            console.log('RESET PASSWORD FAILED:', err);
             setValues({ ...values, buttonText: 'Reset Now' });
             toast.error(err.response.data.error);
         }

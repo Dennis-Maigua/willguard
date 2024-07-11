@@ -31,7 +31,7 @@ const History = () => {
         // }
 
         // catch (err) {
-        //     console.error('FETCH WILLS FAILED:', err.response.data.error);
+        //     console.error('FETCH WILLS FAILED:', err);
         // }
     };
 
@@ -79,6 +79,7 @@ const History = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.txnHash)}</span>
@@ -89,6 +90,7 @@ const History = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.from)}</span>
@@ -99,6 +101,7 @@ const History = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.to)}</span>
@@ -109,6 +112,7 @@ const History = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'> {will.value} </td>
                                         <td className='px-6 py-4 whitespace-nowrap'> {will.status} </td>
                                     </tr>

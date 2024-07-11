@@ -36,12 +36,12 @@ const Signin = () => {
             authenticate(response, () => {
                 setValues({ ...values, email: '', password: '', buttonText: 'Submitted' });
                 // toast.success(response.data.message);
-                isAuth() && isAuth().role === 'admin' ? navigate('/dashboard') : navigate('/profile');
+                isAuth() && isAuth().role === 'admin' ? navigate('/admin/dashboard') : navigate('/profile');
             });
         }
 
         catch (err) {
-            console.log('USER SIGNIN FAILED:', err.response.data.error);
+            console.log('USER SIGNIN FAILED:', err);
             setValues({ ...values, buttonText: 'Submit' });
             toast.error(err.response.data.error);
         }

@@ -114,7 +114,7 @@ const CreateWill = () => {
                         setValues({ ...values, contract: newContractInstance, beneficiary: '', amount: '', buttonText: 'Created' });
                     })
                     .catch((err) => {
-                        console.log('SAVE WILL FAILED:', err.response.data.error);
+                        console.log('SAVE WILL FAILED:', err);
                         setValues({ ...values, buttonText: 'Create Will' });
                     });
             }
@@ -153,15 +153,15 @@ const CreateWill = () => {
                 )
                     .then((response) => {
                         console.log('EXECUTE PAYOUT SUCCESS:', response);
-                        toast.success('Payout executed Successfully!');
+                        toast.success('Will sent successfully!');
                     })
                     .catch((err) => {
-                        console.log('EXECUTE PAYOUT FAILED:', err.response.data.error);
+                        console.log('EXECUTE PAYOUT FAILED:', err);
                     });
             }
 
             catch (err) {
-                console.error('EXECUTE PAYOUT FAILED:', err.response.data.error);
+                console.error('EXECUTE PAYOUT FAILED:', err);
                 toast.error('Failed to execute payout! Please try again.');
             }
         }
