@@ -72,7 +72,7 @@ const Reset = () => {
 
             {!reset && (
                 <div className='max-w-lg m-auto text-center px-4 py-14'>
-                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
+                    <form onSubmit={clickSubmit} className='p-10 flex flex-col shadow rounded gap-4 bg-slate-100'>
                         <input
                             type='password'
                             name='newPassword'

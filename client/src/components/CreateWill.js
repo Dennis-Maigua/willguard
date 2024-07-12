@@ -182,7 +182,7 @@ const CreateWill = () => {
                 </div>
             </section>
 
-            <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-gray-100 shadow rounded'>
+            <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-slate-100 shadow rounded'>
                 <div className='px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
                     <div className='flex md:flex-row flex-col md:items-center gap-2'>
                         <span className='text-red-600 font-semibold'> Account: </span>
@@ -212,7 +212,7 @@ const CreateWill = () => {
             </section>
 
             <section className="max-w-lg m-auto text-center flex flex-col gap-4 px-4 py-10">
-                <form onSubmit={handleCreateWill} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
+                <form onSubmit={handleCreateWill} className='p-10 flex flex-col shadow rounded gap-4 bg-slate-100'>
                     <input
                         type="text"
                         name="beneficiary"

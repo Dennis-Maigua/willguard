@@ -78,7 +78,7 @@ exports.countByStatus = async (req, res) => {
     }
 }
 
-exports.willsTrends = async (req, res) => {
+exports.willTrends = async (req, res) => {
     try {
         const trends = await Will.aggregate([
             {
@@ -93,6 +93,7 @@ exports.willsTrends = async (req, res) => {
             },
             { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
         ]);
+
         return res.json(trends);
     }
 

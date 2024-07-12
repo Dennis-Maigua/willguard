@@ -161,7 +161,7 @@ const Profile = () => {
             </div>
 
             <div className='max-w-2xl m-auto text-center flex flex-col gap-4 px-4 py-10'>
-                <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow rounded gap-4 bg-gray-100'>
+                <form onSubmit={clickUpdate} className='p-10 flex flex-col shadow rounded gap-4 bg-slate-100'>
                     <input
                         type='file'
                         ref={fileRef}
@@ -197,15 +197,18 @@ const Profile = () => {
                     </div>
 
                     <div className='grid grid-cols-2 gap-4'>
-                        <input
-                            type='text'
+                        <select
                             name='role'
                             value={role}
-                            placeholder='Role'
                             onChange={handleChange}
-                            className='p-3 shadow rounded'
+                            className={`p-3 shadow rounded ${isAuth().role === 'user' ? 'bg-gray-100' : ''}`}
                             disabled={isAuth().role === 'user'}
-                        />
+                        >
+                            <option value='' disabled> Select Role </option>
+                            <option value='user'> user </option>
+                            <option value='admin'> admin </option>
+                        </select>
+
                         <input
                             type='email'
                             name='email'

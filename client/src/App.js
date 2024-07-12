@@ -43,7 +43,7 @@ const HeroSection = () => {
 
 const HowItWorksSection = () => {
   return (
-    <section className="py-20 bg-gray-100">
+    <section className="py-20 bg-slate-100">
       <div className="container mx-auto px-6 text-center">
         <h2 className="text-3xl font-bold mb-10">How It Works</h2>
         <div className="flex flex-wrap -mx-4">
@@ -78,7 +78,7 @@ const TestimonialsSection = () => {
         <h2 className="text-3xl font-bold mb-10">Testimonials</h2>
         <div className="flex flex-wrap -mx-4">
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow p-10">
+            <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "This platform made it so easy to create my will. I feel at ease knowing my family is taken care of."
               </p>
@@ -86,7 +86,7 @@ const TestimonialsSection = () => {
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow p-10">
+            <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "The process was straightforward, and I was able to update my will effortlessly. Highly recommend!"
               </p>
@@ -94,7 +94,7 @@ const TestimonialsSection = () => {
             </div>
           </div>
           <div className="w-full md:w-1/3 px-4 mb-8">
-            <div className="bg-gray-100 rounded-lg shadow p-10">
+            <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
                 "The security and ease of use are top-notch. I trust this platform with my important documents."
               </p>

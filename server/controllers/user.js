@@ -135,7 +135,7 @@ exports.activeUsers = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-    const { _id, role, profileUrl, name, email, phone, address } = req.body;
+    const { id, role, profileUrl, name, email, phone, address } = req.body;
 
     try {
         const updateFields = {};
@@ -148,7 +148,7 @@ exports.updateUser = async (req, res) => {
         if (address) updateFields.address = address.trim();
 
         const user = await User.findByIdAndUpdate(
-            _id,
+            id,
             { $set: updateFields },
             { new: true, runValidators: true }
         );
@@ -163,11 +163,7 @@ exports.updateUser = async (req, res) => {
         user.salt = undefined;
 
         console.log('UPDATE USER SUCCESS:', req.user);
-        return res.json({
-            user,
-            message: 'User updated successfully!',
-            success: true
-        });
+        return res.json(user);
     }
 
     catch (err) {
@@ -180,7 +176,7 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndDelete(req.body._id);
+        const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
             return res.status(404).json({
                 error: 'User not found!'
@@ -190,7 +186,7 @@ exports.deleteUser = async (req, res) => {
         user.hashed_password = undefined;
         user.salt = undefined;
 
-        console.log('DELETE USER SUCCESS:', req.user)
+        console.log('DELETE USER SUCCESS:', user)
         return res.json({
             success: true,
             message: `User deleted successfully!`,
@@ -205,3 +201,28 @@ exports.deleteUser = async (req, res) => {
         });
     }
 }
+
+exports.userTrends = async (req, res) => {
+    try {
+        const trends = await User.aggregate([
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$createdAt" },
+                        month: { $month: "$createdAt" },
+                        day: { $dayOfMonth: "$createdAt" }
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ]);
+
+        return res.json(trends);
+    }
+
+    catch (err) {
+        console.log('USER CREATION TRENDS FAILED:', err);
+        return res.status(500).json({ error: 'Failed to fetch user creation trends!' });
+    }
+};

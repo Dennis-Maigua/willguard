@@ -16,15 +16,16 @@ Chart.register(...registerables);
 const Dashboard = () => {
     const [wills, setWills] = useState([]);
     const [users, setUsers] = useState([]);
+    const [userTrends, setUserTrends] = useState([]);
     const [willTrends, setWillTrends] = useState([]);
 
-    const [willCounts, setWillCounts] = useState({
-        pending: 0,
-        complete: 0
-    });
     const [activeCounts, setActiveCounts] = useState({
         active: 0,
         inactive: 0
+    });
+    const [willCounts, setWillCounts] = useState({
+        pending: 0,
+        complete: 0
     });
     const [activeComponent, setActiveComponent] = useState({
         name: 'Dashboard',
@@ -33,62 +34,17 @@ const Dashboard = () => {
 
     useEffect(() => {
         const init = async () => {
-            await fetchWills();
-            await countWills();
-            await fetchTrends();
             await fetchUsers();
             await countActive();
+            await fetchUserTrends();
+            await fetchWills();
+            await countWills();
+            await fetchWillTrends();
         };
         init();
     }, []);
 
     const token = getCookie('token');
-
-    const fetchWills = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/fetch`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('FETCH WILLS SUCCESS:', response);
-            setWills(response.data);
-        }
-
-        catch (err) {
-            console.log('FETCH WILLS FAILED:', err);
-        }
-    };
-
-    const countWills = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/count`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('COUNT WILLS SUCCESS:', response);
-            setWillCounts(response.data);
-        }
-        catch (err) {
-            console.log('COUNT WILLS FAILED:', err);
-        }
-    }
-
-    const fetchTrends = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/trends`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('WILL TRENDS SUCCESS:', response);
-            setWillTrends(response.data);
-        }
-        catch (err) {
-            console.log('WILL TRENDS FAILED:', err);
-        }
-    }
 
     const fetchUsers = async () => {
         try {
@@ -121,7 +77,68 @@ const Dashboard = () => {
             console.log('ACTIVE USERS FAILED:', err);
         }
 
-    }
+    };
+
+    const fetchUserTrends = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/users/trends`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH USER TRENDS SUCCESS:', response);
+            setUserTrends(response.data);
+        }
+        catch (err) {
+            console.log('FETCH USER TRENDS FAILED:', err);
+        }
+    };
+
+    const fetchWills = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/fetch`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH WILLS SUCCESS:', response);
+            setWills(response.data);
+        }
+
+        catch (err) {
+            console.log('FETCH WILLS FAILED:', err);
+        }
+    };
+
+    const countWills = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/count`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('COUNT WILLS SUCCESS:', response);
+            setWillCounts(response.data);
+        }
+        catch (err) {
+            console.log('COUNT WILLS FAILED:', err);
+        }
+    };
+
+    const fetchWillTrends = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/trends`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH WILL TRENDS SUCCESS:', response);
+            setWillTrends(response.data);
+        }
+        catch (err) {
+            console.log('FETCH WILL TRENDS FAILED:', err);
+        }
+    };
 
     const isActive = (path) => {
         return path === activeComponent
@@ -136,18 +153,19 @@ const Dashboard = () => {
     const renderContent = () => {
         switch (activeComponent.name) {
             case 'Dashboard':
-                return <DashboardContent totalWills={wills} pendingWills={willCounts.pending}
+                return <CardsContent totalWills={wills} pendingWills={willCounts.pending}
                     completeWills={willCounts.complete} activeUsers={activeCounts.active}
                     inactiveUsers={users.length - activeCounts.active} totalUsers={users} />;
-            case 'Wills':
-                return <WillsContent list={wills} />;
             case 'Users':
-                return <UsersContent list={users} token={token} shorten={shortenContent} />;
+                return <UsersContent list={users} token={token} />;
+            case 'Wills':
+                return <WillsContent list={wills} shorten={shortenContent} />;
             case 'Analytics':
-                return <AnalyticsContent pendingWills={willCounts.pending} completeWills={willCounts.complete}
-                    activeUsers={activeCounts.active} inactiveUsers={users.length - activeCounts.active} willTrends={willTrends} />;
+                return <AnalyticsContent pendingWills={willCounts.pending}
+                    completeWills={willCounts.complete} willTrends={willTrends} userTrends={userTrends}
+                    activeUsers={activeCounts.active} inactiveUsers={users.length - activeCounts.active} />;
             default:
-                return <DashboardContent />;
+                return <CardsContent />;
         }
     };
 
@@ -155,16 +173,18 @@ const Dashboard = () => {
         <Layout>
             <ToastContainer />
             {!isAuth() ? <Navigate to='/signin' /> : null}
-            <div className='flex min-h-screen bg-gray-100'>
+            <div className='flex min-h-screen bg-slate-100'>
                 <Sidebar activeComponent={activeComponent.name}
                     setActiveComponent={setActiveComponent}
                     isActive={isActive}
                 />
+
                 <div className='flex-1 p-5'>
                     <Header headerName={activeComponent.header}
                         activeComponent={activeComponent.name}
                         setActiveComponent={setActiveComponent}
                         isActive={isActive} />
+
                     <main className='mt-6'>
                         {renderContent()}
                     </main>
@@ -180,8 +200,8 @@ const Sidebar = ({ isActive, setActiveComponent }) => {
             <h1 className='text-2xl font-bold text-gray-800'> Admin </h1>
             <nav className='flex flex-col mt-10'>
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
-                <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
+                <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
                 <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
             </nav>
         </section>
@@ -209,7 +229,7 @@ const Header = ({ headerName, isActive, setActiveComponent }) => {
             </div>
 
             {dropdown ? (
-                <div className='md:hidden static absolute bg-gray-100 right-6 top-40 w-40 round shadow'>
+                <div className='md:hidden static absolute bg-slate-100 right-6 top-40 w-40 round shadow'>
                     <ul className='flex flex-col gap-6 p-6'>
                         <li>
                             <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
@@ -231,24 +251,9 @@ const Header = ({ headerName, isActive, setActiveComponent }) => {
     );
 };
 
-const DashboardContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers }) => {
+const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers }) => {
     return (
-        <section className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-            <div className='py-10 bg-white rounded-lg shadow text-center'>
-                <h3 className='text-lg font-semibold text-gray-700'> {pendingWills} </h3>
-                <p className='text-gray-500'> Pending Wills </p>
-            </div>
-
-            <div className='py-10 bg-white rounded-lg shadow text-center'>
-                <h3 className='text-lg font-semibold text-gray-700'> {completeWills} </h3>
-                <p className='text-gray-500'> Complete Wills </p>
-            </div>
-
-            <div className='py-10 bg-white rounded-lg shadow text-center'>
-                <h3 className='text-lg font-semibold text-gray-700'> {totalWills.length} </h3>
-                <p className='text-gray-500'> Total Wills </p>
-            </div>
-
+        <section className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
             <div className='py-10 bg-white rounded-lg shadow text-center'>
                 <h3 className='text-lg font-semibold text-gray-700'> {activeUsers} </h3>
                 <p className='text-gray-500'> Active Users </p>
@@ -263,78 +268,20 @@ const DashboardContent = ({ pendingWills, completeWills, totalWills, totalUsers,
                 <h3 className='text-lg font-semibold text-gray-700'> {totalUsers.length} </h3>
                 <p className='text-gray-500'> Total Users </p>
             </div>
-        </section>
-    );
-};
 
-const WillsContent = ({ list, shorten }) => {
-    return (
-        <section className='max-w-md md:max-w-lg lg:max-w-full mx-auto bg-white rounded-lg shadow'>
-            <div className='overflow-x-auto'>
-                <table className='min-w-full divide-y divide-gray-200'>
-                    <thead>
-                        <tr>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Contract Address </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Txn Hash </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value ETH </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
-                        </tr>
-                    </thead>
-                    <tbody className='bg-white divide-y divide-gray-200'>
-                        {list.map((will) => (
-                            <tr key={will._id}>
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <div className='flex items-center'>
-                                        <span>{shorten(will.txnHash)}</span>
-                                        <CopyToClipboard text={will.txnHash}>
-                                            <button className='ml-2'>
-                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                            </button>
-                                        </CopyToClipboard>
-                                    </div>
-                                </td>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {pendingWills} </h3>
+                <p className='text-gray-500'> Pending Wills </p>
+            </div>
 
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <div className='flex items-center'>
-                                        <span>{shorten(will.contractAddress)}</span>
-                                        <CopyToClipboard text={will.contractAddress}>
-                                            <button className='ml-2'>
-                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                            </button>
-                                        </CopyToClipboard>
-                                    </div>
-                                </td>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {completeWills} </h3>
+                <p className='text-gray-500'> Complete Wills </p>
+            </div>
 
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <div className='flex items-center'>
-                                        <span>{shorten(will.from)}</span>
-                                        <CopyToClipboard text={will.from}>
-                                            <button className='ml-2'>
-                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                            </button>
-                                        </CopyToClipboard>
-                                    </div>
-                                </td>
-
-                                <td className='px-6 py-4 whitespace-nowrap'>
-                                    <div className='flex items-center'>
-                                        <span>{shorten(will.to)}</span>
-                                        <CopyToClipboard text={will.to}>
-                                            <button className='ml-2'>
-                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                            </button>
-                                        </CopyToClipboard>
-                                    </div>
-                                </td>
-
-                                <td className='px-6 py-4 whitespace-nowrap'>{will.value}</td>
-                                <td className='px-6 py-4 whitespace-nowrap'>{will.status}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {totalWills.length} </h3>
+                <p className='text-gray-500'> Total Wills </p>
             </div>
         </section>
     );
@@ -343,6 +290,7 @@ const WillsContent = ({ list, shorten }) => {
 const UsersContent = ({ list, token }) => {
     const [editUser, setEditUser] = useState(null);
     const [values, setValues] = useState({
+        id: '',
         role: '',
         profileUrl: '',
         name: '',
@@ -352,7 +300,7 @@ const UsersContent = ({ list, token }) => {
         buttonText: 'Update'
     });
 
-    const { role, profileUrl, name, email, phone, address, buttonText } = values;
+    const { id, role, profileUrl, name, email, phone, address, buttonText } = values;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -363,13 +311,14 @@ const UsersContent = ({ list, token }) => {
         setEditUser(user);
         setValues({
             ...values,
+            id: user._id,
             role: user.role,
             profileUrl: user.profileUrl,
             name: user.name,
             email: user.email,
             phone: user.phone,
             address: user.address
-        })
+        });
     };
 
     const handleUpdateUser = async (event) => {
@@ -377,14 +326,12 @@ const UsersContent = ({ list, token }) => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API}/admin/update`,
-                { userId: editUser._id, role, profileUrl, name, email, phone, address },
+                `${process.env.REACT_APP_API}/admin/update`, values,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('USER UPDATE SUCCESS:', response.data);
             toast.success('User updated successfully!');
-            // Update the user list with the new data (optional)
             setEditUser(null);
         }
 
@@ -400,9 +347,8 @@ const UsersContent = ({ list, token }) => {
         if (confirmDelete) {
             try {
                 const response = await axios.delete(
-                    `${process.env.REACT_APP_API}/admin/delete`,
-                    { headers: { Authorization: `Bearer ${token}` } },
-                    { data: { userId } }
+                    `${process.env.REACT_APP_API}/admin/delete/${userId}`,
+                    { headers: { Authorization: `Bearer ${token}` } }
                 );
 
                 console.log('DELETE USER SUCCESS:', response);
@@ -418,7 +364,7 @@ const UsersContent = ({ list, token }) => {
     };
 
     return (
-        <section className='max-w-md md:max-w-lg lg:max-w-full mx-auto bg-white rounded-lg shadow'>
+        <section className='max-w-md md:min-w-full mx-auto bg-white rounded-lg shadow'>
             <div className='overflow-x-auto'>
                 <table className='min-w-full divide-y divide-gray-200'>
                     <thead>
@@ -435,17 +381,17 @@ const UsersContent = ({ list, token }) => {
                     <tbody className='bg-white divide-y divide-gray-200'>
                         {list.map((user) => (
                             <tr key={user._id}>
-                                <td className='px-6 py-4 whitespace-nowrap'>{user.role}</td>
-                                <td className='px-6 py-4 whitespace-nowrap'>
+                                <td className='px-6 py-3 whitespace-nowrap'>{user.role}</td>
+                                <td className='px-6 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <img src={user.profileUrl || Avatar} alt='Profile' className='w-10 h-10 rounded-full' />
                                     </div>
                                 </td>
-                                <td className='px-6 py-4 whitespace-nowrap'>{user.name}</td>
-                                <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
-                                <td className='px-6 py-4 whitespace-nowrap'>{user.phone}</td>
-                                <td className='px-6 py-4 whitespace-nowrap'>{user.address}</td>
-                                <td className='px-6 py-4 whitespace-nowrap font-medium'>
+                                <td className='px-6 py-3 whitespace-nowrap'>{user.name}</td>
+                                <td className='px-6 py-3 whitespace-nowrap'>{user.email}</td>
+                                <td className='px-6 py-3 whitespace-nowrap'>{user.phone}</td>
+                                <td className='px-6 py-3 whitespace-nowrap'>{user.address}</td>
+                                <td className='px-6 py-3 whitespace-nowrap font-medium'>
                                     <button className='text-blue-400 hover:text-blue-700' onClick={() => clickEditUser(user)}> Edit </button>
                                     <button className='text-red-500 hover:text-red-700 ml-4' onClick={() => handleDeleteUser(user._id)}> Delete </button>
                                 </td>
@@ -459,18 +405,26 @@ const UsersContent = ({ list, token }) => {
                 <div className='fixed inset-0 flex items-center justify-center z-50 p-4'>
                     <div className='fixed inset-0 bg-black opacity-50'></div>
                     <div className='bg-white rounded-lg shadow-lg p-10 z-10 max-w-2xl w-full'>
-                        <h1 className='text-center text-3xl font-semibold mb-10'> Edit User </h1>
+                        <div className='text-center mb-10'>
+                            <h1 className='text-3xl font-semibold mb-6'> Edit User </h1>
+                            <span className='font-semibold'> ID: </span>
+                            <span className=''> {id} </span>
+                        </div>
 
                         <form onSubmit={handleUpdateUser} className='flex flex-col gap-4'>
                             <div className='grid grid-cols-2 gap-4'>
-                                <input
-                                    type='text'
+                                <select
                                     name='role'
                                     value={role}
-                                    placeholder='Role'
                                     onChange={handleChange}
                                     className='p-3 shadow rounded'
-                                />
+                                    disabled={isAuth().role === 'user'}
+                                >
+                                    <option value='' disabled> Select Role </option>
+                                    <option value='user'> user </option>
+                                    <option value='admin'> admin </option>
+                                </select>
+
                                 <input
                                     type='text'
                                     name='profileUrl'
@@ -535,7 +489,80 @@ const UsersContent = ({ list, token }) => {
     );
 };
 
-const AnalyticsContent = ({ pendingWills, completeWills, willTrends, activeUsers, inactiveUsers }) => {
+const WillsContent = ({ list, shorten }) => {
+    return (
+        <section className='max-w-md md:min-w-full mx-auto bg-white rounded-lg shadow'>
+            <div className='overflow-x-auto'>
+                <table className='min-w-full divide-y divide-gray-200'>
+                    <thead>
+                        <tr>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Contract Address </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Txn Hash </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value ETH </th>
+                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
+                        </tr>
+                    </thead>
+                    <tbody className='bg-white divide-y divide-gray-200'>
+                        {list.map((will) => (
+                            <tr key={will._id}>
+                                <td className='px-6 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(will.txnHash)}</span>
+                                        <CopyToClipboard text={will.txnHash}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-6 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(will.contractAddress)}</span>
+                                        <CopyToClipboard text={will.contractAddress}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-6 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(will.from)}</span>
+                                        <CopyToClipboard text={will.from}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-6 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(will.to)}</span>
+                                        <CopyToClipboard text={will.to}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-6 py-3 whitespace-nowrap'>{will.value}</td>
+                                <td className='px-6 py-3 whitespace-nowrap'>{will.status}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    );
+};
+
+const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills, completeWills, willTrends }) => {
     const willsData = {
         labels: ['Pending', 'Complete'],
         datasets: [
@@ -578,33 +605,55 @@ const AnalyticsContent = ({ pendingWills, completeWills, willTrends, activeUsers
         <section className='flex flex-col gap-8'>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 gap-6'>
                 <div className='p-6 bg-white rounded-lg shadow'>
-                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills </h3>
-                    <Pie data={willsData} />
-                </div>
-
-                <div className='p-6 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Users </h3>
                     <Pie data={usersData} />
                 </div>
 
                 <div className='p-6 bg-white rounded-lg shadow'>
-                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills Trends </h3>
-                    <Line //or Bar
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills </h3>
+                    <Pie data={willsData} />
+                </div>
+            </div>
+
+            <div className='grid grid-cols-1 md:grid-cols-2 md:gap-4 gap-6'>
+                <div className='p-6 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> User Trends </h3>
+                    <Bar
+                        data={{
+                            labels: userTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            datasets: [
+                                {
+                                    label: 'Users Created',
+                                    data: userTrends.map(trend => trend.count),
+                                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1,
+                                }
+                            ]
+                        }}
+                    />
+                </div>
+
+                <div className='p-6 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Will Trends </h3>
+                    <Line
                         data={{
                             labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
                             datasets: [
                                 {
                                     label: 'Wills Created',
                                     data: willTrends.map(trend => trend.count),
-                                    borderColor: 'rgba(75,192,192,1)',
-                                    fill: false,
+                                    backgroundColor: 'rgba(255, 205, 86, 0.2)',
+                                    borderColor: 'rgba(255, 205, 86, 1)',
+                                    borderWidth: 1,
+                                    fill: true,
                                 }
                             ]
                         }}
                     />
                 </div>
             </div>
-        </section>
+        </section >
     );
 };
 
