@@ -7,7 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
 import Layout from './Layout';
-import { getCookie, isAuth, signout, updateLocalStorage } from '../utils/helpers';
+import { getCookie, isAuth, signout, updateUser } from '../utils/helpers';
 import Avatar from '../assets/avatar.png';
 
 const Profile = () => {
@@ -86,7 +86,7 @@ const Profile = () => {
 
             if (err.response.status === 401) {
                 signout(() => {
-                    navigate('/')
+                    navigate('/signin')
                 });
             }
         }
@@ -107,15 +107,14 @@ const Profile = () => {
 
         try {
             const response = await axios.put(
-                `${process.env.REACT_APP_API}/user/update`,
-                { role, profileUrl, name, email, password, phone, address },
+                `${process.env.REACT_APP_API}/user/update`, values,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             console.log('UPDATE PROFILE SUCCESS:', response);
-            updateLocalStorage(response, () => {
+            updateUser(response, () => {
                 setValues({ ...values, buttonText: 'Updated' });
-                toast.success(response.data.message);
+                toast.success('Profile updated successfully!');
             });
         }
 
@@ -205,7 +204,7 @@ const Profile = () => {
                             placeholder='Role'
                             onChange={handleChange}
                             className='p-3 shadow rounded'
-                            disabled={isAuth().role === 'subscriber'}
+                            disabled={isAuth().role === 'user'}
                         />
                         <input
                             type='email'
@@ -214,7 +213,7 @@ const Profile = () => {
                             placeholder='Email'
                             onChange={handleChange}
                             className='p-3 shadow rounded'
-                            disabled={isAuth().role === 'subscriber'}
+                            disabled={isAuth().role === 'user'}
                         />
                     </div>
 

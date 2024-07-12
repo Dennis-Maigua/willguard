@@ -383,7 +383,7 @@ const UsersContent = ({ list, token }) => {
             );
 
             console.log('USER UPDATE SUCCESS:', response.data);
-            toast.success(response.data.message);
+            toast.success('User updated successfully!');
             // Update the user list with the new data (optional)
             setEditUser(null);
         }

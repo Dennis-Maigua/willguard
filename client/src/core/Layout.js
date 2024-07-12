@@ -59,45 +59,22 @@ const Layout = ({ children }) => {
                             </div>
                         )}
 
-                        {isAuth() && isAuth().role === 'subscriber' && (
+                        {isAuth() && (
                             <div>
                                 <div className='flex items-center gap-2 cursor-pointer' onClick={() => { setDropdown(!dropdown) }}>
                                     <img src={isAuth().profile || Avatar} alt='avatar' className='h-8 w-8 rounded-full object-cover border' />
                                     <span className=''> {isAuth().name} </span>
                                 </div>
 
+
                                 {dropdown ? (
                                     <div className='bg-gray-800 absolute right-0 top-20 w-40 round shadow'>
                                         <ul className='flex flex-col gap-6 p-6'>
-                                            <li>
-                                                <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
-                                            </li>
-                                            <li>
-                                                <NavLink to='/history' className={`${isActive('/history')}`}> History </NavLink>
-                                            </li>
-                                            <li>
-                                                <span onClick={handleLogout} className='hover:text-red-500 cursor-pointer'> Log Out </span>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                )
-                                    : null}
-                            </div>
-                        )}
-
-                        {isAuth() && isAuth().role === 'admin' && (
-                            <div>
-                                <div className='flex items-center gap-2 cursor-pointer' onClick={() => { setDropdown(!dropdown) }}>
-                                    <img src={isAuth().profile || Avatar} alt='avatar' className='h-8 w-8 rounded-full object-cover border' />
-                                    <span> {isAuth().name} </span>
-                                </div>
-
-                                {dropdown ? (
-                                    <div className='bg-gray-800 absolute right-2 top-20 w-40 round shadow'>
-                                        <ul className='flex flex-col gap-6 p-6'>
-                                            <li>
-                                                <NavLink to='/admin/dashboard' className={`${isActive('/admin/dashboard')}`}> Dashboard </NavLink>
-                                            </li>
+                                            {isAuth().role === 'admin' && (
+                                                <li>
+                                                    <NavLink to='/admin/dashboard' className={`${isActive('/admin/dashboard')}`}> Dashboard </NavLink>
+                                                </li>
+                                            )}
                                             <li>
                                                 <NavLink to='/profile' className={`${isActive('/profile')}`}> Profile </NavLink>
                                             </li>

@@ -59,14 +59,17 @@ exports.resetValidator = [
 
 exports.updateValidator = [
     check('role')
-        .isIn(['subscriber', 'admin'])
-        .withMessage('Role must be either subscriber or admin!'),
+        .optional()
+        .isIn(['user', 'admin'])
+        .withMessage('Role must be either user or admin!'),
     check('name')
+        .optional()
         .isLength({ min: 3 })
         .withMessage('Name must be at least 3 characters long!')
         .matches(/^[A-Za-z\s]+$/)
         .withMessage('Name can only contain alphabetic characters and spaces!'),
     check('email')
+        .optional()
         .isEmail()
         .withMessage('A valid email is required!')
         .normalizeEmail()
@@ -76,13 +79,13 @@ exports.updateValidator = [
         .isLength({ min: 8 })
         .withMessage('Password must be at least 8 characters long!')
         .matches(/[a-z]/)
-        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .withMessage('Password must contain: a lowercase letter, uppercase letter, digit, and special character!')
         .matches(/[A-Z]/)
-        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .withMessage('Password must contain: a lowercase letter, uppercase letter, digit, and special character!')
         .matches(/[0-9]/)
-        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!')
+        .withMessage('Password must contain: a lowercase letter, uppercase letter, digit, and special character!')
         .matches(/[!@#$%^&*(),.?":{}|<>]/)
-        .withMessage('Password must contain at least a lowercase letter, uppercase letter, digit, and special character!'),
+        .withMessage('Password must contain: a lowercase letter, uppercase letter, digit, and special character!'),
     check('phone')
         .optional()
         .isMobilePhone()

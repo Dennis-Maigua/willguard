@@ -28,6 +28,16 @@ exports.updateProfile = async (req, res) => {
     const { role, profileUrl, name, email, password, phone, address } = req.body;
 
     try {
+        const updateFields = {};
+
+        if (role) updateFields.role = role.trim();
+        if (profileUrl) updateFields.profileUrl = profileUrl.trim();
+        if (name) updateFields.name = name.trim();
+        if (email) updateFields.email = email.trim();
+        if (phone) updateFields.phone = phone.trim();
+        if (address) updateFields.address = address.trim();
+
+        // Fetch the user to get the current password if a new password is not provided
         const user = await User.findById(req.user._id);
         if (!user) {
             return res.status(404).json({
@@ -35,45 +45,24 @@ exports.updateProfile = async (req, res) => {
             });
         }
 
-        if (role) {
-            user.role = role.trim();
+        // If a new password is provided, encrypt it and update hashed_password and salt
+        if (password) {
+            user.password = password.trim(); // This will trigger the virtual password setter
+            updateFields.hashed_password = user.hashed_password;
+            updateFields.salt = user.salt;
         }
 
-        if (profileUrl) {
-            user.profileUrl = profileUrl.trim();
-        }
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
 
-        if (name) {
-            user.name = name.trim();
-        }
-
-        // for admins only
-        if (email) {
-            user.email = email.trim();
-        }
-
-        if (password !== undefined) {
-            user.password = password.trim();
-        }
-
-        if (phone !== undefined) {
-            user.phone = phone.trim();
-        }
-
-        if (address !== undefined) {
-            user.address = address.trim();
-        }
-
-        const updatedUser = await user.save();
         updatedUser.hashed_password = undefined;
         updatedUser.salt = undefined;
 
         console.log('UPDATE PROFILE SUCCESS:', req.user);
-        return res.json({
-            success: true,
-            message: `User profile updated successfully!`,
-            updatedUser
-        });
+        return res.json(updatedUser);
     }
 
     catch (err) {
@@ -84,7 +73,7 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-exports.deleteAccount = async (req, res) => {
+exports.deleteProfile = async (req, res) => {
     try {
         const user = await User.findByIdAndDelete(req.user._id);
         if (!user) {
@@ -142,6 +131,50 @@ exports.activeUsers = async (req, res) => {
     catch (err) {
         console.log('COUNT ACTIVE USERS FAILED:', err);
         return res.status(500).json({ error: 'Failed to count active users!' });
+    }
+};
+
+exports.updateUser = async (req, res) => {
+    const { _id, role, profileUrl, name, email, phone, address } = req.body;
+
+    try {
+        const updateFields = {};
+
+        if (role) updateFields.role = role.trim();
+        if (profileUrl) updateFields.profileUrl = profileUrl.trim();
+        if (name) updateFields.name = name.trim();
+        if (email) updateFields.email = email.trim();
+        if (phone) updateFields.phone = phone.trim();
+        if (address) updateFields.address = address.trim();
+
+        const user = await User.findByIdAndUpdate(
+            _id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found!'
+            });
+        }
+
+        user.hashed_password = undefined;
+        user.salt = undefined;
+
+        console.log('UPDATE USER SUCCESS:', req.user);
+        return res.json({
+            user,
+            message: 'User updated successfully!',
+            success: true
+        });
+    }
+
+    catch (err) {
+        console.log('UPDATE USER FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to update user! Please try again.'
+        });
     }
 };
 

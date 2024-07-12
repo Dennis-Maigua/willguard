@@ -11,7 +11,7 @@ import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
 const CreateWill = () => {
-    const [wills, setWills] = useState([]);
+    const [will, setWill] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
         account: '',
@@ -97,12 +97,12 @@ const CreateWill = () => {
                 const value = amount;
 
                 const newWill = { txnHash, contractAddress, from, to, value, status: 'Pending' };
-                // Update state
-                const storeWills = [...wills, newWill];
-                setWills(storeWills);
+                const storeWill = [...will, newWill];
+                setWill(storeWill);
 
-                // Store in localStorage
-                localStorage.setItem('will', JSON.stringify(storeWills));
+                if (typeof window !== 'undefined') {
+                    localStorage.setItem('will', JSON.stringify(storeWill));
+                }
 
                 await axios.post(
                     `${process.env.REACT_APP_API}/will/create`, newWill,
@@ -140,10 +140,10 @@ const CreateWill = () => {
                 await contract.methods.hasDeceased().send({ from: account });
 
                 // Update wills state
-                const updatedWills = [...wills];
+                const updatedWills = [...will];
                 const id = updatedWills[index].txnHash;
                 updatedWills[index].status = 'Complete';
-                setWills(updatedWills);
+                setWill(updatedWills);
 
                 localStorage.setItem('will', JSON.stringify(updatedWills));
 
@@ -252,8 +252,8 @@ const CreateWill = () => {
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
-                            {wills.length > 0 ? (
-                                wills.map((will, index) => (
+                            {will.length > 0 ? (
+                                will.map((will, index) => (
                                     <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
