@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App';
 
@@ -19,6 +19,8 @@ import Contact from './components/Contact';
 import CreateWill from './components/CreateWill';
 
 const Router = () => {
+    const [account, setAccount] = useState('');
+
     return (
         <BrowserRouter>
             <Routes>
@@ -36,8 +38,8 @@ const Router = () => {
                 </Route>
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/create-will' element={<CreateWill />} />
-                <Route path='/history' element={<History />} />
+                <Route path='/create-will' element={<CreateWill setAccount={setAccount} />} />
+                <Route path='/history' element={<History account={account} />} />
             </Routes>
         </BrowserRouter>
     );

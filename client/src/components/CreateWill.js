@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
@@ -10,7 +10,7 @@ import Layout from '../core/Layout';
 import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
-const CreateWill = () => {
+const CreateWill = ({ setAccount }) => {
     const [will, setWill] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
@@ -56,6 +56,7 @@ const CreateWill = () => {
                 const contractInstance = new web3.eth.Contract(Will.abi, deployedNetwork && deployedNetwork.address);
 
                 setValues({ ...values, account: accounts[0], contract: contractInstance, balance: balanceInEth });
+                setAccount(accounts[0]);
             }
 
             catch (err) {
@@ -168,7 +169,7 @@ const CreateWill = () => {
     };
 
     const shortenAddress = (address) => {
-        return `${address.slice(0, 5)}...${address.slice(-5)}`;
+        return `${address.slice(0, 4)}...${address.slice(-4)}`;
     };
 
     return (
@@ -183,8 +184,8 @@ const CreateWill = () => {
             </section>
 
             <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-slate-100 shadow rounded'>
-                <div className='px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
-                    <div className='flex md:flex-row flex-col md:items-center gap-2'>
+                <div className='px-0 lg:px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
+                    <div className='flex lg:flex-row flex-col md:items-center gap-2'>
                         <span className='text-red-600 font-semibold'> Account: </span>
                         {!account ? (
                             <button onClick={loadWeb3}
@@ -194,9 +195,9 @@ const CreateWill = () => {
                             </button>
                         ) : (
                             <div>
-                                <span> {shortenAddress(account)}</span>
+                                <span> {account} </span>
                                 <CopyToClipboard text={account}>
-                                    <button className='ml-2'>
+                                    <button>
                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                     </button>
                                 </CopyToClipboard>
@@ -204,7 +205,7 @@ const CreateWill = () => {
                         )}
                     </div>
 
-                    <div className='flex md:flex-row flex-col gap-2'>
+                    <div className='flex lg:flex-row flex-col gap-2'>
                         <span className='text-red-600 font-semibold'> Balance: </span>
                         <span> {balance} ETH </span>
                     </div>
@@ -237,7 +238,7 @@ const CreateWill = () => {
                 </form>
             </section>
 
-            <section className='max-w-7xl mx-auto px-4 py-14'>
+            <section className='max-w-7xl mx-auto px-4 py-10'>
                 <div className='shadow rounded overflow-x-auto'>
                     <table className='min-w-full divide-y divide-gray-200'>
                         <thead>
@@ -265,6 +266,7 @@ const CreateWill = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.txnHash)}</span>
@@ -275,6 +277,7 @@ const CreateWill = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.from)}</span>
@@ -285,6 +288,7 @@ const CreateWill = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will.to)}</span>
@@ -295,6 +299,7 @@ const CreateWill = () => {
                                                 </CopyToClipboard>
                                             </div>
                                         </td>
+
                                         <td className='px-6 py-4 whitespace-nowrap'>{will.value}</td>
                                         <td className='px-6 py-4 whitespace-nowrap'>{will.status}</td>
 
@@ -306,9 +311,9 @@ const CreateWill = () => {
                                             </td>
                                         ) : (
                                             <td className='px-6 py-4 whitespace-nowrap'>
-                                                <button disabled className='text-gray-400 font-medium'>
-                                                    Sent
-                                                </button>
+                                                <Link to='/history' className='text-red-500 hover:opacity-80 font-medium'>
+                                                    View
+                                                </Link>
                                             </td>
                                         )}
                                     </tr>
@@ -316,7 +321,7 @@ const CreateWill = () => {
                             ) : (
                                 <tr>
                                     <td className='px-6 py-4 whitespace-nowrap' colSpan='7'>
-                                        <div className='text-center text-gray-500'>No wills found</div>
+                                        <div className='text-center text-gray-500'> No wills found </div>
                                     </td>
                                 </tr>
                             )}

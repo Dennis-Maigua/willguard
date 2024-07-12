@@ -44,18 +44,39 @@ exports.update = async (req, res) => {
     }
 };
 
-exports.fetchWills = async (req, res) => {
+exports.loadUserWills = async (req, res) => {
     try {
-        const wills = await Will.find();
+        const wills = await Will.find({ from: req.params.from });
+        if (!wills) {
+            return res.status(404).json({
+                error: 'User wills not found!'
+            });
+        }
 
-        console.log('READ WILL SUCCESS!');
+        console.log('LOAD USER WILLS SUCCESS:', wills)
         return res.json(wills);
     }
 
     catch (err) {
-        console.log('READ WILL FAILED:', err);
+        console.log('LOAD USER WILLS FAILED:', err);
         return res.status(500).json({
-            message: 'Failed to fetch will from database!'
+            error: 'Failed to load user wills! Please try again.'
+        });
+    }
+}
+
+exports.fetchWills = async (req, res) => {
+    try {
+        const wills = await Will.find();
+
+        console.log('FETCH WILLS SUCCESS!');
+        return res.json(wills);
+    }
+
+    catch (err) {
+        console.log('FETCH WILLS FAILED:', err);
+        return res.status(500).json({
+            message: 'Failed to fetch wills from database!'
         });
     }
 };

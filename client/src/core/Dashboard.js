@@ -142,12 +142,12 @@ const Dashboard = () => {
 
     const isActive = (path) => {
         return path === activeComponent
-            ? 'w-full text-sm font-semibold py-5 text-red-500 cursor-pointer'
-            : 'w-full text-sm font-semibold py-5 hover:text-red-500 cursor-pointer';
+            ? 'w-full text-md font-semibold py-5 text-red-500 cursor-pointer'
+            : 'w-full text-md font-semibold py-5 hover:text-red-500 cursor-pointer';
     };
 
     const shortenContent = (content) => {
-        return `${content.slice(0, 5)}...${content.slice(-5)}`;
+        return `${content.slice(0, 4)}...${content.slice(-4)}`;
     };
 
     const renderContent = () => {
@@ -157,7 +157,7 @@ const Dashboard = () => {
                     completeWills={willCounts.complete} activeUsers={activeCounts.active}
                     inactiveUsers={users.length - activeCounts.active} totalUsers={users} />;
             case 'Users':
-                return <UsersContent list={users} token={token} />;
+                return <UsersContent list={users} token={token} shorten={shortenContent} />;
             case 'Wills':
                 return <WillsContent list={wills} shorten={shortenContent} />;
             case 'Analytics':
@@ -212,7 +212,7 @@ const Header = ({ headerName, isActive, setActiveComponent }) => {
     const [dropdown, setDropdown] = useState(false);
 
     return (
-        <header className='flex justify-between items-center py-4 px-6 bg-white border-b-4 border-red-500'>
+        <header className='flex justify-between items-center py-4 px-5 bg-white border-b-4 border-red-500'>
             <div>
                 <h2 className='text-2xl font-semibold text-gray-800'>{headerName}</h2>
             </div>
@@ -287,7 +287,7 @@ const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, act
     );
 };
 
-const UsersContent = ({ list, token }) => {
+const UsersContent = ({ list, token, shorten }) => {
     const [editUser, setEditUser] = useState(null);
     const [values, setValues] = useState({
         id: '',
@@ -369,31 +369,43 @@ const UsersContent = ({ list, token }) => {
                 <table className='min-w-full divide-y divide-gray-200'>
                     <thead>
                         <tr>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Role </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Profile </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Phone </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Address </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> ID </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Role </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Profile </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Phone </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Address </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
                         </tr>
                     </thead>
                     <tbody className='bg-white divide-y divide-gray-200'>
                         {list.map((user) => (
                             <tr key={user._id}>
-                                <td className='px-6 py-3 whitespace-nowrap'>{user.role}</td>
-                                <td className='px-6 py-3 whitespace-nowrap'>
+                                <td className='px-5 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(user._id)}</span>
+                                        <CopyToClipboard text={user._id}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-5 py-3 whitespace-nowrap'>{user.role}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <img src={user.profileUrl || Avatar} alt='Profile' className='w-10 h-10 rounded-full' />
                                     </div>
                                 </td>
-                                <td className='px-6 py-3 whitespace-nowrap'>{user.name}</td>
-                                <td className='px-6 py-3 whitespace-nowrap'>{user.email}</td>
-                                <td className='px-6 py-3 whitespace-nowrap'>{user.phone}</td>
-                                <td className='px-6 py-3 whitespace-nowrap'>{user.address}</td>
-                                <td className='px-6 py-3 whitespace-nowrap font-medium'>
+                                <td className='px-5 py-3 whitespace-nowrap'>{user.name}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{user.email}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{user.phone}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{user.address}</td>
+                                <td className='px-5 py-3 whitespace-nowrap font-medium'>
                                     <button className='text-blue-400 hover:text-blue-700' onClick={() => clickEditUser(user)}> Edit </button>
-                                    <button className='text-red-500 hover:text-red-700 ml-4' onClick={() => handleDeleteUser(user._id)}> Delete </button>
+                                    <button className='text-red-500 hover:text-red-700 ml-3' onClick={() => handleDeleteUser(user._id)}> Delete </button>
                                 </td>
                             </tr>
                         ))}
@@ -496,18 +508,30 @@ const WillsContent = ({ list, shorten }) => {
                 <table className='min-w-full divide-y divide-gray-200'>
                     <thead>
                         <tr>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Contract Address </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Txn Hash </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value ETH </th>
-                            <th className='px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> ID </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Contract Address </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Txn Hash </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> From </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> To </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Value ETH </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
                         </tr>
                     </thead>
                     <tbody className='bg-white divide-y divide-gray-200'>
                         {list.map((will) => (
                             <tr key={will._id}>
-                                <td className='px-6 py-3 whitespace-nowrap'>
+                                <td className='px-5 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(will._id)}</span>
+                                        <CopyToClipboard text={will._id}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <span>{shorten(will.txnHash)}</span>
                                         <CopyToClipboard text={will.txnHash}>
@@ -518,7 +542,7 @@ const WillsContent = ({ list, shorten }) => {
                                     </div>
                                 </td>
 
-                                <td className='px-6 py-3 whitespace-nowrap'>
+                                <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <span>{shorten(will.contractAddress)}</span>
                                         <CopyToClipboard text={will.contractAddress}>
@@ -529,7 +553,7 @@ const WillsContent = ({ list, shorten }) => {
                                     </div>
                                 </td>
 
-                                <td className='px-6 py-3 whitespace-nowrap'>
+                                <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <span>{shorten(will.from)}</span>
                                         <CopyToClipboard text={will.from}>
@@ -540,7 +564,7 @@ const WillsContent = ({ list, shorten }) => {
                                     </div>
                                 </td>
 
-                                <td className='px-6 py-3 whitespace-nowrap'>
+                                <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
                                         <span>{shorten(will.to)}</span>
                                         <CopyToClipboard text={will.to}>
@@ -551,8 +575,8 @@ const WillsContent = ({ list, shorten }) => {
                                     </div>
                                 </td>
 
-                                <td className='px-6 py-3 whitespace-nowrap'>{will.value}</td>
-                                <td className='px-6 py-3 whitespace-nowrap'>{will.status}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{will.value}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{will.status}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -603,27 +627,27 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
 
     return (
         <section className='flex flex-col gap-8'>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 md:gap-4 gap-6'>
-                <div className='p-6 bg-white rounded-lg shadow'>
+            <div className='grid grid-cols-2 lg:grid-cols-3 md:gap-4 gap-6'>
+                <div className='p-5 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Users </h3>
                     <Pie data={usersData} />
                 </div>
 
-                <div className='p-6 bg-white rounded-lg shadow'>
+                <div className='p-5 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills </h3>
                     <Pie data={willsData} />
                 </div>
             </div>
 
-            <div className='grid grid-cols-1 md:grid-cols-2 md:gap-4 gap-6'>
-                <div className='p-6 bg-white rounded-lg shadow'>
+            <div className='grid grid-cols-1 lg:grid-cols-2 md:gap-4 gap-6'>
+                <div className='p-5 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> User Trends </h3>
                     <Bar
                         data={{
                             labels: userTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
                             datasets: [
                                 {
-                                    label: 'Users Created',
+                                    label: 'Accounts Created',
                                     data: userTrends.map(trend => trend.count),
                                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                     borderColor: 'rgba(75, 192, 192, 1)',
@@ -634,7 +658,7 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
                     />
                 </div>
 
-                <div className='p-6 bg-white rounded-lg shadow'>
+                <div className='p-5 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Will Trends </h3>
                     <Line
                         data={{
