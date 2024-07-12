@@ -45,8 +45,10 @@ exports.update = async (req, res) => {
 };
 
 exports.loadUserWills = async (req, res) => {
+    const { from } = req.params.id;
+
     try {
-        const wills = await Will.find({ from: req.params.from });
+        const wills = await Will.find({ from: from });
         if (!wills) {
             return res.status(404).json({
                 error: 'User wills not found!'

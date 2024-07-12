@@ -311,7 +311,7 @@ const CreateWill = ({ setAccount }) => {
                                             </td>
                                         ) : (
                                             <td className='px-6 py-4 whitespace-nowrap'>
-                                                <Link to='/history' className='text-red-500 hover:opacity-80 font-medium'>
+                                                <Link to='/history' className='text-green-500 hover:opacity-80 font-medium'>
                                                     View
                                                 </Link>
                                             </td>

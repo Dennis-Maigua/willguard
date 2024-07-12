@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
@@ -25,12 +25,15 @@ const History = ({ account }) => {
     const fetchWills = async () => {
         try {
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/load/${account}`,
+                `${process.env.REACT_APP_API}/wills/${account}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            console.log('FETCH USER WILLS SUCCESS:', response);
+            console.log('FETCH USER WILLS SUCCESS:', response.data);
             setWills(response.data);
+
+            console.log('Wills length:', wills.length);
+            console.log('Wills data', wills);
         }
 
         catch (err) {
@@ -88,8 +91,8 @@ const History = ({ account }) => {
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
                             {wills.length > 0 ? (
-                                wills.map((will, index) => (
-                                    <tr key={index}>
+                                wills.map(will => (
+                                    <tr key={will._id}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will._id)}</span>
