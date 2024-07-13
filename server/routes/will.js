@@ -7,9 +7,9 @@ const { create, fetchWills, update, countByStatus, willTrends,
 
 router.post('/will/create', requireSignin, create);
 router.put('/will/update', requireSignin, update);
-router.get('/wills/:id', requireSignin, loadUserWills);
 router.get('/wills/fetch', requireSignin, adminOnly, fetchWills);
 router.get('/wills/count', requireSignin, adminOnly, countByStatus);
 router.get('/wills/trends', requireSignin, adminOnly, willTrends);
+router.get('/wills/:id', requireSignin, loadUserWills);
 
 module.exports = router;

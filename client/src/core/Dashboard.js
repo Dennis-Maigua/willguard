@@ -34,17 +34,63 @@ const Dashboard = () => {
 
     useEffect(() => {
         const init = async () => {
-            await fetchUsers();
-            await countActive();
-            await fetchUserTrends();
             await fetchWills();
             await countWills();
             await fetchWillTrends();
+            await fetchUsers();
+            await countActive();
+            await fetchUserTrends();
         };
         init();
     }, []);
 
     const token = getCookie('token');
+
+    const fetchWills = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/fetch`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH WILLS SUCCESS:', response);
+            setWills(response.data);
+        }
+
+        catch (err) {
+            console.log('FETCH WILLS FAILED:', err);
+        }
+    };
+
+    const countWills = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/count`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('COUNT WILLS SUCCESS:', response);
+            setWillCounts(response.data);
+        }
+        catch (err) {
+            console.log('COUNT WILLS FAILED:', err);
+        }
+    };
+
+    const fetchWillTrends = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/wills/trends`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH WILL TRENDS SUCCESS:', response);
+            setWillTrends(response.data);
+        }
+        catch (err) {
+            console.log('FETCH WILL TRENDS FAILED:', err);
+        }
+    };
 
     const fetchUsers = async () => {
         try {
@@ -94,52 +140,6 @@ const Dashboard = () => {
         }
     };
 
-    const fetchWills = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/fetch`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('FETCH WILLS SUCCESS:', response);
-            setWills(response.data);
-        }
-
-        catch (err) {
-            console.log('FETCH WILLS FAILED:', err);
-        }
-    };
-
-    const countWills = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/count`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('COUNT WILLS SUCCESS:', response);
-            setWillCounts(response.data);
-        }
-        catch (err) {
-            console.log('COUNT WILLS FAILED:', err);
-        }
-    };
-
-    const fetchWillTrends = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/trends`,
-                { headers: { Authorization: `Bearer ${token}` } }
-            );
-
-            console.log('FETCH WILL TRENDS SUCCESS:', response);
-            setWillTrends(response.data);
-        }
-        catch (err) {
-            console.log('FETCH WILL TRENDS FAILED:', err);
-        }
-    };
-
     const isActive = (path) => {
         return path === activeComponent
             ? 'w-full text-md font-semibold py-5 text-red-500 cursor-pointer'
@@ -179,7 +179,7 @@ const Dashboard = () => {
                     isActive={isActive}
                 />
 
-                <div className='flex-1 p-5'>
+                <div className='flex-1 p-4'>
                     <Header headerName={activeComponent.header}
                         activeComponent={activeComponent.name}
                         setActiveComponent={setActiveComponent}

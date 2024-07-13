@@ -44,29 +44,6 @@ exports.update = async (req, res) => {
     }
 };
 
-exports.loadUserWills = async (req, res) => {
-    const { from } = req.params.id;
-
-    try {
-        const wills = await Will.find({ from: from });
-        if (!wills) {
-            return res.status(404).json({
-                error: 'User wills not found!'
-            });
-        }
-
-        console.log('LOAD USER WILLS SUCCESS:', wills)
-        return res.json(wills);
-    }
-
-    catch (err) {
-        console.log('LOAD USER WILLS FAILED:', err);
-        return res.status(500).json({
-            error: 'Failed to load user wills! Please try again.'
-        });
-    }
-}
-
 exports.fetchWills = async (req, res) => {
     try {
         const wills = await Will.find();
@@ -93,6 +70,7 @@ exports.countByStatus = async (req, res) => {
             complete
         });
     }
+
     catch (err) {
         console.log('COUNTING WILLS FAILED:', err);
         return res.status(500).json({
@@ -125,3 +103,26 @@ exports.willTrends = async (req, res) => {
         return res.status(500).json({ error: 'Failed to fetch will creation trends!' });
     }
 };
+
+exports.loadUserWills = async (req, res) => {
+    const { from } = req.params.id;
+
+    try {
+        const wills = await Will.find({ from: from });
+        if (!wills) {
+            return res.status(404).json({
+                error: 'User wills not found!'
+            });
+        }
+
+        console.log('LOAD USER WILLS SUCCESS:', wills)
+        return res.json(wills);
+    }
+
+    catch (err) {
+        console.log('LOAD USER WILLS FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to load user wills! Please try again.'
+        });
+    }
+}
