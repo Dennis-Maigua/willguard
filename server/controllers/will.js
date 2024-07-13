@@ -105,10 +105,10 @@ exports.willTrends = async (req, res) => {
 };
 
 exports.loadUserWills = async (req, res) => {
-    const { from } = req.params.id;
+    const { account } = req.query;
 
     try {
-        const wills = await Will.find({ from: from });
+        const wills = await Will.find({ from: account });
         if (!wills) {
             return res.status(404).json({
                 error: 'User wills not found!'

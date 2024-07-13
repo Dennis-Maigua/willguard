@@ -11,7 +11,7 @@ import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
 const CreateWill = ({ setAccount }) => {
-    const [will, setWill] = useState([]);
+    const [wills, setWills] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
         account: '',
@@ -35,7 +35,7 @@ const CreateWill = ({ setAccount }) => {
     }, []);
 
     const token = getCookie('token');
-    const { web3, contract, account, balance, beneficiary, amount, buttonText } = values;
+    const { web3, account, balance, contract, beneficiary, amount, buttonText } = values;
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -56,7 +56,7 @@ const CreateWill = ({ setAccount }) => {
                 const contractInstance = new web3.eth.Contract(Will.abi, deployedNetwork && deployedNetwork.address);
 
                 setValues({ ...values, account: accounts[0], contract: contractInstance, balance: balanceInEth });
-                setAccount(accounts[0]);
+                setAccount(accounts[0].toLowerCase());
             }
 
             catch (err) {
@@ -98,12 +98,13 @@ const CreateWill = ({ setAccount }) => {
                 const value = amount;
 
                 const newWill = { txnHash, contractAddress, from, to, value, status: 'Pending' };
-                const storeWill = [...will, newWill];
-                setWill(storeWill);
+                const storeWill = [...wills, newWill];
+                setWills(storeWill);
 
-                if (typeof window !== 'undefined') {
-                    localStorage.setItem('will', JSON.stringify(storeWill));
-                }
+                // Add 'will' cookie to the localStorage
+                // if (typeof window !== 'undefined') {
+                //     localStorage.setItem('will', JSON.stringify(storeWill));
+                // }
 
                 await axios.post(
                     `${process.env.REACT_APP_API}/will/create`, newWill,
@@ -140,24 +141,25 @@ const CreateWill = ({ setAccount }) => {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
 
-                // Update wills state
-                const updatedWills = [...will];
+                // Update will's state
+                const updatedWills = [...wills];
                 const id = updatedWills[index].txnHash;
                 updatedWills[index].status = 'Complete';
-                setWill(updatedWills);
+                setWills(updatedWills);
 
-                localStorage.setItem('will', JSON.stringify(updatedWills));
+                // Update 'will' cookie in the localStorage
+                // localStorage.setItem('will', JSON.stringify(updatedWills));
 
                 await axios.put(
                     `${process.env.REACT_APP_API}/will/update`, { txnHash: id, status: 'Complete' },
                     { headers: { Authorization: `Bearer ${token}` } }
                 )
                     .then((response) => {
-                        console.log('EXECUTE PAYOUT SUCCESS:', response);
+                        console.log('SEND WILL SUCCESS:', response);
                         toast.success('Will sent successfully!');
                     })
                     .catch((err) => {
-                        console.log('EXECUTE PAYOUT FAILED:', err);
+                        console.log('SEND WILL FAILED:', err);
                     });
             }
 
@@ -253,8 +255,8 @@ const CreateWill = ({ setAccount }) => {
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
-                            {will.length > 0 ? (
-                                will.map((will, index) => (
+                            {wills.length > 0 ? (
+                                wills.map((will, index) => (
                                     <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
@@ -305,7 +307,7 @@ const CreateWill = ({ setAccount }) => {
 
                                         {will.status === 'Pending' ? (
                                             <td className='px-6 py-4 whitespace-nowrap'>
-                                                <button className='text-red-500 hover:opacity-80 font-medium' onClick={(event) => handlePayout(event, index)}>
+                                                <button className='text-red-500 hover:opacity-80 font-medium' onClick={(e) => handlePayout(e, index)}>
                                                     Send
                                                 </button>
                                             </td>

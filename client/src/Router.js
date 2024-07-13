@@ -32,14 +32,14 @@ const Router = () => {
                 <Route path='/reset-password/:token' element={<Reset />} />
                 <Route element={<UserRoute />}>
                     <Route path='/profile' element={<Profile />} />
+                    <Route path='/create-will' element={<CreateWill setAccount={setAccount} />} />
+                    <Route path='/history' element={<History account={account} />} />
                 </Route>
                 <Route element={<AdminRoute />}>
                     <Route path='/admin/dashboard' element={<Dashboard />} />
                 </Route>
                 <Route path='/about-us' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/create-will' element={<CreateWill setAccount={setAccount} />} />
-                <Route path='/history' element={<History account={account} />} />
             </Routes>
         </BrowserRouter>
     );

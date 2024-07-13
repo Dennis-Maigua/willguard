@@ -65,7 +65,7 @@ const HowItWorksSection = () => {
           <div className="w-full md:w-1/3 px-4 mb-8">
             <div className="bg-white rounded-lg shadow p-10">
               <h3 className="text-xl font-bold mb-4"> 3. Send Will </h3>
-              <p> Easily send payouts to your beneficiaries anytime, anywhere. </p>
+              <p> Easily send wills to your beneficiaries anytime, anywhere. </p>
             </div>
           </div>
         </div>
@@ -84,27 +84,27 @@ const TestimonialsSection = () => {
           <div className="w-full md:w-1/3 px-4 mb-8">
             <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
-                "This platform made it so easy to create my will. I feel at ease knowing my family is taken care of."
+                "This platform made it so easy to create my will. I feel at ease knowing my wishes are secured."
               </p>
-              <p className="mt-4 font-bold">- John Doe</p>
+              <p className="mt-4 font-bold">- Martin Kelly</p>
             </div>
           </div>
 
           <div className="w-full md:w-1/3 px-4 mb-8">
             <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
-                "The process was straightforward, and I was able to update my will effortlessly. Highly recommend!"
+                "The process was straightforward, and I was able to save my will effortlessly. Highly recommend!"
               </p>
-              <p className="mt-4 font-bold">- Jane Smith</p>
+              <p className="mt-4 font-bold">- Ana Smith</p>
             </div>
           </div>
 
           <div className="w-full md:w-1/3 px-4 mb-8">
             <div className="bg-slate-100 rounded-lg shadow p-10">
               <p className="text-lg italic">
-                "The security and ease of use are top-notch. I trust this platform with my important documents."
+                "The security and ease of use are top-notch. I trust this platform with my wills and testaments."
               </p>
-              <p className="mt-4 font-bold">- Emily Johnson</p>
+              <p className="mt-4 font-bold">- Brian Williams</p>
             </div>
           </div>
         </div>

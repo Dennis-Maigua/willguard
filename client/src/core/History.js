@@ -12,30 +12,36 @@ const History = ({ account }) => {
     const [wills, setWills] = useState([]);
 
     useEffect(() => {
-        const init = async () => {
-            if (account) {
-                await fetchWills();
-            }
-        };
-        init();
+        if (account) {
+            fetchWills();
+        }
     }, [account]);
 
     const token = getCookie('token');
 
     const fetchWills = async () => {
+        // Get 'will' cookie from the localStorage
+        // const storedWills = JSON.parse(localStorage.getItem('will')) || [];
+        // setWills(storedWills);
+
         try {
+            console.log('Fetching wills for account:', account);
             const response = await axios.get(
-                `${process.env.REACT_APP_API}/wills/${account}`,
-                { headers: { Authorization: `Bearer ${token}` } }
+                `${process.env.REACT_APP_API}/wills/load`,
+                {
+                    params: { account },
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                }
             );
 
             console.log('FETCH USER WILLS SUCCESS:', response.data);
             setWills(response.data);
-
-            console.log('Wills length:', wills.length);
-            console.log('Wills data', wills);
         }
-
         catch (err) {
             console.error('FETCH USER WILLS FAILED:', err);
         }
@@ -69,8 +75,8 @@ const History = ({ account }) => {
                     </div>
 
                     <div className='flex md:flex-row flex-col gap-2'>
-                        {/* <span className='text-red-600 font-semibold'> Balance: </span>
-                        <span> {balance} ETH </span> */}
+                        <span className='text-red-600 font-semibold'> Account: </span>
+                        <span> {account} </span>
                     </div>
                 </div>
             </section>
@@ -91,8 +97,8 @@ const History = ({ account }) => {
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
                             {wills.length > 0 ? (
-                                wills.map(will => (
-                                    <tr key={will._id}>
+                                wills.map((will, index) => (
+                                    <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>
                                                 <span>{shortenAddress(will._id)}</span>
