@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { MdOutlineContentCopy } from 'react-icons/md';
 import axios from 'axios';

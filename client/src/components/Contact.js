@@ -34,7 +34,7 @@ const HeroSection = () => {
 const FormSection = () => {
     return (
         <div className="w-full md:w-1/2 px-4 mb-8 md:mb-0">
-            <h3 className="text-2xl font-bold mb-6">Get in Touch</h3>
+            <h3 className="text-2xl font-bold mb-6"> Get in Touch </h3>
             <form className="bg-slate-100 rounded-lg shadow p-10">
                 <div className="mb-4">
                     <input
