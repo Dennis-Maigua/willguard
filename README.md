@@ -96,7 +96,7 @@ Go back to `Terminal 2` above, and run the commands below:
 
 Start the `client` and `server` in both terminals.
 
-- Terminal 1 & 2:
+- Terminal 1 and 2:
 
 ```bash
     $ npm start
