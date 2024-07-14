@@ -25,12 +25,10 @@ const Layout = ({ children }) => {
         <div>
             <nav className='bg-gray-900 text-white'>
                 <div className='max-w-7xl mx-auto px-4 py-6 flex items-center justify-between'>
-                    <div>
-                        <NavLink to='/' className='flex gap-2'>
-                            <img src={Logo} className='h-8' alt='logo' />
-                            <span className='text-2xl font-bold'> WillGuard </span>
-                        </NavLink>
-                    </div>
+                    <NavLink to='/' className='flex gap-2'>
+                        <img src={Logo} className='h-8' alt='logo' />
+                        <span className='text-2xl font-bold'> WillGuard </span>
+                    </NavLink>
 
                     <div className={`md:bg-transparent bg-gray-800 md:static absolute md:p-0 py-6 text-center left-0 
                         md:w-auto w-full md:flex ${toggled ? 'block top-20' : 'hidden'}`}>
@@ -60,7 +58,7 @@ const Layout = ({ children }) => {
                     <div className='flex gap-4 font-semibold'>
                         {!isAuth() && (
                             <div className='flex gap-4'>
-                                <NavLink to='/signin' className='py-2 px-4 text-white bg-red-500 hover:opacity-80 shadow rounded'> Sign In </NavLink>
+                                <NavLink to='/signin' className='py-1 px-3 text-black bg-white hover:text-red-500 shadow rounded'> Sign In </NavLink>
                             </div>
                         )}
 

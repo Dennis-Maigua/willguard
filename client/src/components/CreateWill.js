@@ -188,16 +188,16 @@ const CreateWill = ({ setAccount }) => {
             <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-slate-100 shadow rounded'>
                 <div className='px-0 lg:px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
                     <div className='flex lg:flex-row flex-col md:items-center gap-2'>
-                        <span className='text-red-600 font-semibold'> Account: </span>
+                        <span className='text-red-400 font-bold'> Account: </span>
                         {!account ? (
                             <button onClick={loadWeb3}
-                                className='py-2 px-4 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
+                                className='p-2 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
                             >
                                 Connect to MetaMask
                             </button>
                         ) : (
                             <div>
-                                <span> {account} </span>
+                                {account}
                                 <CopyToClipboard text={account}>
                                     <button>
                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
@@ -207,10 +207,9 @@ const CreateWill = ({ setAccount }) => {
                         )}
                     </div>
 
-                    <div className='flex lg:flex-row flex-col gap-2'>
-                        <span className='text-red-600 font-semibold'> Balance: </span>
-                        <span> {balance} ETH </span>
-                    </div>
+                    <span>
+                        <strong className='text-red-400'> Balance: </strong> {balance} ETH
+                    </span>
                 </div>
             </section>
 

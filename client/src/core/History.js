@@ -66,18 +66,22 @@ const History = ({ account }) => {
 
             <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-slate-100 shadow rounded'>
                 <div className='px-0 lg:px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
-                    <div className='flex md:flex-row flex-col md:items-center gap-2'>
-                        <Link to='/create-will'
-                            className='py-2 px-4 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
-                        >
-                            + Create Will
-                        </Link>
-                    </div>
+                    <Link to='/create-will'
+                        className='p-2 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
+                    >
+                        + Create Will
+                    </Link>
 
-                    <div className='flex md:flex-row flex-col gap-2'>
-                        <span className='text-red-600 font-semibold'> Account: </span>
-                        <span> {account} </span>
-                    </div>
+                    {account && (
+                        <span>
+                            <strong className='text-red-400'> Account: </strong> {account}
+                            <CopyToClipboard text={account}>
+                                <button>
+                                    <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                </button>
+                            </CopyToClipboard>
+                        </span>
+                    )}
                 </div>
             </section>
 

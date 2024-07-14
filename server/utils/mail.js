@@ -267,7 +267,7 @@ exports.contactEntryTemplate = (name, email, message) => {
                         <strong> Message: </strong> ${message}
                     </p>
                 </div>
-                <span> If this was a spam email, please delete it or mark as spam. </span>
+                <span> If this was email was not intended, please delete it or mark as spam. </span>
             </div>
         </body>
     </html>

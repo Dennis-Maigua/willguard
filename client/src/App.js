@@ -28,11 +28,11 @@ const HeroSection = () => {
         </p>
 
         {!isAuth() ? (
-          <Link to="/signup" className="py-3 px-4 font-semibold text-black bg-white hover:text-red-500 shadow rounded">
+          <Link to="/signup" className="py-2 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
             Get Started
           </Link>
         ) : (
-          <Link to="/create-will" className="py-3 px-4 font-semibold text-black bg-white hover:text-red-500 shadow rounded">
+          <Link to="/create-will" className="py-2 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
             Get Started
           </Link>
         )}

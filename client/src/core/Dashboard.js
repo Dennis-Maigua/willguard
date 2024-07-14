@@ -18,6 +18,7 @@ const Dashboard = () => {
     const [users, setUsers] = useState([]);
     const [userTrends, setUserTrends] = useState([]);
     const [willTrends, setWillTrends] = useState([]);
+    const [messages, setMessages] = useState([]);
 
     const [activeCounts, setActiveCounts] = useState({
         active: 0,
@@ -40,6 +41,7 @@ const Dashboard = () => {
             await fetchUsers();
             await countActive();
             await fetchUserTrends();
+            await fetchContactMessages();
         };
         init();
     }, []);
@@ -140,6 +142,23 @@ const Dashboard = () => {
         }
     };
 
+    const fetchContactMessages = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/messages/fetch`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH MESSAGES SUCCESS:', response);
+            setMessages(response.data);
+        }
+
+        catch (err) {
+            console.log('FETCH MESSAGES FAILED:', err);
+        }
+
+    }
+
     const isActive = (path) => {
         return path === activeComponent
             ? 'w-full text-md font-semibold py-5 text-red-500 cursor-pointer'
@@ -155,15 +174,18 @@ const Dashboard = () => {
             case 'Dashboard':
                 return <CardsContent totalWills={wills} pendingWills={willCounts.pending}
                     completeWills={willCounts.complete} activeUsers={activeCounts.active}
-                    inactiveUsers={users.length - activeCounts.active} totalUsers={users} />;
-            case 'Users':
-                return <UsersContent list={users} token={token} shorten={shortenContent} />;
-            case 'Wills':
-                return <WillsContent list={wills} shorten={shortenContent} />;
+                    inactiveUsers={users.length - activeCounts.active} totalUsers={users}
+                    totalMessages={messages} />;
             case 'Analytics':
                 return <AnalyticsContent pendingWills={willCounts.pending}
                     completeWills={willCounts.complete} willTrends={willTrends} userTrends={userTrends}
                     activeUsers={activeCounts.active} inactiveUsers={users.length - activeCounts.active} />;
+            case 'Users':
+                return <UsersContent list={users} token={token} shorten={shortenContent} />;
+            case 'Wills':
+                return <WillsContent list={wills} shorten={shortenContent} />;
+            case 'Messages':
+                return <MessagesContent list={messages} shorten={shortenContent} />;
             default:
                 return <CardsContent />;
         }
@@ -200,9 +222,10 @@ const Sidebar = ({ isActive, setActiveComponent }) => {
             <h1 className='text-2xl font-bold text-gray-800'> Admin </h1>
             <nav className='flex flex-col mt-10'>
                 <span onClick={() => setActiveComponent({ name: 'Dashboard', header: 'Dashboard' })} className={isActive('Dashboard')}> Dashboard </span>
+                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
                 <span onClick={() => setActiveComponent({ name: 'Users', header: 'Users' })} className={isActive('Users')}> Users </span>
                 <span onClick={() => setActiveComponent({ name: 'Wills', header: 'Wills' })} className={isActive('Wills')}> Wills </span>
-                <span onClick={() => setActiveComponent({ name: 'Analytics', header: 'Analytics' })} className={isActive('Analytics')}> Analytics </span>
+                <span onClick={() => setActiveComponent({ name: 'Messages', header: 'Messages' })} className={isActive('Messages')}> Messages </span>
             </nav>
         </section>
     );
@@ -251,7 +274,7 @@ const Header = ({ headerName, isActive, setActiveComponent }) => {
     );
 };
 
-const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers }) => {
+const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers, totalMessages }) => {
     return (
         <section className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
             <div className='py-10 bg-white rounded-lg shadow text-center'>
@@ -283,6 +306,11 @@ const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, act
                 <h3 className='text-lg font-semibold text-gray-700'> {totalWills.length} </h3>
                 <p className='text-gray-500'> Total Wills </p>
             </div>
+
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {totalMessages.length} </h3>
+                <p className='text-gray-500'> Total Messages </p>
+            </div>
         </section>
     );
 };
@@ -309,6 +337,7 @@ const UsersContent = ({ list, token, shorten }) => {
 
     const clickEditUser = (user) => {
         setEditUser(user);
+
         setValues({
             ...values,
             id: user._id,
@@ -577,6 +606,45 @@ const WillsContent = ({ list, shorten }) => {
 
                                 <td className='px-5 py-3 whitespace-nowrap'>{will.value}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{will.status}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    );
+};
+
+const MessagesContent = ({ list, shorten }) => {
+    return (
+        <section className='max-w-md md:min-w-full mx-auto bg-white rounded-lg shadow'>
+            <div className='overflow-x-auto'>
+                <table className='min-w-max divide-y divide-gray-200'>
+                    <thead>
+                        <tr>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> ID </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Message </th>
+                        </tr>
+                    </thead>
+                    <tbody className='bg-white divide-y divide-gray-200'>
+                        {list.map((contact) => (
+                            <tr key={contact._id}>
+                                <td className='px-5 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(contact._id)}</span>
+                                        <CopyToClipboard text={contact._id}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
+                                <td className='px-5 py-3 whitespace-nowrap'>{contact.name}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{contact.email}</td>
+                                <td className='px-5 py-3 whitespace-nowrap'>{contact.message}</td>
                             </tr>
                         ))}
                     </tbody>

@@ -38,3 +38,19 @@ exports.sendMessage = async (req, res) => {
         });
     }
 };
+
+exports.fetchMessages = async (req, res) => {
+    try {
+        const messages = await Contact.find();
+
+        console.log('FETCH MESSAGES SUCCESS!');
+        return res.json(messages);
+    }
+
+    catch (err) {
+        console.log('FETCH MESSAGES FAILED:', err);
+        return res.status(500).json({
+            message: 'Failed to fetch messages from database!'
+        });
+    }
+};

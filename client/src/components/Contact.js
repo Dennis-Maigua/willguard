@@ -51,7 +51,7 @@ const FormSection = () => {
 
         try {
             const response = await axios.post(
-                `${process.env.REACT_APP_API}/user/contact`, { name, email, message }
+                `${process.env.REACT_APP_API}/message/send`, { name, email, message }
             );
 
             console.log('CONTACT ENTRY SUCCESS:', response);
@@ -65,7 +65,6 @@ const FormSection = () => {
             toast.error(err.response.data.error);
         }
     };
-
 
     return (
         <div className='p-0 md:p-4 lg:p-10'>
@@ -114,18 +113,19 @@ const InfoSection = () => {
     return (
         <div className='pt-10 md:p-4 lg:p-10'>
             <h3 className='text-2xl font-bold mb-4'> Contact Information </h3>
+
             <div className='py-6 gap-4 flex flex-col'>
                 <span>
                     If you have any questions, feel free to reach out to us at:
                 </span>
                 <span>
-                    <strong>Email:</strong> support@willguard.com
+                    <strong> Email: </strong> support@willguard.com
                 </span>
                 <span>
-                    <strong>Phone:</strong> +254 712 345 678
+                    <strong>Phone: </strong> +254 712 345 678
                 </span>
                 <span>
-                    <strong>Address:</strong> 1234 Street, Will City, NA 56789
+                    <strong> Address: </strong> 1234 Street, Will City, NA 56789
                 </span>
             </div>
         </div>
