@@ -39,6 +39,38 @@ exports.sendMessage = async (req, res) => {
     }
 };
 
+exports.update = async (req, res) => {
+    const { _id, status } = req.body;
+
+    try {
+        const updateFields = {};
+
+        updateFields.status = status.trim();
+
+        const message = await Contact.findByIdAndUpdate(
+            _id,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
+
+        if (!message) {
+            return res.status(404).json({
+                error: 'Message not found!'
+            });
+        }
+
+        console.log('UPDATE MESSAGE SUCCESS:', message);
+        return res.json(message);
+    }
+
+    catch (err) {
+        console.log('UPDATE MESSAGE FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to update message!'
+        });
+    }
+};
+
 exports.fetchMessages = async (req, res) => {
     try {
         const messages = await Contact.find();
@@ -54,3 +86,22 @@ exports.fetchMessages = async (req, res) => {
         });
     }
 };
+
+exports.countByStatus = async (req, res) => {
+    try {
+        const unread = await Contact.countDocuments({ status: 'Unread' });
+        const read = await Contact.countDocuments({ status: 'Read' });
+
+        return res.json({
+            unread,
+            read
+        });
+    }
+
+    catch (err) {
+        console.log('COUNTING MESSAGES FAILED:', err);
+        return res.status(500).json({
+            error: 'Failed to count messages!'
+        });
+    }
+}

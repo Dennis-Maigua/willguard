@@ -20,17 +20,21 @@ const Dashboard = () => {
     const [willTrends, setWillTrends] = useState([]);
     const [messages, setMessages] = useState([]);
 
-    const [activeCounts, setActiveCounts] = useState({
+    const [activeCount, setActiveCount] = useState({
         active: 0,
         inactive: 0
     });
-    const [willCounts, setWillCounts] = useState({
+    const [willsCount, setWillsCount] = useState({
         pending: 0,
         complete: 0
     });
     const [activeComponent, setActiveComponent] = useState({
         name: 'Dashboard',
         header: 'Dashboard'
+    });
+    const [messagesCount, setMessagesCount] = useState({
+        unread: 0,
+        read: 0
     });
 
     useEffect(() => {
@@ -42,6 +46,7 @@ const Dashboard = () => {
             await countActive();
             await fetchUserTrends();
             await fetchContactMessages();
+            await countMessages();
         };
         init();
     }, []);
@@ -72,7 +77,7 @@ const Dashboard = () => {
             );
 
             console.log('COUNT WILLS SUCCESS:', response);
-            setWillCounts(response.data);
+            setWillsCount(response.data);
         }
         catch (err) {
             console.log('COUNT WILLS FAILED:', err);
@@ -118,7 +123,7 @@ const Dashboard = () => {
             );
 
             console.log('ACTIVE USERS SUCCESS:', response);
-            setActiveCounts(response.data);
+            setActiveCount(response.data);
         }
 
         catch (err) {
@@ -159,6 +164,21 @@ const Dashboard = () => {
 
     }
 
+    const countMessages = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/messages/count`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('COUNT MESSAGES SUCCESS:', response);
+            setMessagesCount(response.data);
+        }
+        catch (err) {
+            console.log('COUNT MESSAGES FAILED:', err);
+        }
+    };
+
     const isActive = (path) => {
         return path === activeComponent
             ? 'w-full text-md font-semibold py-5 text-red-500 cursor-pointer'
@@ -172,20 +192,20 @@ const Dashboard = () => {
     const renderContent = () => {
         switch (activeComponent.name) {
             case 'Dashboard':
-                return <CardsContent totalWills={wills} pendingWills={willCounts.pending}
-                    completeWills={willCounts.complete} activeUsers={activeCounts.active}
-                    inactiveUsers={users.length - activeCounts.active} totalUsers={users}
-                    totalMessages={messages} />;
+                return <CardsContent pendingWills={willsCount.pending} completeWills={willsCount.complete} totalWills={wills}
+                    activeUsers={activeCount.active} inactiveUsers={users.length - activeCount.active} totalUsers={users}
+                    unreadMessages={messagesCount.unread} readMessages={messagesCount.read} totalMessages={messages} />;
             case 'Analytics':
-                return <AnalyticsContent pendingWills={willCounts.pending}
-                    completeWills={willCounts.complete} willTrends={willTrends} userTrends={userTrends}
-                    activeUsers={activeCounts.active} inactiveUsers={users.length - activeCounts.active} />;
+                return <AnalyticsContent pendingWills={willsCount.pending} completeWills={willsCount.complete}
+                    activeUsers={activeCount.active} inactiveUsers={users.length - activeCount.active}
+                    unreadMessages={messagesCount.unread} readMessages={messagesCount.read}
+                    willTrends={willTrends} userTrends={userTrends} />;
             case 'Users':
                 return <UsersContent list={users} token={token} shorten={shortenContent} />;
             case 'Wills':
                 return <WillsContent list={wills} shorten={shortenContent} />;
             case 'Messages':
-                return <MessagesContent list={messages} shorten={shortenContent} />;
+                return <MessagesContent list={messages} token={token} shorten={shortenContent} />;
             default:
                 return <CardsContent />;
         }
@@ -274,7 +294,8 @@ const Header = ({ headerName, isActive, setActiveComponent }) => {
     );
 };
 
-const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, activeUsers, inactiveUsers, totalMessages }) => {
+const CardsContent = ({ pendingWills, completeWills, totalWills, activeUsers, inactiveUsers, totalUsers,
+    unreadMessages, readMessages, totalMessages }) => {
     return (
         <section className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
             <div className='py-10 bg-white rounded-lg shadow text-center'>
@@ -308,6 +329,16 @@ const CardsContent = ({ pendingWills, completeWills, totalWills, totalUsers, act
             </div>
 
             <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {unreadMessages} </h3>
+                <p className='text-gray-500'> Unread Messages </p>
+            </div>
+
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
+                <h3 className='text-lg font-semibold text-gray-700'> {readMessages} </h3>
+                <p className='text-gray-500'> Read Messages </p>
+            </div>
+
+            <div className='py-10 bg-white rounded-lg shadow text-center'>
                 <h3 className='text-lg font-semibold text-gray-700'> {totalMessages.length} </h3>
                 <p className='text-gray-500'> Total Messages </p>
             </div>
@@ -337,7 +368,6 @@ const UsersContent = ({ list, token, shorten }) => {
 
     const clickEditUser = (user) => {
         setEditUser(user);
-
         setValues({
             ...values,
             id: user._id,
@@ -372,7 +402,6 @@ const UsersContent = ({ list, token, shorten }) => {
 
     const handleDeleteUser = async (userId) => {
         const confirmDelete = window.confirm('Are you sure you want to delete this user? This action cannot be undone.');
-
         if (confirmDelete) {
             try {
                 const response = await axios.delete(
@@ -433,8 +462,8 @@ const UsersContent = ({ list, token, shorten }) => {
                                 <td className='px-5 py-3 whitespace-nowrap'>{user.phone}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{user.address}</td>
                                 <td className='px-5 py-3 whitespace-nowrap font-medium'>
-                                    <button className='text-blue-400 hover:text-blue-700' onClick={() => clickEditUser(user)}> Edit </button>
-                                    <button className='text-red-500 hover:text-red-700 ml-3' onClick={() => handleDeleteUser(user._id)}> Delete </button>
+                                    <button className='text-green-500 hover:opacity-80' onClick={() => clickEditUser(user)}> Edit </button>
+                                    <button className='text-red-500 hover:opacity-80 ml-3' onClick={() => handleDeleteUser(user._id)}> Delete </button>
                                 </td>
                             </tr>
                         ))}
@@ -615,14 +644,32 @@ const WillsContent = ({ list, shorten }) => {
     );
 };
 
-const MessagesContent = ({ list, shorten }) => {
+const MessagesContent = ({ list, token, shorten }) => {
+    const handleReadMessage = async (messageId) => {
+        try {
+            const response = await axios.put(
+                `${process.env.REACT_APP_API}/message/update`, { _id: messageId, status: 'Read' },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('MARK AS READ SUCCESS:', response);
+            toast.success('Message marked as read successfully!');
+        }
+
+        catch (err) {
+            console.error('MARK AS READ FAILED:', err);
+            toast.error(err.response.data.error);
+        }
+    };
+
     return (
         <section className='max-w-md md:min-w-full mx-auto bg-white rounded-lg shadow'>
             <div className='overflow-x-auto'>
                 <table className='min-w-max divide-y divide-gray-200'>
                     <thead>
                         <tr>
-                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> ID </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Message </th>
@@ -631,17 +678,20 @@ const MessagesContent = ({ list, shorten }) => {
                     <tbody className='bg-white divide-y divide-gray-200'>
                         {list.map((contact) => (
                             <tr key={contact._id}>
-                                <td className='px-5 py-3 whitespace-nowrap'>
-                                    <div className='flex items-center'>
-                                        <span>{shorten(contact._id)}</span>
-                                        <CopyToClipboard text={contact._id}>
-                                            <button className='ml-2'>
-                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
-                                            </button>
-                                        </CopyToClipboard>
-                                    </div>
-                                </td>
-
+                                {contact.status === 'Unread' ? (
+                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                        <button className='text-green-500 hover:opacity-80 font-semibold' onClick={() => handleReadMessage(contact._id)}>
+                                            Mark as Read
+                                        </button>
+                                    </td>
+                                ) : (
+                                    <td className='px-6 py-4 whitespace-nowrap'>
+                                        <button disabled className='text-gray-400 font-medium'>
+                                            -
+                                        </button>
+                                    </td>
+                                )}
+                                <td className='px-5 py-3 whitespace-nowrap'>{contact.status}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.name}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.email}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.message}</td>
@@ -654,7 +704,8 @@ const MessagesContent = ({ list, shorten }) => {
     );
 };
 
-const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills, completeWills, willTrends }) => {
+const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills, completeWills, willTrends,
+    unreadMessages, readMessages }) => {
     const willsData = {
         labels: ['Pending', 'Complete'],
         datasets: [
@@ -693,6 +744,25 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
         ],
     };
 
+    const messagesData = {
+        labels: ['Read', 'Unread'],
+        datasets: [
+            {
+                label: 'Count',
+                data: [readMessages, unreadMessages],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)', // Read Messages
+                    'rgba(255, 99, 132, 0.2)', // Unread Messages
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)', // Read Messages
+                    'rgba(255, 99, 132, 1)', // Unread Messages
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
     return (
         <section className='flex flex-col gap-8'>
             <div className='grid grid-cols-2 lg:grid-cols-3 md:gap-4 gap-6'>
@@ -704,6 +774,11 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
                 <div className='p-5 bg-white rounded-lg shadow'>
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Wills </h3>
                     <Pie data={willsData} />
+                </div>
+
+                <div className='p-5 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Messages </h3>
+                    <Pie data={messagesData} />
                 </div>
             </div>
 

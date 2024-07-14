@@ -11,7 +11,7 @@ import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
 const CreateWill = ({ setAccount }) => {
-    const [wills, setWills] = useState([]);
+    const [will, setWill] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
         account: '',
@@ -98,8 +98,8 @@ const CreateWill = ({ setAccount }) => {
                 const value = amount;
 
                 const newWill = { txnHash, contractAddress, from, to, value, status: 'Pending' };
-                const storeWill = [...wills, newWill];
-                setWills(storeWill);
+                const storeWill = [...will, newWill];
+                setWill(storeWill);
 
                 // Add 'will' cookie to the localStorage
                 // if (typeof window !== 'undefined') {
@@ -141,14 +141,14 @@ const CreateWill = ({ setAccount }) => {
             try {
                 await contract.methods.hasDeceased().send({ from: account });
 
-                // Update will's state
-                const updatedWills = [...wills];
-                const id = updatedWills[index].txnHash;
-                updatedWills[index].status = 'Complete';
-                setWills(updatedWills);
+                // Update will's status
+                const updateWill = [...will];
+                const id = updateWill[index].txnHash;
+                updateWill[index].status = 'Complete';
+                setWill(updateWill);
 
                 // Update 'will' cookie in the localStorage
-                // localStorage.setItem('will', JSON.stringify(updatedWills));
+                // localStorage.setItem('will', JSON.stringify(updateWill));
 
                 await axios.put(
                     `${process.env.REACT_APP_API}/will/update`, { txnHash: id, status: 'Complete' },
@@ -199,7 +199,7 @@ const CreateWill = ({ setAccount }) => {
                             <div>
                                 {account}
                                 <CopyToClipboard text={account}>
-                                    <button>
+                                    <button className='ml-2'>
                                         <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                     </button>
                                 </CopyToClipboard>
@@ -254,8 +254,8 @@ const CreateWill = ({ setAccount }) => {
                             </tr>
                         </thead>
                         <tbody className='bg-white divide-y divide-gray-200'>
-                            {wills.length > 0 ? (
-                                wills.map((will, index) => (
+                            {will.length > 0 ? (
+                                will.map((will, index) => (
                                     <tr key={index}>
                                         <td className='px-6 py-4 whitespace-nowrap'>
                                             <div className='flex items-center'>

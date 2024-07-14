@@ -76,7 +76,7 @@ const History = ({ account }) => {
                         <span>
                             <strong className='text-red-400'> Account: </strong> {account}
                             <CopyToClipboard text={account}>
-                                <button>
+                                <button className='ml-2'>
                                     <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
                                 </button>
                             </CopyToClipboard>

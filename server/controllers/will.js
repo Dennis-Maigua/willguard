@@ -74,7 +74,7 @@ exports.countByStatus = async (req, res) => {
     catch (err) {
         console.log('COUNTING WILLS FAILED:', err);
         return res.status(500).json({
-            error: 'Failed to count will!'
+            error: 'Failed to count wills!'
         });
     }
 }

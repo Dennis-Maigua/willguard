@@ -58,7 +58,7 @@ const Layout = ({ children }) => {
                     <div className='flex gap-4 font-semibold'>
                         {!isAuth() && (
                             <div className='flex gap-4'>
-                                <NavLink to='/signin' className='py-1 px-3 text-black bg-white hover:text-red-500 shadow rounded'> Sign In </NavLink>
+                                <NavLink to='/signin' className='py-2 px-3 text-black bg-white hover:text-red-500 shadow rounded'> Sign In </NavLink>
                             </div>
                         )}
 
