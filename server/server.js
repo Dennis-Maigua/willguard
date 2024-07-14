@@ -1,11 +1,11 @@
 const express = require('express');
+const app = express();
 const morgan = require('morgan');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const app = express();
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const willRoutes = require('./routes/will');
@@ -14,7 +14,7 @@ const port = process.env.PORT || 8000;
 
 mongoose
     .connect(process.env.DATABASE_URL)
-    .then(() => console.log('MongoDB connected successfully'))
+    .then(() => console.log('MongoDB is connected successfully,'))
     .catch(err => console.log(err));
 
 // app.use(cors());
@@ -30,5 +30,5 @@ app.use('/api', userRoutes);
 app.use('/api', willRoutes);
 
 app.listen(port, () => {
-    console.log(`API server running on port ${port}`);
+    console.log(`API server is running on port ${port}.`);
 });

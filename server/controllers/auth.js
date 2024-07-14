@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
         catch (err) {
             console.log('EMAIL NOT SENT:', err);
             return res.status(500).json({
-                error: 'Problem with sending email!'
+                error: 'Problem with sendingactivation link!'
             });
         }
     }
@@ -171,7 +171,7 @@ exports.forgotPassword = async (req, res) => {
             .catch((err) => {
                 console.log('DATABASE/EMAIL ERROR:', err);
                 return res.status(500).json({
-                    error: 'Problem with database or sending email!'
+                    error: 'Problem with database or sending reset link!'
                 });
             });
     }

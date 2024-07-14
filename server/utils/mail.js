@@ -213,3 +213,63 @@ exports.resetSuccessTemplate = url => {
     </html>
     `;
 };
+
+exports.contactEntryTemplate = (name, email, message) => {
+    return `
+    <!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <style>
+                @media only screen and (max-width: 620px) {
+                    h1 {
+                        font-size: 20px;
+                        padding: 5px;
+                    }
+                }
+                div {
+                    margin: 0 auto;
+                    font-family: sans-serif;
+                    color: #272727;
+                }
+                h1 {
+                    background: #f6f6f6;
+                    padding: 10px;
+                    text-align: center;
+                }
+                .container {
+                    border: 1px dotted red;
+                    border-radius: 4px;
+                    padding: 10px;
+                    margin: 15px;
+                }
+                p {
+                    margin-bottom: 10px;
+                }
+                span {
+                    text-align: center;
+                }
+            </style>
+        </head>
+        <body>
+            <div>
+                <h1> New Message </h1>
+                <span> You have received a new contact entry from the website as follows: </span>
+                <div class="container">
+                    <p>
+                        <strong> Name: </strong> ${name}
+                    </p>
+                    <p>
+                        <strong> Email: </strong> ${email}
+                    </p>
+                    <p>
+                        <strong> Message: </strong> ${message}
+                    </p>
+                </div>
+                <span> If this was a spam email, please delete it or mark as spam. </span>
+            </div>
+        </body>
+    </html>
+    `;
+};

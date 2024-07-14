@@ -95,3 +95,22 @@ exports.updateValidator = [
         .isLength({ min: 3 })
         .withMessage('Address must be at least 3 characters long!')
 ];
+
+exports.contactValidator = [
+    check('name')
+        .optional()
+        .isLength({ min: 3 })
+        .withMessage('Name must be at least 3 characters long!')
+        .matches(/^[A-Za-z\s]+$/)
+        .withMessage('Name can only contain alphabetic characters and spaces!'),
+    check('email')
+        .optional()
+        .isEmail()
+        .withMessage('A valid email is required!')
+        .normalizeEmail()
+        .withMessage('A valid email is required!'),
+    check('message')
+        .optional()
+        .isLength({ min: 100 })
+        .withMessage('Message must be at least 100 characters long!')
+];

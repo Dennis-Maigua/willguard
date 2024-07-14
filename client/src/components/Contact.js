@@ -1,18 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '../core/Layout';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
+import axios from 'axios';
 
 const Contact = () => {
     return (
         <Layout>
             <ToastContainer />
             <HeroSection />
-            <section className="py-14">
-                <div className="container mx-auto px-6">
-                    <div className="flex flex-wrap -mx-4">
-                        <FormSection />
-                        <InfoSection />
-                    </div>
+            <section className='py-10 px-6 mx-auto'>
+                <div className='grid grid-cols-1 lg:grid-cols-2'>
+                    <FormSection />
+                    <InfoSection />
                 </div>
             </section>
         </Layout>
@@ -21,9 +20,9 @@ const Contact = () => {
 
 const HeroSection = () => {
     return (
-        <section className="bg-gray-600 text-white py-14">
-            <div className="container mx-auto px-6 text-center">
-                <h1 className="text-5xl font-bold mb-2">
+        <section className='bg-gray-600 text-white py-14'>
+            <div className='container mx-auto px-6 text-center'>
+                <h1 className='text-5xl font-bold mb-2'>
                     Contact
                 </h1>
             </div>
@@ -32,42 +31,80 @@ const HeroSection = () => {
 };
 
 const FormSection = () => {
+    const [values, setValues] = useState({
+        name: '',
+        email: '',
+        message: '',
+        buttonText: 'Send Message'
+    });
+
+    const { name, email, message, buttonText } = values;
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setValues({ ...values, [name]: value });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setValues({ ...values, buttonText: 'Sending...' });
+
+        try {
+            const response = await axios.post(
+                `${process.env.REACT_APP_API}/user/contact`, { name, email, message }
+            );
+
+            console.log('CONTACT ENTRY SUCCESS:', response);
+            toast.success(response.data.message);
+            setValues({ ...values, name: '', email: '', message: '', buttonText: 'Sent' });
+        }
+
+        catch (err) {
+            console.log('CONTACT ENTRY FAILED:', err);
+            setValues({ ...values, buttonText: 'Send Message' });
+            toast.error(err.response.data.error);
+        }
+    };
+
+
     return (
-        <div className="w-full md:w-1/2 px-4 mb-8 md:mb-0">
-            <h3 className="text-2xl font-bold mb-6"> Get in Touch </h3>
-            <form className="bg-slate-100 rounded-lg shadow p-10">
-                <div className="mb-4">
-                    <input
-                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
-                        type="text"
-                        id="name"
-                        placeholder="Your Name"
-                    />
-                </div>
-                <div className="mb-4">
-                    <input
-                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
-                        type="email"
-                        id="email"
-                        placeholder="Your Email"
-                    />
-                </div>
-                <div className="mb-4">
-                    <textarea
-                        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
-                        id="message"
-                        rows="5"
-                        placeholder="Your Message"
-                    ></textarea>
-                </div>
-                <div className="text-center">
-                    <button
-                        className="py-2 px-4 text-white font-semibold bg-red-500 hover:opacity-90 shadow rounded"
-                        type="submit"
-                    >
-                        Send Message
-                    </button>
-                </div>
+        <div className='p-0 md:p-4 lg:p-10'>
+            <h3 className='text-2xl font-bold mb-6'> Get in Touch </h3>
+            <form onSubmit={handleSubmit} className='flex flex-col bg-slate-100 rounded shadow p-10 gap-4'>
+                <input
+                    type='text'
+                    name='name'
+                    value={name}
+                    placeholder='Your Name'
+                    onChange={handleChange}
+                    className='p-3 shadow rounded'
+                />
+
+                <input
+                    type='email'
+                    name='email'
+                    value={email}
+                    placeholder='Your Email'
+                    onChange={handleChange}
+                    className='p-3 shadow rounded'
+                />
+
+                <textarea
+                    type='text'
+                    rows='5'
+                    name='message'
+                    value={message}
+                    placeholder='Your Message'
+                    onChange={handleChange}
+                    className='p-3 shadow rounded'
+                ></textarea>
+
+                <button
+                    className='py-3 text-white font-semibold bg-red-500 hover:opacity-90 shadow rounded'
+                    type='submit'
+                >
+                    {buttonText}
+                </button>
             </form>
         </div>
     );
@@ -75,21 +112,21 @@ const FormSection = () => {
 
 const InfoSection = () => {
     return (
-        <div className="w-full md:w-1/2 md:px-20 px-4 md:pt-0 pt-10">
-            <h3 className="text-2xl font-bold mb-4">Contact Information</h3>
-            <div className="py-6 gap-4 flex flex-col">
-                <p className="text-lg">
+        <div className='pt-10 md:p-4 lg:p-10'>
+            <h3 className='text-2xl font-bold mb-4'> Contact Information </h3>
+            <div className='py-6 gap-4 flex flex-col'>
+                <span>
                     If you have any questions, feel free to reach out to us at:
-                </p>
-                <p className="text-lg">
+                </span>
+                <span>
                     <strong>Email:</strong> support@willguard.com
-                </p>
-                <p className="text-lg">
-                    <strong>Phone:</strong> +1 234 567 890
-                </p>
-                <p className="text-lg">
-                    <strong>Address:</strong> 1234 Will Street, Testament City, TX 12345
-                </p>
+                </span>
+                <span>
+                    <strong>Phone:</strong> +254 712 345 678
+                </span>
+                <span>
+                    <strong>Address:</strong> 1234 Street, Will City, NA 56789
+                </span>
             </div>
         </div>
     );
