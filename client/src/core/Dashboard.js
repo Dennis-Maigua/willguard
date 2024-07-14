@@ -19,6 +19,7 @@ const Dashboard = () => {
     const [userTrends, setUserTrends] = useState([]);
     const [willTrends, setWillTrends] = useState([]);
     const [messages, setMessages] = useState([]);
+    const [messageTrends, setMessageTrends] = useState([]);
 
     const [activeCount, setActiveCount] = useState({
         active: 0,
@@ -47,6 +48,7 @@ const Dashboard = () => {
             await fetchUserTrends();
             await fetchContactMessages();
             await countMessages();
+            await fetchMessageTrends();
         };
         init();
     }, []);
@@ -179,8 +181,23 @@ const Dashboard = () => {
         }
     };
 
+    const fetchMessageTrends = async () => {
+        try {
+            const response = await axios.get(
+                `${process.env.REACT_APP_API}/messages/trends`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            console.log('FETCH MESSAGE TRENDS SUCCESS:', response);
+            setWillTrends(response.data);
+        }
+        catch (err) {
+            console.log('FETCH MESSAGE TRENDS FAILED:', err);
+        }
+    };
+
     const isActive = (path) => {
-        return path === activeComponent
+        return path === activeComponent.name
             ? 'w-full text-md font-semibold py-5 text-red-500 cursor-pointer'
             : 'w-full text-md font-semibold py-5 hover:text-red-500 cursor-pointer';
     };
@@ -199,7 +216,7 @@ const Dashboard = () => {
                 return <AnalyticsContent pendingWills={willsCount.pending} completeWills={willsCount.complete}
                     activeUsers={activeCount.active} inactiveUsers={users.length - activeCount.active}
                     unreadMessages={messagesCount.unread} readMessages={messagesCount.read}
-                    willTrends={willTrends} userTrends={userTrends} />;
+                    willsTrend={willTrends} usersTrend={userTrends} messagesTrend={messageTrends} />;
             case 'Users':
                 return <UsersContent list={users} token={token} shorten={shortenContent} />;
             case 'Wills':
@@ -462,7 +479,7 @@ const UsersContent = ({ list, token, shorten }) => {
                                 <td className='px-5 py-3 whitespace-nowrap'>{user.phone}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{user.address}</td>
                                 <td className='px-5 py-3 whitespace-nowrap font-medium'>
-                                    <button className='text-green-500 hover:opacity-80' onClick={() => clickEditUser(user)}> Edit </button>
+                                    <button className='text-blue-500 hover:opacity-80' onClick={() => clickEditUser(user)}> Edit </button>
                                     <button className='text-red-500 hover:opacity-80 ml-3' onClick={() => handleDeleteUser(user._id)}> Delete </button>
                                 </td>
                             </tr>
@@ -670,6 +687,7 @@ const MessagesContent = ({ list, token, shorten }) => {
                         <tr>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Actions </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Status </th>
+                            <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> ID </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Name </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Email </th>
                             <th className='px-5 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'> Message </th>
@@ -680,18 +698,31 @@ const MessagesContent = ({ list, token, shorten }) => {
                             <tr key={contact._id}>
                                 {contact.status === 'Unread' ? (
                                     <td className='px-6 py-4 whitespace-nowrap'>
-                                        <button className='text-green-500 hover:opacity-80 font-semibold' onClick={() => handleReadMessage(contact._id)}>
+                                        <button className='text-red-500 hover:opacity-80 font-semibold' onClick={() => handleReadMessage(contact._id)}>
                                             Mark as Read
                                         </button>
                                     </td>
                                 ) : (
                                     <td className='px-6 py-4 whitespace-nowrap'>
-                                        <button disabled className='text-gray-400 font-medium'>
-                                            -
+                                        <button disabled className='text-gray-300 font-medium'>
+                                            None
                                         </button>
                                     </td>
                                 )}
-                                <td className='px-5 py-3 whitespace-nowrap'>{contact.status}</td>
+
+                                <td className='px-5 py-3 text-green-500 font-semibold whitespace-nowrap'>{contact.status}</td>
+
+                                <td className='px-5 py-3 whitespace-nowrap'>
+                                    <div className='flex items-center'>
+                                        <span>{shorten(contact._id)}</span>
+                                        <CopyToClipboard text={contact._id}>
+                                            <button className='ml-2'>
+                                                <MdOutlineContentCopy className='text-gray-500 hover:text-gray-800' />
+                                            </button>
+                                        </CopyToClipboard>
+                                    </div>
+                                </td>
+
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.name}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.email}</td>
                                 <td className='px-5 py-3 whitespace-nowrap'>{contact.message}</td>
@@ -704,8 +735,8 @@ const MessagesContent = ({ list, token, shorten }) => {
     );
 };
 
-const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills, completeWills, willTrends,
-    unreadMessages, readMessages }) => {
+const AnalyticsContent = ({ activeUsers, inactiveUsers, usersTrend, pendingWills, completeWills, willsTrend,
+    unreadMessages, readMessages, messagesTrend }) => {
     const willsData = {
         labels: ['Pending', 'Complete'],
         datasets: [
@@ -751,12 +782,12 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
                 label: 'Count',
                 data: [readMessages, unreadMessages],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)', // Read Messages
-                    'rgba(255, 99, 132, 0.2)', // Unread Messages
+                    'rgba(201, 203, 207, 0.2)', // Read Messages
+                    'rgba(50, 50, 50, 0.2)', // Unread Messages
                 ],
                 borderColor: [
-                    'rgba(54, 162, 235, 1)', // Read Messages
-                    'rgba(255, 99, 132, 1)', // Unread Messages
+                    'rgba(201, 203, 207, 1)', // Read Messages
+                    'rgba(50, 50, 50, 1)', // Unread Messages
                 ],
                 borderWidth: 1,
             },
@@ -787,11 +818,11 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> User Trends </h3>
                     <Bar
                         data={{
-                            labels: userTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            labels: usersTrend.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
                             datasets: [
                                 {
                                     label: 'Accounts Created',
-                                    data: userTrends.map(trend => trend.count),
+                                    data: usersTrend.map(trend => trend.count),
                                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                                     borderColor: 'rgba(75, 192, 192, 1)',
                                     borderWidth: 1,
@@ -805,15 +836,33 @@ const AnalyticsContent = ({ activeUsers, inactiveUsers, userTrends, pendingWills
                     <h3 className='text-lg font-semibold text-gray-700 mb-4'> Will Trends </h3>
                     <Line
                         data={{
-                            labels: willTrends.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            labels: willsTrend.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
                             datasets: [
                                 {
                                     label: 'Wills Created',
-                                    data: willTrends.map(trend => trend.count),
+                                    data: willsTrend.map(trend => trend.count),
                                     backgroundColor: 'rgba(255, 205, 86, 0.2)',
                                     borderColor: 'rgba(255, 205, 86, 1)',
                                     borderWidth: 1,
                                     fill: true,
+                                }
+                            ]
+                        }}
+                    />
+                </div>
+
+                <div className='p-5 bg-white rounded-lg shadow'>
+                    <h3 className='text-lg font-semibold text-gray-700 mb-4'> Message Trends </h3>
+                    <Bar
+                        data={{
+                            labels: messagesTrend.map(trend => `${trend._id.month}/${trend._id.day}/${trend._id.year}`),
+                            datasets: [
+                                {
+                                    label: 'Messages Sent',
+                                    data: messagesTrend.map(trend => trend.count),
+                                    backgroundColor: 'rgba(255, 159, 243, 0.2)',
+                                    borderColor: 'rgba(255, 159, 243, 1)',
+                                    borderWidth: 1,
                                 }
                             ]
                         }}

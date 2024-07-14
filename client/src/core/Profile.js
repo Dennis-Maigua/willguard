@@ -176,7 +176,7 @@ const Profile = () => {
                         className='h-24 w-24 rounded-full self-center border object-cover cursor-pointer'
                         onClick={() => fileRef.current.click()}
                     />
-                    <div className='text-sm text-center'>
+                    <div className='text-sm text-center font-medium'>
                         {imageError ? (
                             <span className='text-red-500'>
                                 Error! File size must be less than 2 MB.

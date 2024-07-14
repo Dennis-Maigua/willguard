@@ -15,7 +15,7 @@ const port = process.env.PORT || 8000;
 
 mongoose
     .connect(process.env.DATABASE_URL)
-    .then(() => console.log('MongoDB is connected successfully!'))
+    .then(() => console.log('MongoDB is connected successfully'))
     .catch(err => console.log(err));
 
 // app.use(cors());
@@ -32,5 +32,5 @@ app.use('/api', willRoutes);
 app.use('/api', contactRoutes);
 
 app.listen(port, () => {
-    console.log(`API server is running on port ${port},`);
+    console.log(`API server is running on port ${port}`);
 });
