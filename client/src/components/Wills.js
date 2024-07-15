@@ -10,7 +10,7 @@ import Layout from '../core/Layout';
 import { getCookie, isAuth } from '../utils/helpers';
 import Will from '../truffle_abis/Will.json';
 
-const CreateWill = ({ setAccount }) => {
+const Wills = ({ setAccount }) => {
     const [will, setWill] = useState([]);
     const [values, setValues] = useState({
         web3: new Web3(window.ethereum),
@@ -181,7 +181,7 @@ const CreateWill = ({ setAccount }) => {
 
             <section className="bg-gray-600 text-white py-14">
                 <div className="container mx-auto px-6 text-center">
-                    <h1 className="text-5xl font-bold mb-2"> Create a Will </h1>
+                    <h1 className="text-5xl font-bold mb-2"> Wills </h1>
                 </div>
             </section>
 
@@ -191,7 +191,7 @@ const CreateWill = ({ setAccount }) => {
                         <span className='text-red-400 font-bold'> Account: </span>
                         {!account ? (
                             <button onClick={loadWeb3}
-                                className='p-2 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
+                                className='p-2 text-base font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
                             >
                                 Connect to MetaMask
                             </button>
@@ -334,4 +334,4 @@ const CreateWill = ({ setAccount }) => {
     );
 };
 
-export default CreateWill;
+export default Wills;

@@ -66,8 +66,8 @@ const History = ({ account }) => {
 
             <section className='mx-auto px-4 py-6 flex flex-col gap-8 bg-slate-100 shadow rounded'>
                 <div className='px-0 lg:px-10 flex items-center justify-between md:flex-row flex-col text-lg text-center gap-8'>
-                    <Link to='/create-will'
-                        className='p-2 font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
+                    <Link to='/wills'
+                        className='p-2 text-base font-semibold bg-white hover:opacity-80 border shadow rounded-md cursor-pointer'
                     >
                         + Create Will
                     </Link>

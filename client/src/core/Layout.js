@@ -39,11 +39,11 @@ const Layout = ({ children }) => {
 
                             {!isAuth() ? (
                                 <li>
-                                    <NavLink to='/signin' className={`${isActive('/sign-in')}`}> Create Will </NavLink>
+                                    <NavLink to='/signin' className={`${isActive('/sign-in')}`}> Wills </NavLink>
                                 </li>
                             ) : (
                                 <li>
-                                    <NavLink to='/create-will' className={`${isActive('/create-will')}`}> Create Will </NavLink>
+                                    <NavLink to='/wills' className={`${isActive('/wills')}`}> Wills </NavLink>
                                 </li>
                             )}
                             <li>

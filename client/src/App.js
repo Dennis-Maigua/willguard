@@ -32,7 +32,7 @@ const HeroSection = () => {
             Get Started
           </Link>
         ) : (
-          <Link to="/create-will" className="py-3 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
+          <Link to="/wills" className="py-3 px-4 font-semibold text-white bg-red-500 hover:opacity-80 shadow rounded">
             Get Started
           </Link>
         )}

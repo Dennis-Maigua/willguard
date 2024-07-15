@@ -16,7 +16,7 @@ import History from './core/History';
 
 import About from './components/About';
 import Contact from './components/Contact';
-import CreateWill from './components/CreateWill';
+import Wills from './components/Wills';
 
 const Router = () => {
     const [account, setAccount] = useState('');
@@ -32,7 +32,7 @@ const Router = () => {
                 <Route path='/reset-password/:token' element={<Reset />} />
                 <Route element={<UserRoute />}>
                     <Route path='/profile' element={<Profile />} />
-                    <Route path='/create-will' element={<CreateWill setAccount={setAccount} />} />
+                    <Route path='/wills' element={<Wills setAccount={setAccount} />} />
                     <Route path='/history' element={<History account={account} />} />
                 </Route>
                 <Route element={<AdminRoute />}>
