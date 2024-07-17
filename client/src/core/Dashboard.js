@@ -189,7 +189,7 @@ const Dashboard = () => {
             );
 
             console.log('FETCH MESSAGE TRENDS SUCCESS:', response);
-            setWillTrends(response.data);
+            setMessageTrends(response.data);
         }
         catch (err) {
             console.log('FETCH MESSAGE TRENDS FAILED:', err);
@@ -698,7 +698,7 @@ const MessagesContent = ({ list, token, shorten }) => {
                             <tr key={contact._id}>
                                 {contact.status === 'Unread' ? (
                                     <td className='px-6 py-4 whitespace-nowrap'>
-                                        <button className='text-red-500 hover:opacity-80 font-semibold' onClick={() => handleReadMessage(contact._id)}>
+                                        <button className='text-blue-500 hover:opacity-80 font-semibold' onClick={() => handleReadMessage(contact._id)}>
                                             Mark as Read
                                         </button>
                                     </td>
@@ -710,7 +710,11 @@ const MessagesContent = ({ list, token, shorten }) => {
                                     </td>
                                 )}
 
-                                <td className='px-5 py-3 text-green-500 font-semibold whitespace-nowrap'>{contact.status}</td>
+                                {contact.status === 'Unread' ? (
+                                    <td className='px-5 py-3 text-red-500 font-semibold whitespace-nowrap'>{contact.status}</td>
+                                ) : (
+                                    <td className='px-5 py-3 text-green-500 font-semibold whitespace-nowrap'>{contact.status}</td>
+                                )}
 
                                 <td className='px-5 py-3 whitespace-nowrap'>
                                     <div className='flex items-center'>
